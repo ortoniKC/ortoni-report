@@ -1,0 +1,42 @@
+{
+  "name": "ortoni-report",
+  "version": "1.0.6",
+  "description": "Playwright Report By LetCode Koushik",
+  "scripts": {
+    "build": "tsup",
+    "release": "npm publish",
+    "lint": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ortoniKC/letcode-pw-report.git"
+  },
+  "keywords": [
+    "playwright report",
+    "playwright letcode",
+    "letcode koushik",
+    "ortoni report",
+    "ortoni"
+  ],
+  "author": "Koushik Chatterjee (LetCode with Koushik)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ortoniKC/letcode-pw-report/issues"
+  },
+  "homepage": "https://github.com/ortoniKC/letcode-pw-report#readme",
+ "dependencies": {
+    "hiq": "^4.2.3",
+    "colors": "^1.4.0",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "@types/node": "^20.14.2",
+    "@changesets/cli": "^2.26.0",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.4"
+  },
+  "main": "dist/ortoni-report.js",
+  "module": "dist/ortoni-report.mjs",
+  "types": "dist/ortoni-report.d.ts"
+}
