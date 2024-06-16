@@ -2,41 +2,30 @@ import fs from 'fs';
 import path from 'path';
 import Handlebars from "handlebars";
 import colors from 'colors/safe';
+import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import {ReporterConfig} from './types/reporterConfig';
+import {TestResultData} from './types/testResults';
 
-import type {
-    FullConfig, FullResult, Reporter, Suite, TestCase, TestResult
-} from '@playwright/test/reporter';
 
-interface TestResultData {    
-    projectName: any;
-    suite: any;
-    title: string;
-    status: string;
-    flaky:string;
-    duration: number;
-    errors: any[];
-    steps: any[];
-    logs: string;
-    screenshotPath: string | null;
-    filePath: any;
-}
 class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
     private groupedResults: any;
     private suiteName: string | undefined | TestCase[];
-    constructor(){}
+    private config: ReporterConfig;
+
+    constructor(config: ReporterConfig = {}) {
+        this.config = config;
+    }
 
     onBegin(config: FullConfig, suite: Suite) {
-
         this.results = [];
-        const screenshotsDir = path.join(process.cwd(), 'screenshots');
+        const screenshotsDir = path.resolve(process.cwd(), 'screenshots');
         if (!fs.existsSync(screenshotsDir)) {
-            fs.mkdirSync(screenshotsDir);
+            fs.mkdirSync(screenshotsDir, { recursive: true });
         }
     }
 
-    onTestBegin(test: TestCase, result: TestResult) {
-    }
+    onTestBegin(test: TestCase, result: TestResult) {}
 
     onTestEnd(test: TestCase, result: TestResult) {
         const testResult: TestResultData = {
@@ -59,15 +48,15 @@ class OrtoniReport implements Reporter {
         };
 
         if (result.attachments) {
-            const screenshotsDir = path.join(process.cwd(), 'screenshots\\' + test.id);
+            const screenshotsDir = path.resolve(process.cwd(), 'screenshots', test.id);
             if (!fs.existsSync(screenshotsDir)) {
-                fs.mkdirSync(screenshotsDir);
+                fs.mkdirSync(screenshotsDir, { recursive: true });
             }
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
                 const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
-                const screenshotFileName = `screenshots/${test.id}/${path.basename(screenshot.path)}`;
-                fs.writeFileSync(path.join(process.cwd(), screenshotFileName), screenshotContent, 'base64');
+                const screenshotFileName = path.join('screenshots', test.id, path.basename(screenshot.path));
+                fs.writeFileSync(path.resolve(process.cwd(), screenshotFileName), screenshotContent, 'base64');
                 testResult.screenshotPath = screenshotFileName;
             }
         }
@@ -93,21 +82,19 @@ class OrtoniReport implements Reporter {
             return acc;
         }, {});
 
-
         // Register the json helper
         Handlebars.registerHelper('json', function (context) {
             return safeStringify(context);
         });
-        Handlebars.registerHelper('splitSuiteName', function (suiteName) {
-            return suiteName.split(' - ');
-        });
+
         const html = this.generateHTML();
-        const outputPath = path.join(process.cwd(), 'ortoni-report.html');
+        const outputPath = path.resolve(process.cwd(), 'ortoni-report.html'); // Save in project root folder
         fs.writeFileSync(outputPath, html);
         console.log(`Ortoni HTML report generated at ${outputPath}`);
     }
+
     generateHTML() {
-        const templateSource = fs.readFileSync(path.join(__dirname, 'report-template.hbs'), 'utf-8');
+        const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
         const data = {
             suiteName: this.suiteName,
@@ -117,11 +104,15 @@ class OrtoniReport implements Reporter {
             skipCount: this.results.filter(r => r.status === 'skipped').length,
             flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
             totalCount: this.results.length,
-            groupedResults: this.groupedResults
+            groupedResults: this.groupedResults,
+            projectName: this.config.projectName, // Include project name
+            authorName: this.config.authorName,   // Include author name
+            testType: this.config.testType        // Include test type
         };
         return template(data);
     }
 }
+
 // Utility function to remove circular references
 function safeStringify(obj: any, indent = 2) {
     const cache = new Set();

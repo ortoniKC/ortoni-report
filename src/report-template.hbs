@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playwright Test Report</title>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="icon" href="src\icon\32.png" type="image/x-icon">
+    <link rel="stylesheet" href="src\css\pico.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
     <style>
         main.container {
@@ -70,9 +71,11 @@
 <body>
     <header class="container">
         <div class="header">
+            {{!-- Custom Project Name --}}
             <div>
-                <h1>Playwright Test Report</h1>
+                {{#if projectName}}<h1>{{projectName}}</h1>{{/if}}
             </div>
+            {{!-- Dummy for now --}}
             <div>
                 <form role="search">
                     <input name="search" type="search" placeholder="Search" />
@@ -82,6 +85,7 @@
         </div>
     </header>
     <main class="container">
+        {{!-- Test Scripts --}}
         <aside class="sidebar">
             <h2>Tests</h2>
             <div class="">
@@ -112,10 +116,8 @@
                 {{/each}}
             </div>
         </aside>
-
-
-
         <section>
+            {{!-- Overall summar --}}
             <div id="summary">
                 <section class="grid">
                     <div>
@@ -152,13 +154,20 @@
                     </div>
                 </section>
                 <section>
-                    <h2>Test Results</h2>
-                    <div class="chart-container">
-                        <canvas id="testChart"></canvas>
+                    <h3>Test Results</h3>
+                    <div class="grid">
+                        <div>
+                            {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
+                            {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="testChart"></canvas>
+                        </div>
                     </div>
+
                 </section>
             </div>
-
+            {{!-- Test details --}}
             <div id="testDetails" style="display: none;">
                 <!-- Back button should be outside the dynamic content -->
                 <button class="back-button" onclick="showSummary()">Back to Summary</button>
@@ -239,7 +248,7 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'right'
+                    position: 'top'
                 }
             }
         }
