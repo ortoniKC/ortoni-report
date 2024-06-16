@@ -197,7 +197,8 @@
                         <div>
                             <h3>Status</h3>
                             <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status}</p>
-                            <h3>Duration</h3>
+                             ${test.duration.length ? `
+                            <h3>Duration</h3> `: ""}
                             <p>${test.duration}</p>
                             ${test.errors.length ? `
                             <h3>Errors</h3>
