@@ -110,6 +110,12 @@ export default defineConfig({
 - **Integration with CI/CD:** Enhanced support for continuous integration and deployment environments.
 - **Advanced Filtering:** Additional filtering options to allow users to focus on specific subsets of test results.
 
+## Change Logs:
+[log](https://github.com/ortoniKC/ortoni-report/blob/main/changelog.md)
+
+## License:
+[LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.md)
+
 ## Feedback and Contributions
 
 We welcome feedback and contributions from the community. If you encounter any issues or have suggestions for improvements, please open an issue or submit a pull request on our GitHub repository.

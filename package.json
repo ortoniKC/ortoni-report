@@ -8,6 +8,11 @@
     "release": "npm publish",
     "lint": "tsc"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ortoniKC/ortoni-report"

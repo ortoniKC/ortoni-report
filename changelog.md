@@ -16,6 +16,7 @@
 1. File path based on unix/windows machine [ISSUE#1](https://github.com/ortoniKC/ortoni-report/issues/1)
 2. Log & Error message display where it shows the actual html element
 3. Skip test duration of 0s for the skipper test
+4. Fixed Absolute path of test files
 
 **Changed:**
 1. Modified the `displayTestDetails` function to remove highlights when displaying test details
