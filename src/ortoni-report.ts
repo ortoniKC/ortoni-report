@@ -3,10 +3,9 @@ import path from 'path';
 import Handlebars from "handlebars";
 import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
-import {ReporterConfig} from './types/reporterConfig';
-import {TestResultData} from './types/testResults';
+import { ReporterConfig } from './types/reporterConfig';
+import { TestResultData } from './types/testResults';
 import { msToTime } from './utils/time';
-
 
 class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
@@ -22,11 +21,11 @@ class OrtoniReport implements Reporter {
         this.results = [];
         const screenshotsDir = path.resolve(process.cwd(), 'screenshots');
         if (!fs.existsSync(screenshotsDir)) {
-            fs.mkdirSync(screenshotsDir, { recursive: true });
+            fs.mkdirSync(screenshotsDir);
         }
     }
 
-    onTestBegin(test: TestCase, result: TestResult) {}
+    onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
         const testResult: TestResultData = {
@@ -36,7 +35,7 @@ class OrtoniReport implements Reporter {
             title: test.title,
             status: result.status,
             flaky: test.outcome(),
-            duration: result.duration,
+            duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
                 title: step.title,

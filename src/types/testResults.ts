@@ -5,7 +5,7 @@ export interface TestResultData {
     title: string;
     status: string;
     flaky:string;
-    duration: number;
+    duration: string;
     errors: any[];
     steps: any[];
     logs: string;
