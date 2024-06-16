@@ -28,7 +28,6 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
-        console.log(msToTime(result.duration));
         const testResult: TestResultData = {
             totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name

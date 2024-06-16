@@ -1,25 +1,62 @@
-# Release Notes: OrtoniReport
+## Playwright Report by Koushik
 
-## Introduction
-
-We are excited to announce the release of OrtoniReport v1.0.0, a powerful and customizable HTML report generator for Playwright tests. This release includes key features that enhance the reporting capabilities and make it easier to visualize and organize test results.
+We are excited to announce the release of OrtoniReport (Playwright report - unofficial), a powerful and customizable HTML report generator for Playwright tests. This release includes key features that enhance the reporting capabilities and make it easier to visualize and organize test results.
 
 ![report](https://github.com/ortoniKC/ortoni-report/assets/58769833/9770cdc9-ccf3-459b-bbe8-fcd28be8330e)
 
 
 ## Features
 
-### Enhanced Grouping and Organization
-- **Hierarchical Grouping:** Test results are now grouped hierarchically by file name, suite name, and project name, allowing for a clear and organized view of your test structure.
-- **Detailed Breakdown:** Each suite displays a sub-category for project names, with individual test cases listed under their respective projects.
+1. **Hierarchical Grouping:** 
+   - Test results are now grouped hierarchically by file name, suite name, and project name, allowing for a clear and organized view of your test structure.
+  
+2. **Detailed Breakdown:**
+   - Each suite displays a sub-category for project names, with individual test cases listed under their respective projects.
+
+3. **Test Result Display:**
+   - Display  results including status (passed, failed, skipped), duration, errors, logs, and screenshots.
+   - Organize test results by suite, project, and test script.
+
+4. **Summary Statistics:**
+   - Provide summary statistics for total tests, passed tests, failed tests, skipped tests, and flaky tests.
+
+5. **Chart Visualization:**
+   - Visualize test results using a doughnut chart to represent the distribution of passed, failed, and skipped tests.
+
+6. **Project Information:**
+   - Include project name, author name, and test type information in the report.
+
+7. **Search Functionality:**
+   - Search bar to filter and display specific tests based on user input.
+
+8. **Reset Functionality:**
+   - Allow users to reset the search bar to show all tests when cleared.
+
+9. **Customization:**
+   - Customize project name, author name, and test type displayed in the report.
+   - Dark/Light theme based on the user browser/system setting.
+
+10. **Responsive Design:**
+    - Design the report layout to be responsive and adaptable to different screen sizes.
+
+11. **Accessibility:**
+    - Ensure accessibility by providing appropriate HTML attributes and semantic structure.
+
+12. **Ease of Use:**
+    - Enable easy navigation between test results and summary sections.
+
+These features collectively enhance the readability, usability, and accessibility of the test report, providing valuable insights into test execution and results.
 
 ### Configurable Report Generation
 - **Flexible Configuration:** The reporter can be easily configured within your Playwright configuration file. Example:
   ```JS/TS
-  reporter: [
-      ['ortoni-report'],
-      ['dot']
-  ],
+  reporter: [["ortoni-report",
+    {
+      projectName: 'Plawright Sample',
+      authorName: 'Koushik',
+      testType: 'E2E'
+    }],
+  ["dot"]],
   ```
 
 ### Screenshot Handling
@@ -51,10 +88,13 @@ import { defineConfig } from '@playwright/test';
 import OrtoniReport from 'ortoni-report';
 
 export default defineConfig({
- reporter: [
-      ['ortoni-report'],
-      ['dot']
-  ],
+  reporter: [["ortoni-report",
+    {
+      projectName: 'Plawright Sample',
+      authorName: 'Koushik',
+      testType: 'E2E'
+    }],
+  ["dot"]],
   // Other Playwright configurations
 });
 ```
