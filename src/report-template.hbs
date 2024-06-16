@@ -45,6 +45,7 @@
             border-right: 1px solid #ddd;
             padding-right: 10px;
         }
+
         pre {
             background-color: #f8f9fa;
             padding: 1rem;
@@ -146,19 +147,19 @@
                 </section>
                 {{!-- Suite details with chart --}}
                 <section>
-                   <article>
-                     <header>Suite</header>
-                    <div class="grid">
-                        <div>
-                            {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
-                            {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
-                            {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                    <article>
+                        <header>Suite</header>
+                        <div class="grid">
+                            <div>
+                                {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
+                                {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
+                                {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="testChart"></canvas>
+                            </div>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="testChart"></canvas>
-                        </div>
-                    </div>
-                   </article>
+                    </article>
                 </section>
             </div>
             {{!-- Test details --}}
@@ -172,6 +173,18 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script>
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/[&<"']/g, function (match) {
+                const escapeMap = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return escapeMap[match];
+            });
+        }
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
         const testDetails = document.getElementById('testDetails');
@@ -192,31 +205,35 @@
             backButton.style.display = 'block';
             testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
-                    <h2>${test.title}</h2>
+                    <h3>${test.title}</h3>
                     <div class="grid">
                         <div>
-                            <h3>Status</h3>
+                            <h4>Status</h4>
                             <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status}</p>
                              ${test.duration.length ? `
-                            <h3>Duration</h3> `: ""}
+                            <h4>Duration</h4> `: ""}
                             <p>${test.duration}</p>
-                            ${test.errors.length ? `
-                            <h3>Errors</h3>
-                            <pre>${test.errors.join('\n')}</pre>
-                            ` : ''}
                         </div>
                         <div>
                             ${test.screenshotPath ? `
-                            <h3>Screenshot</h3>
+                            <h4>Screenshot</h4>
                             <img src="${test.screenshotPath}" alt="Screenshot">
-                            ` : ''}
-                            ${test.logs ? `
-                            <h3>Logs</h3>
-                            <pre>${test.logs}</pre>
                             ` : ''}
                         </div>
                     </div>
-                `;
+                    <div>
+                    ${test.errors.length ? `
+                            <h4>Errors</h4>
+                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                            ` : ''}
+                    </div>
+                    <div>
+                    ${test.logs ? `
+                            <h4>Logs</h4>
+                            <pre>${escapeHtml(test.logs)}</pre>
+                            ` : ''}
+                    </div>
+        `;
         }
 
         const testItems = document.querySelectorAll('[data-test-id]');

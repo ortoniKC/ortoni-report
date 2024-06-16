@@ -16,18 +16,19 @@ class OrtoniReport implements Reporter {
     constructor(config: ReporterConfig = {}) {
         this.config = config;
     }
-
     onBegin(config: FullConfig, suite: Suite) {
         this.results = [];
         const screenshotsDir = path.resolve(process.cwd(), 'screenshots');
-        if (!fs.existsSync(screenshotsDir)) {
-            fs.mkdirSync(screenshotsDir);
+        if (fs.existsSync(screenshotsDir)) {
+            fs.rmSync(screenshotsDir, { recursive: true, force: true });
         }
+        fs.mkdirSync(screenshotsDir, { recursive: true });
     }
 
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
+        console.log(msToTime(result.duration));
         const testResult: TestResultData = {
             totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name

@@ -1,11 +1,12 @@
 export function msToTime(duration: number): string {
-    let seconds = Math.floor((duration / 1000) % 60);
-    let minutes = Math.floor((duration / (1000 * 60)) % 60);
-    let hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+    const seconds = Math.floor((duration / 1000) % 60);
+    const minutes = Math.floor((duration / (1000 * 60)) % 60);
+    const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-    const hoursStr = hours > 0 ? `${hours.toString().padStart(2, '0')} H - ` : '';
-    const minutesStr = minutes > 0 || hours > 0 ? `${minutes.toString().padStart(2, '0')} M - ` : '';
-    const secondsStr = seconds > 0 || minutes > 0 || hours > 0 ? `${seconds.toString().padStart(2, '0')} S` : '';
+    const parts = [];
+    if (hours > 0) parts.push(hours + 'h');
+    if (minutes > 0) parts.push(minutes + 'm');
+    if (seconds > 0 || parts.length === 0) parts.push(seconds + 's');
 
-    return `${hoursStr}${minutesStr}${secondsStr}`;
+    return parts.join(' ');
 }
