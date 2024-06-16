@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playwright Test Report</title>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
+    <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
+    <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/pico.css">
+    {{!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css"> --}}
     <style>
         main.container {
             display: grid;
@@ -24,25 +25,29 @@
             justify-content: space-evenly;
         }
 
+        .highlight {
+            background-color: var(--pico-primary-background)
+        }
+
         .text-success {
             color: #28a745;
         }
 
-        .text-danger {
+        .text-failure {
             color: #dc3545;
+        }
+
+        .text-skip {
+            color: #d5d4a1;
+        }
+
+        .text-flaky {
+            color: #d5d4a1;
         }
 
         .sidebar {
             border-right: 1px solid #ddd;
             padding-right: 10px;
-        }
-
-        .card {
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 0.5rem;
-            background-color: #fff;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
         }
 
         pre {
@@ -62,9 +67,11 @@
 <body>
     <header class="container">
         <div class="header">
+            {{!-- Custom Project Name --}}
             <div>
-                <h1>Playwright Test Report</h1>
+                {{#if projectName}}<h1>{{projectName}}</h1>{{/if}}
             </div>
+            {{!-- Dummy for now --}}
             <div>
                 <form role="search">
                     <input name="search" type="search" placeholder="Search" />
@@ -74,6 +81,7 @@
         </div>
     </header>
     <main class="container">
+        {{!-- Test Scripts --}}
         <aside class="sidebar">
             <h2>Tests</h2>
             <div class="">
@@ -104,15 +112,13 @@
                 {{/each}}
             </div>
         </aside>
-
-
-
         <section>
+            {{!-- Overall summar --}}
             <div id="summary">
                 <section class="grid">
                     <div>
                         <article>
-                            <header>Total Tests</header>
+                            <header>All Tests</header>
                             <p>{{totalCount}}</p>
                         </article>
                     </div>
@@ -125,7 +131,7 @@
                     <div>
                         <article>
                             <header>Failed</header>
-                            <p class="text-danger">{{failCount}}</p>
+                            <p class="text-failure">{{failCount}}</p>
                         </article>
                     </div>
                 </section>
@@ -133,24 +139,34 @@
                     <div>
                         <article>
                             <header>Skipped</header>
-                            <p>{{skipCount}}</p>
+                            <p class="text-skip">{{skipCount}}</p>
                         </article>
                     </div>
                     <div>
                         <article>
-                            <header>Retry</header>
-                            <p class="text-success">{{retryCount}}</p>
+                            <header>Flaky</header>
+                            <p class="text-flaky">{{flakyCount}}</p>
                         </article>
                     </div>
                 </section>
+                {{!-- Suite details with chart --}}
                 <section>
-                    <h2>Test Results</h2>
-                    <div class="chart-container">
-                        <canvas id="testChart"></canvas>
-                    </div>
+                    <article>
+                        <header>Suite</header>
+                        <div class="grid">
+                            <div>
+                                {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
+                                {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
+                                {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="testChart"></canvas>
+                            </div>
+                        </div>
+                    </article>
                 </section>
             </div>
-
+            {{!-- Test details --}}
             <div id="testDetails" style="display: none;">
                 <!-- Back button should be outside the dynamic content -->
                 <button class="back-button" onclick="showSummary()">Back to Summary</button>
@@ -161,16 +177,36 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script>
+        function escapeHtml(unsafe) {
+            return unsafe.replace(/[&<"']/g, function (match) {
+                const escapeMap = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return escapeMap[match];
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-        const testData = {{{ json results }}};
+            const testData = {{{ json results }}};
         const testDetails = document.getElementById('testDetails');
         const summary = document.getElementById('summary');
         const backButton = document.querySelector('.back-button');
+        const testItems = document.querySelectorAll('[data-test-id]');
+        const searchInput = document.querySelector('input[name="search"]');
+        const searchForm = document.querySelector('form[role="search"]');
 
         function showSummary() {
             summary.style.display = 'block';
             testDetails.style.display = 'none';
             backButton.style.display = 'none';
+            clearHighlights();
+        }
+        function clearHighlights() {
+            testItems.forEach(item => item.classList.remove('highlight'));
         }
 
         window.showSummary = showSummary;
@@ -181,38 +217,71 @@
             backButton.style.display = 'block';
             testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
-                    <h2>${test.title}</h2>
+                    <h3>${test.title}</h3>
                     <div class="grid">
                         <div>
-                            <h3>Status</h3>
-                            <p class="${test.status === 'passed' ? 'text-success' : 'text-danger'}">${test.status}</p>
-                            <h3>Duration</h3>
-                            <p>${test.duration}ms</p>
-                            ${test.errors.length ? `
-                            <h3>Errors</h3>
-                            <pre>${test.errors.join('\n')}</pre>
-                            ` : ''}
+                            <h4>Status</h4>
+                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                            ${test.duration != '0s' ? `
+                            <h4>Duration</h4>
+                            <p>${test.duration}</p>` : ""}
                         </div>
                         <div>
                             ${test.screenshotPath ? `
-                            <h3>Screenshot</h3>
+                            <h4>Screenshot</h4>
                             <img src="${test.screenshotPath}" alt="Screenshot">
-                            ` : ''}
-                            ${test.logs ? `
-                            <h3>Logs</h3>
-                            <pre>${test.logs}</pre>
                             ` : ''}
                         </div>
                     </div>
-                `;
+                    <div>
+                    ${test.errors.length ? `
+                            <h4>Errors</h4>
+                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                            ` : ''}
+                    </div>
+                    <div>
+                    ${test.logs ? `
+                            <h4>Logs</h4>
+                            <pre>${escapeHtml(test.logs)}</pre>
+                            ` : ''}
+                    </div>
+        `;
+        }
+        
+        function searchTests(query) {
+            const lowerCaseQuery = query.toLowerCase();
+            if (lowerCaseQuery === '') {
+                testItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+            } else {
+                testItems.forEach(item => {
+                    const title = item.textContent.toLowerCase();
+                    if (title.includes(lowerCaseQuery)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
         }
 
-        const testItems = document.querySelectorAll('[data-test-id]');
+        searchForm.addEventListener('submit', event => {
+            event.preventDefault();
+            searchTests(searchInput.value);
+        });
+        searchInput.addEventListener('input', () => {
+            searchTests(searchInput.value);
+        });
+
+
         testItems.forEach(item => {
             item.addEventListener('click', () => {
                 const testId = item.getAttribute('data-test-id');
                 const test = testData[testId];
                 displayTestDetails(test);
+                clearHighlights();
+                item.classList.add('highlight');
             });
         });
 
@@ -223,23 +292,15 @@
                 labels: ['Passed', 'Failed', 'Skipped'],
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-            backgroundColor: ['#28a745', '#dc3545', '#f0f662']
+            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
                     }]
                 },
             options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                title: {
-                    display: true,
-                    text: 'Overall',
-                    font: {
-                        size: 18,
-                        weight: 'bold'
-                    }
-                },
                 legend: {
-                    position: 'right'
+                    position: 'bottom'
                 }
             }
         }

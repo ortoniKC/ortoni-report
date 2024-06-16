@@ -34,31 +34,57 @@ __export(ortoni_report_exports, {
 });
 module.exports = __toCommonJS(ortoni_report_exports);
 var import_fs = __toESM(require("fs"));
-var import_path = __toESM(require("path"));
+var import_path2 = __toESM(require("path"));
 var import_handlebars = __toESM(require("handlebars"));
 var import_safe = __toESM(require("colors/safe"));
+
+// src/utils/time.ts
+var import_path = __toESM(require("path"));
+function msToTime(duration) {
+  const seconds = Math.floor(duration / 1e3 % 60);
+  const minutes = Math.floor(duration / (1e3 * 60) % 60);
+  const hours = Math.floor(duration / (1e3 * 60 * 60) % 24);
+  const parts = [];
+  if (hours > 0)
+    parts.push(hours + "h");
+  if (minutes > 0)
+    parts.push(minutes + "m");
+  if (seconds > 0 || parts.length === 0)
+    parts.push(seconds + "s");
+  return parts.join(" ");
+}
+function normalizeFilePath(filePath) {
+  const normalizedPath = import_path.default.normalize(filePath);
+  return import_path.default.basename(normalizedPath);
+}
+
+// src/ortoni-report.ts
 var OrtoniReport = class {
-  constructor() {
+  constructor(config = {}) {
     this.results = [];
+    this.config = config;
   }
   onBegin(config, suite) {
     this.results = [];
-    const screenshotsDir = import_path.default.join(process.cwd(), "screenshots");
-    if (!import_fs.default.existsSync(screenshotsDir)) {
-      import_fs.default.mkdirSync(screenshotsDir);
+    const screenshotsDir = import_path2.default.resolve(process.cwd(), "screenshots");
+    if (import_fs.default.existsSync(screenshotsDir)) {
+      import_fs.default.rmSync(screenshotsDir, { recursive: true, force: true });
     }
+    import_fs.default.mkdirSync(screenshotsDir, { recursive: true });
   }
   onTestBegin(test, result) {
   }
   onTestEnd(test, result) {
     const testResult = {
+      totalDuration: "",
       projectName: test.titlePath()[1],
       // Get the project name
       suite: test.titlePath()[3],
       // Adjust the index based on your suite hierarchy
       title: test.title,
       status: result.status,
-      duration: result.duration,
+      flaky: test.outcome(),
+      duration: msToTime(result.duration),
       errors: result.errors.map((e) => import_safe.default.strip(e.message || e.toString())),
       steps: result.steps.map((step) => ({
         title: step.title,
@@ -68,24 +94,25 @@ var OrtoniReport = class {
       })),
       logs: import_safe.default.strip(result.stdout.concat(result.stderr).map((log) => log).join("\n")),
       screenshotPath: null,
-      filePath: test.titlePath()[2]
+      filePath: normalizeFilePath(test.titlePath()[2])
     };
     if (result.attachments) {
-      const screenshotsDir = import_path.default.join(process.cwd(), "screenshots\\" + test.id);
+      const screenshotsDir = import_path2.default.resolve(process.cwd(), "screenshots", test.id);
       if (!import_fs.default.existsSync(screenshotsDir)) {
-        import_fs.default.mkdirSync(screenshotsDir);
+        import_fs.default.mkdirSync(screenshotsDir, { recursive: true });
       }
       const screenshot = result.attachments.find((attachment) => attachment.name === "screenshot");
       if (screenshot && screenshot.path) {
         const screenshotContent = import_fs.default.readFileSync(screenshot.path, "base64");
-        const screenshotFileName = `screenshots/${test.id}/${import_path.default.basename(screenshot.path)}`;
-        import_fs.default.writeFileSync(import_path.default.join(process.cwd(), screenshotFileName), screenshotContent, "base64");
+        const screenshotFileName = import_path2.default.join("screenshots", test.id, import_path2.default.basename(screenshot.path));
+        import_fs.default.writeFileSync(import_path2.default.resolve(process.cwd(), screenshotFileName), screenshotContent, "base64");
         testResult.screenshotPath = screenshotFileName;
       }
     }
     this.results.push(testResult);
   }
   onEnd(result) {
+    this.results[0].totalDuration = msToTime(result.duration);
     this.groupedResults = this.results.reduce((acc, result2, index) => {
       const filePath = result2.filePath;
       const suiteName = result2.suite;
@@ -105,26 +132,30 @@ var OrtoniReport = class {
     import_handlebars.default.registerHelper("json", function(context) {
       return safeStringify(context);
     });
-    import_handlebars.default.registerHelper("splitSuiteName", function(suiteName) {
-      return suiteName.split(" - ");
-    });
     const html = this.generateHTML();
-    const outputPath = import_path.default.join(process.cwd(), "ortoni-report.html");
+    const outputPath = import_path2.default.resolve(process.cwd(), "ortoni-report.html");
     import_fs.default.writeFileSync(outputPath, html);
     console.log(`Ortoni HTML report generated at ${outputPath}`);
   }
   generateHTML() {
-    const templateSource = import_fs.default.readFileSync(import_path.default.join(__dirname, "report-template.hbs"), "utf-8");
+    const templateSource = import_fs.default.readFileSync(import_path2.default.resolve(__dirname, "report-template.hbs"), "utf-8");
     const template = import_handlebars.default.compile(templateSource);
     const data = {
+      totalDuration: this.results[0].totalDuration,
       suiteName: this.suiteName,
       results: this.results,
       passCount: this.results.filter((r) => r.status === "passed").length,
       failCount: this.results.filter((r) => r.status === "failed").length,
       skipCount: this.results.filter((r) => r.status === "skipped").length,
-      retryCount: this.results.filter((r) => r.status === "retry").length,
+      flakyCount: this.results.filter((r) => r.flaky === "flaky").length,
       totalCount: this.results.length,
-      groupedResults: this.groupedResults
+      groupedResults: this.groupedResults,
+      projectName: this.config.projectName,
+      // Include project name
+      authorName: this.config.authorName,
+      // Include author name
+      testType: this.config.testType
+      // Include test type
     };
     return template(data);
   }

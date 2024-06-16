@@ -5,7 +5,7 @@ import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 import { ReporterConfig } from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
-import { msToTime } from './utils/time';
+import { msToTime, normalizeFilePath } from './utils/time';
 
 class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
@@ -45,7 +45,7 @@ class OrtoniReport implements Reporter {
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             screenshotPath: null,
-            filePath: test.titlePath()[2]
+            filePath: normalizeFilePath(test.titlePath()[2]),
         };
 
         if (result.attachments) {

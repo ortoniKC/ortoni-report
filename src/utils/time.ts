@@ -1,3 +1,5 @@
+import path from 'path';
+
 export function msToTime(duration: number): string {
     const seconds = Math.floor((duration / 1000) % 60);
     const minutes = Math.floor((duration / (1000 * 60)) % 60);
@@ -9,4 +11,10 @@ export function msToTime(duration: number): string {
     if (seconds > 0 || parts.length === 0) parts.push(seconds + 's');
 
     return parts.join(' ');
+}
+export function normalizeFilePath(filePath: string): string {
+    // Normalize the path to handle different separators
+    const normalizedPath = path.normalize(filePath);
+    // Get the base name of the file (removes any leading directories)
+    return path.basename(normalizedPath);
 }
