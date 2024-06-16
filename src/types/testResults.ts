@@ -1,4 +1,5 @@
 export interface TestResultData {    
+    totalDuration: string
     projectName: any;
     suite: any;
     title: string;

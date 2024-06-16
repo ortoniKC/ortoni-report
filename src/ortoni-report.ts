@@ -5,6 +5,7 @@ import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 import {ReporterConfig} from './types/reporterConfig';
 import {TestResultData} from './types/testResults';
+import { msToTime } from './utils/time';
 
 
 class OrtoniReport implements Reporter {
@@ -29,6 +30,7 @@ class OrtoniReport implements Reporter {
 
     onTestEnd(test: TestCase, result: TestResult) {
         const testResult: TestResultData = {
+            totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
             title: test.title,
@@ -65,6 +67,7 @@ class OrtoniReport implements Reporter {
     }
 
     onEnd(result: FullResult) {
+        this.results[0].totalDuration = msToTime(result.duration);
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
             const suiteName = result.suite;
@@ -97,6 +100,7 @@ class OrtoniReport implements Reporter {
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
         const data = {
+            totalDuration: this.results[0].totalDuration,
             suiteName: this.suiteName,
             results: this.results,
             passCount: this.results.filter(r => r.status === 'passed').length,
