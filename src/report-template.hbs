@@ -7,7 +7,7 @@
     <title>Playwright Test Report</title>
     <link rel="icon" href="src\icon\32.png" type="image/x-icon">
     <link rel="stylesheet" href="src\css\pico.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css">
+    {{!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css"> --}}
     <style>
         main.container {
             display: grid;
@@ -247,6 +247,7 @@
                     </div>
         `;
         }
+        
         function searchTests(query) {
             const lowerCaseQuery = query.toLowerCase();
             if (lowerCaseQuery === '') {
