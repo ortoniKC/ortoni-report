@@ -24,7 +24,9 @@
             align-items: center;
             justify-content: space-evenly;
         }
-
+        .highlight {
+            background-color: var(--pico-primary-background)
+        }
         .text-success {
             color: #28a745;
         }
@@ -185,16 +187,21 @@
                 return escapeMap[match];
             });
         }
+        var testItems;
+        function clearHighlights() {
+            testItems.forEach(item => item.classList.remove('highlight'));
+        }
         document.addEventListener('DOMContentLoaded', () => {
-            const testData = {{{ json results }}};
+        const testData = {{{ json results }}};
         const testDetails = document.getElementById('testDetails');
         const summary = document.getElementById('summary');
         const backButton = document.querySelector('.back-button');
-
+        testItems =  document.querySelectorAll('[data-test-id]');
         function showSummary() {
             summary.style.display = 'block';
             testDetails.style.display = 'none';
             backButton.style.display = 'none';
+            clearHighlights();
         }
 
         window.showSummary = showSummary;
@@ -209,10 +216,10 @@
                     <div class="grid">
                         <div>
                             <h4>Status</h4>
-                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status}</p>
-                             ${test.duration.length ? `
-                            <h4>Duration</h4> `: ""}
-                            <p>${test.duration}</p>
+                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                            ${test.duration != '0s' ? `
+                            <h4>Duration</h4>
+                            <p>${test.duration}</p>` : ""}
                         </div>
                         <div>
                             ${test.screenshotPath ? `
@@ -236,12 +243,13 @@
         `;
         }
 
-        const testItems = document.querySelectorAll('[data-test-id]');
         testItems.forEach(item => {
             item.addEventListener('click', () => {
                 const testId = item.getAttribute('data-test-id');
                 const test = testData[testId];
                 displayTestDetails(test);
+                clearHighlights();
+                item.classList.add('highlight');
             });
         });
 
