@@ -7,11 +7,12 @@ import type {
     FullConfig, FullResult, Reporter, Suite, TestCase, TestResult
 } from '@playwright/test/reporter';
 
-interface TestResultData {
+interface TestResultData {    
     projectName: any;
     suite: any;
     title: string;
     status: string;
+    flaky:string;
     duration: number;
     errors: any[];
     steps: any[];
@@ -38,12 +39,12 @@ class OrtoniReport implements Reporter {
     }
 
     onTestEnd(test: TestCase, result: TestResult) {
-
         const testResult: TestResultData = {
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
             title: test.title,
             status: result.status,
+            flaky: test.outcome(),
             duration: result.duration,
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
@@ -114,7 +115,7 @@ class OrtoniReport implements Reporter {
             passCount: this.results.filter(r => r.status === 'passed').length,
             failCount: this.results.filter(r => r.status === 'failed').length,
             skipCount: this.results.filter(r => r.status === 'skipped').length,
-            retryCount: this.results.filter(r => r.status === 'retry').length,
+            flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
             totalCount: this.results.length,
             groupedResults: this.groupedResults
         };

@@ -19,7 +19,7 @@
     "ortoni"
   ],
   "author": "Koushik Chatterjee (LetCode with Koushik)",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/ortoniKC/ortoni-report/issues"
   },

@@ -28,8 +28,16 @@
             color: #28a745;
         }
 
-        .text-danger {
+        .text-failure {
             color: #dc3545;
+        }
+
+        .text-skip {
+            color: #d5d4a1;
+        }
+
+        .text-flaky {
+            color: #35d6dc;
         }
 
         .sidebar {
@@ -125,7 +133,7 @@
                     <div>
                         <article>
                             <header>Failed</header>
-                            <p class="text-danger">{{failCount}}</p>
+                            <p class="text-failure">{{failCount}}</p>
                         </article>
                     </div>
                 </section>
@@ -138,8 +146,8 @@
                     </div>
                     <div>
                         <article>
-                            <header>Retry</header>
-                            <p class="text-success">{{retryCount}}</p>
+                            <header>Flaky</header>
+                            <p class="text-success">{{flakyCount}}</p>
                         </article>
                     </div>
                 </section>
@@ -162,7 +170,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const testData = {{{ json results }}};
+            const testData = {{{ json results }}};
         const testDetails = document.getElementById('testDetails');
         const summary = document.getElementById('summary');
         const backButton = document.querySelector('.back-button');
@@ -185,7 +193,7 @@
                     <div class="grid">
                         <div>
                             <h3>Status</h3>
-                            <p class="${test.status === 'passed' ? 'text-success' : 'text-danger'}">${test.status}</p>
+                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status}</p>
                             <h3>Duration</h3>
                             <p>${test.duration}ms</p>
                             ${test.errors.length ? `
@@ -223,21 +231,13 @@
                 labels: ['Passed', 'Failed', 'Skipped'],
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-            backgroundColor: ['#28a745', '#dc3545', '#f0f662']
+            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
                     }]
                 },
             options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                title: {
-                    display: true,
-                    text: 'Overall',
-                    font: {
-                        size: 18,
-                        weight: 'bold'
-                    }
-                },
                 legend: {
                     position: 'right'
                 }
