@@ -3,6 +3,7 @@
   "version": "1.0.8",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
+    "test":"npx playwright test",
     "build": "tsup",
     "release": "npm publish",
     "lint": "tsc"

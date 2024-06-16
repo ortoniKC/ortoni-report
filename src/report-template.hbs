@@ -38,7 +38,7 @@
         }
 
         .text-flaky {
-            color: #35d6dc;
+            color: #d5d4a1;
         }
 
         .sidebar {
@@ -122,7 +122,7 @@
                 <section class="grid">
                     <div>
                         <article>
-                            <header>Total Tests</header>
+                            <header>All Tests</header>
                             <p>{{totalCount}}</p>
                         </article>
                     </div>
@@ -143,22 +143,23 @@
                     <div>
                         <article>
                             <header>Skipped</header>
-                            <p>{{skipCount}}</p>
+                            <p class="text-skip">{{skipCount}}</p>
                         </article>
                     </div>
                     <div>
                         <article>
                             <header>Flaky</header>
-                            <p class="text-success">{{flakyCount}}</p>
+                            <p class="text-flaky">{{flakyCount}}</p>
                         </article>
                     </div>
                 </section>
                 <section>
-                    <h3>Test Results</h3>
+                    <h3>Suite</h3>
                     <div class="grid">
                         <div>
                             {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
                             {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
+                            {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
                         </div>
                         <div class="chart-container">
                             <canvas id="testChart"></canvas>
@@ -248,7 +249,7 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top'
+                    position: 'bottom'
                 }
             }
         }

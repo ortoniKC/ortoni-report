@@ -3,13 +3,11 @@ test.describe("Playwright report tests", () => {
 
   test('has title', async ({ page }) => {
     await page.goto('https://playwright.dev/');
-
-    await page.pause();
     // Expect a title "to contain" a substring.
     await expect(page).not.toHaveTitle(/Playwright/);
   });
 
-  test('get started link', async ({ page }) => {
+  test.skip('get started link', async ({ page }) => {
     await page.goto('https://playwright.dev/');
 
     // Click the get started link.
