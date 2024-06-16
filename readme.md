@@ -1,4 +1,4 @@
-# Release Notes: OrtoniReport v1.0.5
+# Release Notes: OrtoniReport
 
 ## Introduction
 
@@ -39,7 +39,7 @@ We are excited to announce the release of OrtoniReport v1.0.0, a powerful and cu
 To install OrtoniReport, add it to your project using npm:
 
 ```bash
-npm install ortoni-report --save-dev
+npm install ortoni-report
 ```
 
 ## Usage

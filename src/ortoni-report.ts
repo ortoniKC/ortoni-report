@@ -106,7 +106,7 @@ class OrtoniReport implements Reporter {
         console.log(`Ortoni HTML report generated at ${outputPath}`);
     }
     generateHTML() {
-        const templateSource = fs.readFileSync(path.join(process.cwd(), 'report-template.hbs'), 'utf-8');
+        const templateSource = fs.readFileSync(path.join(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
         const data = {
             suiteName: this.suiteName,
