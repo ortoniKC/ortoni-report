@@ -7,12 +7,11 @@
     <title>Playwright Test Report</title>
     <link rel="icon" href="node_modules\ortoni-report\src\icon\32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules\ortoni-report\src\css\pico.css">
-    {{!--
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css"> --}}
     <style>
         body {
             transform: scale(0.9);
         }
+
         main.container {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -30,7 +29,7 @@
         }
 
         .highlight {
-            background-color: var(--pico-primary-background)
+            background-color: var(--pico-primary-background);
         }
 
         .text-success {
@@ -77,9 +76,7 @@
             </div>
             {{!-- Dummy for now --}}
             <div>
-                <form role="search">
-                    <input name="search" type="search" placeholder="Search test title" />
-                </form>
+                <input name="search" type="search" placeholder="Search test title" />
             </div>
         </div>
     </header>
@@ -160,7 +157,7 @@
                             <div>
                                 {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
                                 {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
-                                <h4>Duration: {{totalDuration}}</h4>
+                                {{#if totalDuration}}<h4>Test Type: {{totalDuration}}</h4>{{/if}}
                             </div>
                             <div class="chart-container">
                                 <canvas id="testChart"></canvas>
@@ -198,11 +195,15 @@
         const testDetails = document.getElementById('testDetails');
         const summary = document.getElementById('summary');
         const backButton = document.querySelector('.back-button');
+        let highlightedItem = null;
 
         function showSummary() {
             summary.style.display = 'block';
             testDetails.style.display = 'none';
             backButton.style.display = 'none';
+            if (highlightedItem) {
+                highlightedItem.classList.remove('highlight');
+            }
         }
 
         window.showSummary = showSummary;
@@ -212,36 +213,36 @@
             testDetails.style.display = 'block';
             backButton.style.display = 'block';
             testDetails.innerHTML = `
-            <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
-            <h3>${test.title}</h3>
-            <div class="grid">
-                <div>
-                    <h4>Status</h4>
-                    <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
-                    ${test.duration != '0s' ? `
-                    <h4>Duration</h4>
-                    <p>${test.duration}</p>` : ""}
-                </div>
-                <div>
-                    ${test.screenshotPath ? `
-                    <h4>Screenshot</h4>
-                    <img src="${test.screenshotPath}" alt="Screenshot">
-                    ` : ''}
-                </div>
-            </div>
-            <div>
-            ${test.errors.length ? `
-                    <h4>Errors</h4>
-                    <pre>${escapeHtml(test.errors.join('\n'))}</pre>
-                    ` : ''}
-            </div>
-            <div>
-            ${test.logs ? `
-                    <h4>Logs</h4>
-                    <pre>${escapeHtml(test.logs)}</pre>
-                    ` : ''}
-            </div>
-        `;
+                    <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
+                    <h3>${test.title}</h3>
+                    <div class="grid">
+                        <div>
+                            <h4>Status</h4>
+                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                            ${test.duration != '0s' ? `
+                            <h4>Duration</h4>
+                            <p>${test.duration}</p>` : ""}
+                        </div>
+                        <div>
+                            ${test.screenshotPath ? `
+                            <h4>Screenshot</h4>
+                            <img src="${test.screenshotPath}" alt="Screenshot">
+                            ` : ''}
+                        </div>
+                    </div>
+                    <div>
+                    ${test.errors.length ? `
+                            <h4>Errors</h4>
+                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                            ` : ''}
+                    </div>
+                    <div>
+                    ${test.logs ? `
+                            <h4>Logs</h4>
+                            <pre>${escapeHtml(test.logs)}</pre>
+                            ` : ''}
+                    </div>
+                `;
         }
 
         function attachEventListeners() {
@@ -251,6 +252,11 @@
                     const testId = item.getAttribute('data-test-id');
                     const test = testData[testId];
                     displayTestDetails(test);
+                    if (highlightedItem) {
+                        highlightedItem.classList.remove('highlight');
+                    }
+                    item.classList.add('highlight');
+                    highlightedItem = item;
                 });
             });
         }
@@ -304,8 +310,8 @@
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
             backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
-            }]
-        },
+                    }]
+                },
             options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -315,8 +321,8 @@
                 }
             }
         }
+            });
         });
-    });
     </script>
 </body>
 

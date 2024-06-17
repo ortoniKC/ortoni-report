@@ -3,7 +3,7 @@ export interface TestResultData {
     projectName: any;
     suite: any;
     title: string;
-    status: string;
+    status:  'passed' | 'failed' | 'timedout' | 'interrupted' | 'skipped' |'timedOut';
     flaky:string;
     duration: string;
     errors: any[];

@@ -62,8 +62,6 @@ function normalizeFilePath(filePath) {
 var OrtoniReport = class {
   constructor(config = {}) {
     this.results = [];
-    this.isFailed = false;
-    this.isFailedInfo = "No Test found! Please check your playwright.config";
     this.config = config;
   }
   onBegin(config, suite) {
@@ -114,11 +112,7 @@ var OrtoniReport = class {
     this.results.push(testResult);
   }
   onEnd(result) {
-    if (!result.duration) {
-      this.results[0].totalDuration = msToTime(result.duration);
-    } else {
-      this.results[0].totalDuration = "";
-    }
+    this.results[0].totalDuration = msToTime(result.duration);
     this.groupedResults = this.results.reduce((acc, result2, index) => {
       const filePath = result2.filePath;
       const suiteName = result2.suite;
@@ -146,15 +140,12 @@ var OrtoniReport = class {
   generateHTML() {
     const templateSource = import_fs.default.readFileSync(import_path2.default.resolve(__dirname, "report-template.hbs"), "utf-8");
     const template = import_handlebars.default.compile(templateSource);
-    const failed = this.results.filter((r) => r.status === "failed").length;
-    const timedout = this.results.filter((r) => r.status === "timedOut").length;
-    const failCount = failed + timedout;
     const data = {
       totalDuration: this.results[0].totalDuration,
       suiteName: this.suiteName,
       results: this.results,
       passCount: this.results.filter((r) => r.status === "passed").length,
-      failCount,
+      failCount: this.results.filter((r) => r.status === "failed" || r.status === "timedOut").length,
       skipCount: this.results.filter((r) => r.status === "skipped").length,
       flakyCount: this.results.filter((r) => r.flaky === "flaky").length,
       totalCount: this.results.length,
