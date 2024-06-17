@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="node_modules\ortoni-report\src\css\pico.css">
     <style>
         body {
-            transform: scale(0.9);
+            zoom: 0.9;
         }
 
         main.container {
@@ -76,7 +76,7 @@
             </div>
             {{!-- Dummy for now --}}
             <div>
-                <input name="search" type="search" placeholder="Search test title" />
+                <input name="search" type="search" placeholder="Search by test title" />
             </div>
         </div>
     </header>
@@ -233,13 +233,15 @@
                     <div>
                     ${test.errors.length ? `
                             <h4>Errors</h4>
-                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                            <div class="grid">
+                            <pre>${escapeHtml(test.errors.join('\n'))}</pre></div>
                             ` : ''}
                     </div>
                     <div>
                     ${test.logs ? `
                             <h4>Logs</h4>
-                            <pre>${escapeHtml(test.logs)}</pre>
+                            <div class="grid">
+                            <pre>${escapeHtml(test.logs)}</pre></div>
                             ` : ''}
                     </div>
                 `;
