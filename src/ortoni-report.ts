@@ -67,11 +67,10 @@ class OrtoniReport implements Reporter {
     private isFailed:boolean = false;
     private isFailedInfo = "No Test found! Please check your playwright.config";
     onEnd(result: FullResult) {
-        if(result.status === "failed"){
-            this.isFailed = true;
-            console.error("Ortoni Report: "+this.isFailedInfo);
-        }else{
+        if(!result.duration){
             this.results[0].totalDuration = msToTime(result.duration);
+        } else{
+            this.results[0].totalDuration = "";
         }
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
@@ -104,12 +103,16 @@ class OrtoniReport implements Reporter {
     generateHTML() {
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
+        const failed:number= this.results.filter(r => r.status === 'failed').length;
+        const timedout:number =  this.results.filter(r => r.status === 'timedOut').length;
+        const failCount:number = failed+timedout;
+        
         const data = {
-            totalDuration: this.isFailed == true? this.isFailedInfo : this.results[0].duration,
+            totalDuration: this.results[0].totalDuration,
             suiteName: this.suiteName,
             results: this.results,
             passCount: this.results.filter(r => r.status === 'passed').length,
-            failCount: this.results.filter(r => r.status === 'failed').length,
+            failCount: failCount,
             skipCount: this.results.filter(r => r.status === 'skipped').length,
             flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
             totalCount: this.results.length,

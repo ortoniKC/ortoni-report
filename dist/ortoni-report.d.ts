@@ -15,6 +15,8 @@ declare class OrtoniReport implements Reporter {
     onBegin(config: FullConfig, suite: Suite): void;
     onTestBegin(test: TestCase, result: TestResult): void;
     onTestEnd(test: TestCase, result: TestResult): void;
+    private isFailed;
+    private isFailedInfo;
     onEnd(result: FullResult): void;
     generateHTML(): string;
 }
