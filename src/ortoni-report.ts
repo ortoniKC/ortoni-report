@@ -64,9 +64,15 @@ class OrtoniReport implements Reporter {
 
         this.results.push(testResult);
     }
-
+    private isFailed:boolean = false;
+    private isFailedInfo = "No Test found! Please check your playwright.config";
     onEnd(result: FullResult) {
-        this.results[0].totalDuration = msToTime(result.duration);
+        if(result.status === "failed"){
+            this.isFailed = true;
+            console.error("Ortoni Report: "+this.isFailedInfo);
+        }else{
+            this.results[0].totalDuration = msToTime(result.duration);
+        }
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
             const suiteName = result.suite;
@@ -99,7 +105,7 @@ class OrtoniReport implements Reporter {
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
         const data = {
-            totalDuration: this.results[0].totalDuration,
+            totalDuration: this.isFailed == true? this.isFailedInfo : this.results[0].duration,
             suiteName: this.suiteName,
             results: this.results,
             passCount: this.results.filter(r => r.status === 'passed').length,
