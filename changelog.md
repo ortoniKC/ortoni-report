@@ -1,5 +1,33 @@
 # Change Log:
 
+### Version 1.1.0
+
+## New Features
+- **Search Functionality:**
+  - Added a search bar to filter tests by their title.
+  - Display the relevant test name, project, and test file name while hiding others during search.
+  - Reset search form to show all tests when cleared.
+
+## Improvements 
+- **Page Zoom:**
+  - Set the HTML page zoom to 90% for better display on different screen sizes.
+
+## Bug Fixes
+- **Event Listeners:**
+  - Fixed an issue where test details would not display when clicking on filtered search results.
+  - Ensured event listeners are correctly reattached after filtering search results.
+
+## Style Adjustments
+- **CSS Adjustments:**
+  - Adjusted body zoom for better overall display: `body { zoom: 0.9; }`
+
+---
+
+### Instructions for Users
+- Use the search bar to quickly find specific tests by their title.
+- Clear the search input to reset the view and display all tests.
+- Note that the page zoom has been set to 90% for optimal display.
+
 ### Version 1.0.9
 
 **Added:**
