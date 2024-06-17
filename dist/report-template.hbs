@@ -5,10 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playwright Test Report</title>
-    <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
-    <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/pico.css">
-    {{!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css"> --}}
+    <link rel="icon" href="node_modules\ortoni-report\src\icon\32.png" type="image/x-icon">
+    <link rel="stylesheet" href="node_modules\ortoni-report\src\css\pico.css">
+    {{!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css"> --}}
     <style>
+        body {
+            transform: scale(0.9);
+        }
         main.container {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -84,7 +88,7 @@
         {{!-- Test Scripts --}}
         <aside class="sidebar">
             <h2>Tests</h2>
-            <div class="">
+            <div>
                 {{#each groupedResults}}
                 <details>
                     <summary>{{@key}}</summary>
@@ -195,18 +199,11 @@
         const testDetails = document.getElementById('testDetails');
         const summary = document.getElementById('summary');
         const backButton = document.querySelector('.back-button');
-        const testItems = document.querySelectorAll('[data-test-id]');
-        const searchInput = document.querySelector('input[name="search"]');
-        const searchForm = document.querySelector('form[role="search"]');
 
         function showSummary() {
             summary.style.display = 'block';
             testDetails.style.display = 'none';
             backButton.style.display = 'none';
-            clearHighlights();
-        }
-        function clearHighlights() {
-            testItems.forEach(item => item.classList.remove('highlight'));
         }
 
         window.showSummary = showSummary;
@@ -216,73 +213,88 @@
             testDetails.style.display = 'block';
             backButton.style.display = 'block';
             testDetails.innerHTML = `
-                    <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
-                    <h3>${test.title}</h3>
-                    <div class="grid">
-                        <div>
-                            <h4>Status</h4>
-                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
-                            ${test.duration != '0s' ? `
-                            <h4>Duration</h4>
-                            <p>${test.duration}</p>` : ""}
-                        </div>
-                        <div>
-                            ${test.screenshotPath ? `
-                            <h4>Screenshot</h4>
-                            <img src="${test.screenshotPath}" alt="Screenshot">
-                            ` : ''}
-                        </div>
-                    </div>
-                    <div>
-                    ${test.errors.length ? `
-                            <h4>Errors</h4>
-                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
-                            ` : ''}
-                    </div>
-                    <div>
-                    ${test.logs ? `
-                            <h4>Logs</h4>
-                            <pre>${escapeHtml(test.logs)}</pre>
-                            ` : ''}
-                    </div>
+            <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
+            <h3>${test.title}</h3>
+            <div class="grid">
+                <div>
+                    <h4>Status</h4>
+                    <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                    ${test.duration != '0s' ? `
+                    <h4>Duration</h4>
+                    <p>${test.duration}</p>` : ""}
+                </div>
+                <div>
+                    ${test.screenshotPath ? `
+                    <h4>Screenshot</h4>
+                    <img src="${test.screenshotPath}" alt="Screenshot">
+                    ` : ''}
+                </div>
+            </div>
+            <div>
+            ${test.errors.length ? `
+                    <h4>Errors</h4>
+                    <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                    ` : ''}
+            </div>
+            <div>
+            ${test.logs ? `
+                    <h4>Logs</h4>
+                    <pre>${escapeHtml(test.logs)}</pre>
+                    ` : ''}
+            </div>
         `;
         }
-        
-        function searchTests(query) {
-            const lowerCaseQuery = query.toLowerCase();
-            if (lowerCaseQuery === '') {
+
+        function attachEventListeners() {
+            const testItems = document.querySelectorAll('[data-test-id]');
+            testItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const testId = item.getAttribute('data-test-id');
+                    const test = testData[testId];
+                    displayTestDetails(test);
+                });
+            });
+        }
+
+        attachEventListeners(); // Attach event listeners initially
+
+        const searchInput = document.querySelector('input[name="search"]');
+        const detailsElements = document.querySelectorAll('details');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const testItems = document.querySelectorAll('[data-test-id]');
+
+            if (searchTerm) {
+                detailsElements.forEach(detail => {
+                    detail.open = false; // Collapse all details initially
+                });
+
                 testItems.forEach(item => {
-                    item.style.display = 'block';
+                    const testTitle = item.textContent.toLowerCase();
+                    if (testTitle.includes(searchTerm)) {
+                        item.style.display = 'block'; // Show matching test item
+
+                        let parent = item.parentElement;
+                        while (parent && parent.tagName !== 'ASIDE') {
+                            if (parent.tagName === 'DETAILS') {
+                                parent.open = true; // Expand parent details elements
+                            }
+                            parent = parent.parentElement;
+                        }
+                    } else {
+                        item.style.display = 'none'; // Hide non-matching test item
+                    }
                 });
             } else {
                 testItems.forEach(item => {
-                    const title = item.textContent.toLowerCase();
-                    if (title.includes(lowerCaseQuery)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
+                    item.style.display = 'block'; // Show all test items
+                });
+                detailsElements.forEach(detail => {
+                    detail.open = false; // Collapse all details elements
                 });
             }
-        }
-
-        searchForm.addEventListener('submit', event => {
-            event.preventDefault();
-            searchTests(searchInput.value);
-        });
-        searchInput.addEventListener('input', () => {
-            searchTests(searchInput.value);
-        });
-
-
-        testItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const testId = item.getAttribute('data-test-id');
-                const test = testData[testId];
-                displayTestDetails(test);
-                clearHighlights();
-                item.classList.add('highlight');
-            });
+            attachEventListeners(); // Reattach event listeners after filtering
         });
 
         const ctx = document.getElementById('testChart').getContext('2d');
@@ -293,8 +305,8 @@
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
             backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
-                    }]
-                },
+            }]
+        },
             options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -304,8 +316,8 @@
                 }
             }
         }
-            });
         });
+    });
     </script>
 </body>
 
