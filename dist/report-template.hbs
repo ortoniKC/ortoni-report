@@ -77,6 +77,13 @@
             white-space: nowrap;
             max-width: 25ch;
         }
+        li img{
+            max-width: 8%
+        }
+        summary img{
+            max-width: 5%
+        }
+
 
     </style>
 </head>
@@ -99,19 +106,42 @@
             <div>
                 {{#each groupedResults}}
                 <details>
-                    <summary>{{@key}}</summary>
+                    <summary>
+                     <img src="node_modules/ortoni-report/dist/icon/file.png" alt="retry">
+                    <span>{{@key}}<span>
+                    </summary>
                     <ul>
                         {{#each this}}
                         <details>
-                            <summary>{{@key}}</summary>
+                            <summary>
+                            <img src="node_modules/ortoni-report/dist/icon/test.png" alt="retry">
+                            <span>{{@key}}<span>
+                            </summary>
                             <ul>
                                 {{#each this}}
                                 <details>
                                     <summary>{{@key}}</summary>
                                     <ul>
                                         {{#each this}}
-                                        <li data-suite-name="{{suite}}" data-project-name="{{projectName}}"
-                                            data-test-id="{{index}}" data-test-status="{{status}}">{{title}}</li>
+                                    <li data-suite-name="{{suite}}" data-project-name="{{projectName}}" data-test-id="{{index}}" data-test-status="{{status}}">
+                                        {{#if isRetry}}
+                                            <img src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
+                                        {{/if}}
+                                        {{#if (eq status "passed")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/pass.png" alt="Pass">
+                                        {{/if}}
+                                        {{#if (eq status "failed")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/fail.png" alt="Fail">
+                                            {{else}}
+                                            {{#if (eq status "skipped")}}
+                                                <img src="node_modules/ortoni-report/dist/icon/skip.png" alt="Skip">
+                                                {{/if}}
+                                        {{/if}}
+                                        {{#if (eq status "timedOut")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
+                                        {{/if}}
+                                        <span>{{title}}</span>
+                                    </li>
                                         {{/each}}
                                     </ul>
                                 </details>
@@ -292,11 +322,12 @@
                     const items = details.querySelectorAll('[data-test-id]');
                     items.forEach(item => {
                         const testStatus = item.getAttribute('data-test-status');
-                        if (status === 'all' || testStatus === status) {
-                            item.style.display = 'block';
-                            shouldShowDetails = true;
+                       if (status === 'all' || testStatus === status || (status === 'failed' && 
+                                        (testStatus === 'failed' || testStatus === 'timedOut'))) {
+                            item.style.display = 'block'; // Show the item
+                            shouldShowDetails = true; // Set shouldShowDetails to true
                         } else {
-                            item.style.display = 'none';
+                            item.style.display = 'none'; // Hide the item
                         }
                     });
                 details.open = shouldShowDetails; // Open the details element if it has any matching items

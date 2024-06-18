@@ -28,7 +28,13 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
+        // console.log("Test data ----");
+        // console.log(test);
+        console.log("Result data ----");
+        console.log(result.retry);
+
         const testResult: TestResultData = {
+            isRetry: result.retry,
             totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
@@ -87,6 +93,21 @@ class OrtoniReport implements Reporter {
         // Register the json helper
         Handlebars.registerHelper('json', function (context) {
             return safeStringify(context);
+        });
+        Handlebars.registerHelper('eq', function (actualStatus, expectedStatus  ) {
+            return actualStatus === expectedStatus
+        });
+        Handlebars.registerHelper('or', () => {
+            var args = Array.prototype.slice.call(arguments);
+            var options = args.pop();
+        
+            for (var i = 0; i < args.length; i++) {
+                if (args[i]) {
+                    return options.fn(this);
+                }
+            }
+        
+            return options.inverse(this);
         });
 
         const html = this.generateHTML();

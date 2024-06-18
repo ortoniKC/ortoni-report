@@ -75,7 +75,10 @@ var OrtoniReport = class {
   onTestBegin(test, result) {
   }
   onTestEnd(test, result) {
+    console.log("Result data ----");
+    console.log(result.retry);
     const testResult = {
+      isRetry: result.retry,
       totalDuration: "",
       projectName: test.titlePath()[1],
       // Get the project name
@@ -131,6 +134,19 @@ var OrtoniReport = class {
     }, {});
     import_handlebars.default.registerHelper("json", function(context) {
       return safeStringify(context);
+    });
+    import_handlebars.default.registerHelper("eq", function(actualStatus, expectedStatus) {
+      return actualStatus === expectedStatus;
+    });
+    import_handlebars.default.registerHelper("or", () => {
+      var args = Array.prototype.slice.call(arguments);
+      var options = args.pop();
+      for (var i = 0; i < args.length; i++) {
+        if (args[i]) {
+          return options.fn(this);
+        }
+      }
+      return options.inverse(this);
     });
     const html = this.generateHTML();
     const outputPath = import_path2.default.resolve(process.cwd(), "ortoni-report.html");

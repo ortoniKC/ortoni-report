@@ -1,5 +1,6 @@
 export interface TestResultData {    
-    totalDuration: string
+    isRetry: number;
+    totalDuration: string;
     projectName: any;
     suite: any;
     title: string;
