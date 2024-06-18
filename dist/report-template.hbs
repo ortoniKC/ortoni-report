@@ -69,8 +69,15 @@
         }
 
         .clickable:hover {
-            background-color: var(--pico-primary-hover-background);
+            background-color: #607D8B;
         }
+        li[data-test-id] {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 25ch;
+        }
+
     </style>
 </head>
 <body>
