@@ -38,30 +38,36 @@ var import_path2 = __toESM(require("path"));
 var import_handlebars = __toESM(require("handlebars"));
 var import_safe = __toESM(require("colors/safe"));
 
-// src/utils/time.ts
+// src/utils/utils.ts
 var import_path = __toESM(require("path"));
 function msToTime(duration) {
+  const milliseconds = Math.floor(duration % 1e3);
   const seconds = Math.floor(duration / 1e3 % 60);
   const minutes = Math.floor(duration / (1e3 * 60) % 60);
   const hours = Math.floor(duration / (1e3 * 60 * 60) % 24);
-  const parts = [];
-  if (hours > 0)
-    parts.push(hours + "h");
-  if (minutes > 0)
-    parts.push(minutes + "m");
-  if (seconds > 0 || parts.length === 0)
-    parts.push(seconds + "s");
-  return parts.join(" ");
+  const hoursStr = hours < 10 ? "0" + hours : hours;
+  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+  const secondsStr = seconds < 10 ? "0" + seconds : seconds;
+  const millisecondsStr = milliseconds < 100 ? "0" + milliseconds : milliseconds;
+  return `${hoursStr}:${minutesStr}:${secondsStr}.${millisecondsStr}`;
 }
 function normalizeFilePath(filePath) {
   const normalizedPath = import_path.default.normalize(filePath);
   return import_path.default.basename(normalizedPath);
+}
+function formatDate(date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = date.toLocaleString("default", { month: "short" });
+  const year = date.getFullYear();
+  const time = date.toLocaleTimeString();
+  return `${day}-${month}-${year} ${time}`;
 }
 
 // src/ortoni-report.ts
 var OrtoniReport = class {
   constructor(config = {}) {
     this.results = [];
+    this._successRate = "";
     this.config = config;
   }
   onBegin(config, suite) {
@@ -75,8 +81,6 @@ var OrtoniReport = class {
   onTestBegin(test, result) {
   }
   onTestEnd(test, result) {
-    console.log("Result data ----");
-    console.log(result.retry);
     const testResult = {
       isRetry: result.retry,
       totalDuration: "",
@@ -115,6 +119,7 @@ var OrtoniReport = class {
     this.results.push(testResult);
   }
   onEnd(result) {
+    this._successRate = (this.results.filter((r) => r.status === "passed").length / this.results.length * 100).toFixed(2);
     this.results[0].totalDuration = msToTime(result.duration);
     this.groupedResults = this.results.reduce((acc, result2, index) => {
       const filePath = result2.filePath;
@@ -148,6 +153,9 @@ var OrtoniReport = class {
       }
       return options.inverse(this);
     });
+    import_handlebars.default.registerHelper("gt", function(a, b) {
+      return a > b;
+    });
     const html = this.generateHTML();
     const outputPath = import_path2.default.resolve(process.cwd(), "ortoni-report.html");
     import_fs.default.writeFileSync(outputPath, html);
@@ -167,11 +175,10 @@ var OrtoniReport = class {
       totalCount: this.results.length,
       groupedResults: this.groupedResults,
       projectName: this.config.projectName,
-      // Include project name
       authorName: this.config.authorName,
-      // Include author name
-      testType: this.config.testType
-      // Include test type
+      testType: this.config.testType,
+      successRate: this._successRate,
+      lastRunDate: formatDate(/* @__PURE__ */ new Date())
     };
     return template(data);
   }

@@ -31,6 +31,12 @@
             background-color: var(--pico-primary-background);
         }
 
+        .filter.active {
+            background-color: var(--pico-primary-hover-background);
+            color: var(--pico-primary-hover-color);
+        }
+
+
         .text-success {
             color: #28a745;
         }
@@ -200,6 +206,8 @@
                                 {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
                                 {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
                                 {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                                <h4>Success Rate: {{successRate}} %</h4>
+                                <h4>Last Run: {{lastRunDate}}</h4>
                             </div>
                             <div class="chart-container">
                                 <canvas id="testChart"></canvas>
@@ -307,7 +315,15 @@
                 const filters = document.querySelectorAll('.filter');
                 filters.forEach(filter => {
                     filter.addEventListener('click', () => {
-                        const status = filter.getAttribute('data-status');
+                       const status = filter.getAttribute('data-status');
+                        filters.forEach(f => {
+                            if (f.getAttribute('data-status') !== 'all') {
+                                f.classList.remove('active');
+                            }
+                        });
+                        if (status !== 'all') {
+                            filter.classList.add('active');
+                        }
                         applyFilter(status);
                     });
                 });
@@ -356,20 +372,20 @@
                             let parent = item.parentElement;
                             while (parent && parent.tagName !== 'ASIDE') {
                                 if (parent.tagName === 'DETAILS') {
-                                    parent.open = true; // Expand parent details elements
+                                    parent.open = true;
                                 }
                                 parent = parent.parentElement;
                             }
                         } else {
-                            item.style.display = 'none'; // Hide non-matching test item
+                            item.style.display = 'none';
                         }
                     });
                 } else {
                     testItems.forEach(item => {
-                        item.style.display = 'block'; // Show all test items
+                        item.style.display = 'block'; 
                     });
                     detailsElements.forEach(detail => {
-                        detail.open = false; // Collapse all details
+                        detail.open = false;
                     });
                 }
             });
