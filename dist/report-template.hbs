@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,18 +63,8 @@
             display: none;
             margin-bottom: 1rem;
         }
-
-        .clickable {
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .clickable:hover {
-            background-color: var(--pico-primary-hover-background);
-        }
     </style>
 </head>
-
 <body>
     <header class="container">
         <div class="header">
@@ -182,7 +171,6 @@
             </div>
         </section>
     </main>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script>
         function escapeHtml(unsafe) {
@@ -199,28 +187,28 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-        const testData = {{{ json results }}};
-        const testDetails = document.getElementById('testDetails');
-        const summary = document.getElementById('summary');
-        const backButton = document.querySelector('.back-button');
-        let highlightedItem = null;
+            const testData = {{{ json results }}};
+            const testDetails = document.getElementById('testDetails');
+            const summary = document.getElementById('summary');
+            const backButton = document.querySelector('.back-button');
+            let highlightedItem = null;
 
-        function showSummary() {
-            summary.style.display = 'block';
-            testDetails.style.display = 'none';
-            backButton.style.display = 'none';
-            if (highlightedItem) {
-                highlightedItem.classList.remove('highlight');
+            function showSummary() {
+                summary.style.display = 'block';
+                testDetails.style.display = 'none';
+                backButton.style.display = 'none';
+                if (highlightedItem) {
+                    highlightedItem.classList.remove('highlight');
+                }
             }
-        }
 
-        window.showSummary = showSummary;
+            window.showSummary = showSummary;
 
-        function displayTestDetails(test) {
-            summary.style.display = 'none';
-            testDetails.style.display = 'block';
-            backButton.style.display = 'block';
-            testDetails.innerHTML = `
+            function displayTestDetails(test) {
+                summary.style.display = 'none';
+                testDetails.style.display = 'block';
+                backButton.style.display = 'block';
+                testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
                     <h3>${test.title}</h3>
                     <div class="grid">
@@ -253,131 +241,116 @@
                             ` : ''}
                     </div>
                 `;
-        }
+            }
 
-        function attachEventListeners() {
-            const testItems = document.querySelectorAll('[data-test-id]');
-            testItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const testId = item.getAttribute('data-test-id');
-                    const test = testData[testId];
-                    displayTestDetails(test);
-                    if (highlightedItem) {
-                        highlightedItem.classList.remove('highlight');
-                    }
-                    item.classList.add('highlight');
-                    highlightedItem = item;
-                });
-            });
-
-            // Event listeners for the filter articles
-            const filters = document.querySelectorAll('.filter');
-            filters.forEach(filter => {
-                filter.addEventListener('click', () => {
-                    const status = filter.getAttribute('data-status');
-                    applyFilter(status);
-                });
-            });
-        }
-
-      function applyFilter(status) {
-            let testItems = document.querySelectorAll('[data-test-id]');
-            testItems.forEach(item => {
-                const testId = item.getAttribute('data-test-id');
-                const test = testData[testId];
-                if (status === 'all' || test.status === status) {
-                    item.style.display = 'block';
-                }
-                 else {
-                    item.style.display = 'none';    
-                }   
-            });
-            testItems = document.querySelectorAll('[data-test-id][data-test-status='+status+']');
-             testItems.forEach(item => {
-                let parent = item.parentElement;
-                while (parent && parent.tagName !== 'ASIDE') {
-                    if (parent.tagName === 'DETAILS') {
-                        parent.open = true;
-                    }
-                    parent = parent.parentElement;
-                }
-             });
-            testItems = document.querySelectorAll('summary+ ul li[data-test-id][data-test-status='+status+']');
-             testItems.forEach(item => {
-                let parent = item.parentElement;
-                while (parent && parent.tagName !== 'ASIDE') {
-                    if (parent.tagName === 'DETAILS') {
-                        parent.open = true;
-                    }
-                    parent = parent.parentElement;
-                }
-             });
-        }
-
-
-        const searchInput = document.querySelector('input[name="search"]');
-        const detailsElements = document.querySelectorAll('details');
-
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const testItems = document.querySelectorAll('[data-test-id]');
-
-            if (searchTerm) {
-                detailsElements.forEach(detail => {
-                    detail.open = false; // Collapse all details initially
-                });
-
+            function attachEventListeners() {
+                const testItems = document.querySelectorAll('[data-test-id]');
                 testItems.forEach(item => {
-                    const testTitle = item.textContent.toLowerCase();
-                    if (testTitle.includes(searchTerm)) {
-                        item.style.display = 'block'; // Show matching test item
-
-                        let parent = item.parentElement;
-                        while (parent && parent.tagName !== 'ASIDE') {
-                            if (parent.tagName === 'DETAILS') {
-                                parent.open = true; // Expand parent details elements
-                            }
-                            parent = parent.parentElement;
+                    item.addEventListener('click', () => {
+                        const testId = item.getAttribute('data-test-id');
+                        const test = testData[testId];
+                        displayTestDetails(test);
+                        if (highlightedItem) {
+                            highlightedItem.classList.remove('highlight');
                         }
-                    } else {
-                        item.style.display = 'none'; // Hide non-matching test item
-                    }
+                        item.classList.add('highlight');
+                        highlightedItem = item;
+                    });
                 });
-            } else {
-                testItems.forEach(item => {
-                    item.style.display = 'block'; // Show all test items
-                });
-                detailsElements.forEach(detail => {
-                    detail.open = false; // Collapse all details elements
+
+                // Event listeners for the filter articles
+                const filters = document.querySelectorAll('.filter');
+                filters.forEach(filter => {
+                    filter.addEventListener('click', () => {
+                        const status = filter.getAttribute('data-status');
+                        applyFilter(status);
+                    });
                 });
             }
-            attachEventListeners(); // Reattach event listeners after filtering
-        });
 
-        const ctx = document.getElementById('testChart').getContext('2d');
-        new Chart(ctx, {
+            function applyFilter(status) {
+                const testItems = document.querySelectorAll('[data-test-id]');
+                const detailsElements = document.querySelectorAll('details');
+
+                detailsElements.forEach(details => {
+                    let shouldShowDetails = false;
+                    const items = details.querySelectorAll('[data-test-id]');
+                    items.forEach(item => {
+                        const testStatus = item.getAttribute('data-test-status');
+                        if (status === 'all' || testStatus === status) {
+                            item.style.display = 'block';
+                            shouldShowDetails = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                details.open = shouldShowDetails; // Open the details element if it has any matching items
+                details.style.display = shouldShowDetails ? 'block' : 'none'; // Show/hide the details element
+                });
+            }
+
+
+            const searchInput = document.querySelector('input[name="search"]');
+            const detailsElements = document.querySelectorAll('details');
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const testItems = document.querySelectorAll('[data-test-id]');
+
+                if (searchTerm) {
+                    detailsElements.forEach(detail => {
+                        detail.open = false; // Collapse all details initially
+                    });
+
+                    testItems.forEach(item => {
+                        const testTitle = item.textContent.toLowerCase();
+                        if (testTitle.includes(searchTerm)) {
+                            item.style.display = 'block'; // Show matching test item
+
+                            let parent = item.parentElement;
+                            while (parent && parent.tagName !== 'ASIDE') {
+                                if (parent.tagName === 'DETAILS') {
+                                    parent.open = true; // Expand parent details elements
+                                }
+                                parent = parent.parentElement;
+                            }
+                        } else {
+                            item.style.display = 'none'; // Hide non-matching test item
+                        }
+                    });
+                } else {
+                    testItems.forEach(item => {
+                        item.style.display = 'block'; // Show all test items
+                    });
+                    detailsElements.forEach(detail => {
+                        detail.open = false; // Collapse all details
+                    });
+                }
+            });
+
+            const ctx = document.getElementById('testChart').getContext('2d');
+            new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Passed', 'Failed', 'Skipped'],
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-                    backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
+                backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
                     }]
                 },
             options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+            responsive: true,
+            maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
                     }
                 }
+            }
             });
 
-        attachEventListeners(); // Attach event listeners initially
+            attachEventListeners();
         });
     </script>
 </body>
-
 </html>
