@@ -2,8 +2,7 @@
 
 We are excited to announce the release of OrtoniReport (Playwright report - unofficial), a powerful and customizable HTML report generator for Playwright tests. This release includes key features that enhance the reporting capabilities and make it easier to visualize and organize test results.
 
-![Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/da8c6b65-5f35-4fad-802a-039a72999cb1)
-
+![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/f96b7697-8ec0-4c6d-a681-b305e6d5843a)
 
 
 ## Features
