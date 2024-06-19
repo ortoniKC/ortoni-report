@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plawright HTML report by LetCode Koushik">
     <title>Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/pico.css">
@@ -52,8 +53,16 @@
         .text-flaky {
             color: #d5d4a1;
         }
+        
+        div#testDetails {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
 
         .sidebar {
+            overflow-y: auto;
+            max-height: calc(100vh - 100px); /* Adjust as needed */
             border-right: 1px solid #ddd;
             padding-right: 10px;
         }
@@ -91,6 +100,27 @@
         }
         dialog article {
             max-width: 768px;
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--pico-secondary-background);;
+            border-radius: 0px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--pico-secondary-background);;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-corner {
+            background-color: #fff;
         }
     </style>
 </head>
@@ -420,10 +450,7 @@
                 }
             }
             });
-
             attachEventListeners();
-          
-
         });
     </script>
     <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>

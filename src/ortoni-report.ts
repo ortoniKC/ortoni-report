@@ -28,14 +28,17 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
-       
+        let status:any = result.status;
+        if (test.outcome() === 'flaky') {
+            status = 'flaky';
+        }
         const testResult: TestResultData = {
             isRetry: result.retry,
             totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
             title: test.title,
-            status: result.status,
+            status: status,
             flaky: test.outcome(),
             duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),

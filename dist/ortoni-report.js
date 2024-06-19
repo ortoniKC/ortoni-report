@@ -81,6 +81,10 @@ var OrtoniReport = class {
   onTestBegin(test, result) {
   }
   onTestEnd(test, result) {
+    let status = result.status;
+    if (test.outcome() === "flaky") {
+      status = "flaky";
+    }
     const testResult = {
       isRetry: result.retry,
       totalDuration: "",
@@ -89,7 +93,7 @@ var OrtoniReport = class {
       suite: test.titlePath()[3],
       // Adjust the index based on your suite hierarchy
       title: test.title,
-      status: result.status,
+      status,
       flaky: test.outcome(),
       duration: msToTime(result.duration),
       errors: result.errors.map((e) => import_safe.default.strip(e.message || e.toString())),
