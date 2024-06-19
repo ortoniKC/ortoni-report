@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "test": "npx playwright test",
@@ -22,7 +22,8 @@
     "playwright letcode",
     "letcode koushik",
     "ortoni report",
-    "ortoni"
+    "ortoni-report",
+    "playwright html"
   ],
   "author": "Koushik Chatterjee (LetCode with Koushik)",
   "license": "GPL-3.0-only",
@@ -37,7 +38,6 @@
     "rimraf": "^5.0.7"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.0",
     "@playwright/test": "^1.44.1",
     "@types/node": "^20.14.2",
     "tsup": "^6.5.0",

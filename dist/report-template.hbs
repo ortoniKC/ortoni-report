@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plawright HTML report by LetCode Koushik">
     <title>Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/pico.css">
@@ -32,6 +32,12 @@
             background-color: var(--pico-primary-background);
         }
 
+        .filter.active {
+            background-color: var(--pico-primary-hover-background);
+            color: var(--pico-primary-hover-color);
+        }
+
+
         .text-success {
             color: #28a745;
         }
@@ -47,8 +53,16 @@
         .text-flaky {
             color: #d5d4a1;
         }
+        
+        div#testDetails {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
 
         .sidebar {
+            overflow-y: auto;
+            max-height: calc(100vh - 100px); /* Adjust as needed */
             border-right: 1px solid #ddd;
             padding-right: 10px;
         }
@@ -64,9 +78,52 @@
             display: none;
             margin-bottom: 1rem;
         }
+         .clickable {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .clickable:hover {
+            background-color: #607D8B;
+        }
+        li[data-test-id] {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 25ch;
+        }
+        li img{
+            max-width: 8%
+        }
+        summary img{
+            max-width: 5%
+        }
+        dialog article {
+            max-width: 768px;
+        }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--pico-secondary-background);;
+            border-radius: 0px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--pico-secondary-background);;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-corner {
+            background-color: #fff;
+        }
     </style>
 </head>
-
 <body>
     <header class="container">
         <div class="header">
@@ -74,7 +131,6 @@
             <div>
                 {{#if projectName}}<h1>{{projectName}}</h1>{{/if}}
             </div>
-            {{!-- Dummy for now --}}
             <div>
                 <input name="search" type="search" placeholder="Search by test title" />
             </div>
@@ -87,19 +143,42 @@
             <div>
                 {{#each groupedResults}}
                 <details>
-                    <summary>{{@key}}</summary>
+                    <summary>
+                     <img src="node_modules/ortoni-report/dist/icon/file.png" alt="retry">
+                    <span>{{@key}}<span>
+                    </summary>
                     <ul>
                         {{#each this}}
                         <details>
-                            <summary>{{@key}}</summary>
+                            <summary>
+                            <img src="node_modules/ortoni-report/dist/icon/test.png" alt="retry">
+                            <span>{{@key}}<span>
+                            </summary>
                             <ul>
                                 {{#each this}}
                                 <details>
                                     <summary>{{@key}}</summary>
                                     <ul>
                                         {{#each this}}
-                                        <li data-suite-name="{{suite}}" data-project-name="{{projectName}}"
-                                            data-test-id="{{index}}">{{title}}</li>
+                                    <li data-suite-name="{{suite}}" data-project-name="{{projectName}}" data-test-id="{{index}}" data-test-status="{{status}}">
+                                        {{#if isRetry}}
+                                            <img src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
+                                        {{/if}}
+                                        {{#if (eq status "passed")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/pass.png" alt="Pass">
+                                        {{/if}}
+                                        {{#if (eq status "failed")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/fail.png" alt="Fail">
+                                            {{else}}
+                                            {{#if (eq status "skipped")}}
+                                                <img src="node_modules/ortoni-report/dist/icon/skip.png" alt="Skip">
+                                                {{/if}}
+                                        {{/if}}
+                                        {{#if (eq status "timedOut")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
+                                        {{/if}}
+                                        <span>{{title}}</span>
+                                    </li>
                                         {{/each}}
                                     </ul>
                                 </details>
@@ -113,23 +192,23 @@
             </div>
         </aside>
         <section>
-            {{!-- Overall summar --}}
+            {{!-- Overall summary --}}
             <div id="summary">
                 <section class="grid">
                     <div>
-                        <article>
+                        <article class="clickable filter" data-status="all">
                             <header>All Tests</header>
                             <p>{{totalCount}}</p>
                         </article>
                     </div>
                     <div>
-                        <article>
+                        <article class="clickable filter" data-status="passed">
                             <header>Passed</header>
                             <p class="text-success">{{passCount}}</p>
                         </article>
                     </div>
                     <div>
-                        <article>
+                        <article class="clickable filter" data-status="failed">
                             <header>Failed</header>
                             <p class="text-failure">{{failCount}}</p>
                         </article>
@@ -137,13 +216,13 @@
                 </section>
                 <section class="grid">
                     <div>
-                        <article>
+                        <article class="clickable filter" data-status="skipped">
                             <header>Skipped</header>
                             <p class="text-skip">{{skipCount}}</p>
                         </article>
                     </div>
                     <div>
-                        <article>
+                        <article class="clickable filter" data-status="flaky">
                             <header>Flaky</header>
                             <p class="text-flaky">{{flakyCount}}</p>
                         </article>
@@ -158,6 +237,8 @@
                                 {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
                                 {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
                                 {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                                <h4>Success Rate: {{successRate}} %</h4>
+                                <h4>Last Run: {{lastRunDate}}</h4>
                             </div>
                             <div class="chart-container">
                                 <canvas id="testChart"></canvas>
@@ -174,8 +255,7 @@
             </div>
         </section>
     </main>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
     <script>
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
@@ -192,27 +272,27 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
-        const testDetails = document.getElementById('testDetails');
-        const summary = document.getElementById('summary');
-        const backButton = document.querySelector('.back-button');
-        let highlightedItem = null;
+            const testDetails = document.getElementById('testDetails');
+            const summary = document.getElementById('summary');
+            const backButton = document.querySelector('.back-button');
+            let highlightedItem = null;
 
-        function showSummary() {
-            summary.style.display = 'block';
-            testDetails.style.display = 'none';
-            backButton.style.display = 'none';
-            if (highlightedItem) {
-                highlightedItem.classList.remove('highlight');
+            function showSummary() {
+                summary.style.display = 'block';
+                testDetails.style.display = 'none';
+                backButton.style.display = 'none';
+                if (highlightedItem) {
+                    highlightedItem.classList.remove('highlight');
+                }
             }
-        }
 
-        window.showSummary = showSummary;
+            window.showSummary = showSummary;
 
-        function displayTestDetails(test) {
-            summary.style.display = 'none';
-            testDetails.style.display = 'block';
-            backButton.style.display = 'block';
-            testDetails.innerHTML = `
+            function displayTestDetails(test) {
+                summary.style.display = 'none';
+                testDetails.style.display = 'block';
+                backButton.style.display = 'block';
+                testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
                     <h3>${test.title}</h3>
                     <div class="grid">
@@ -225,9 +305,18 @@
                         </div>
                         <div>
                             ${test.screenshotPath ? `
-                            <h4>Screenshot</h4>
-                            <img src="${test.screenshotPath}" alt="Screenshot">
-                            ` : ''}
+                            <img src="${test.screenshotPath}" data-target="modal-example" onclick="toggleModal(event)" alt="Screenshot">
+                            <dialog id="modal-example">
+                                <article>
+                                    <header>
+                                    <button aria-label="Close" rel="prev" data-target="modal-example" onclick="toggleModal(event)"></button>
+                                    <p>
+                                        <strong>Screenshot</strong>
+                                    </p>
+                                    </header><p>
+                                    <img src="${test.screenshotPath}" alt="Screenshot"></p>
+                                </article>
+                                </dialog>` : ''}
                         </div>
                     </div>
                     <div>
@@ -245,87 +334,125 @@
                             ` : ''}
                     </div>
                 `;
-        }
+            }
 
-        function attachEventListeners() {
-            const testItems = document.querySelectorAll('[data-test-id]');
-            testItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const testId = item.getAttribute('data-test-id');
-                    const test = testData[testId];
-                    displayTestDetails(test);
-                    if (highlightedItem) {
-                        highlightedItem.classList.remove('highlight');
-                    }
-                    item.classList.add('highlight');
-                    highlightedItem = item;
-                });
-            });
-        }
-
-        attachEventListeners(); // Attach event listeners initially
-
-        const searchInput = document.querySelector('input[name="search"]');
-        const detailsElements = document.querySelectorAll('details');
-
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const testItems = document.querySelectorAll('[data-test-id]');
-
-            if (searchTerm) {
-                detailsElements.forEach(detail => {
-                    detail.open = false; // Collapse all details initially
-                });
-
+            function attachEventListeners() {
+                const testItems = document.querySelectorAll('[data-test-id]');
                 testItems.forEach(item => {
-                    const testTitle = item.textContent.toLowerCase();
-                    if (testTitle.includes(searchTerm)) {
-                        item.style.display = 'block'; // Show matching test item
-
-                        let parent = item.parentElement;
-                        while (parent && parent.tagName !== 'ASIDE') {
-                            if (parent.tagName === 'DETAILS') {
-                                parent.open = true; // Expand parent details elements
-                            }
-                            parent = parent.parentElement;
+                    item.addEventListener('click', () => {
+                        const testId = item.getAttribute('data-test-id');
+                        const test = testData[testId];
+                        displayTestDetails(test);
+                        if (highlightedItem) {
+                            highlightedItem.classList.remove('highlight');
                         }
-                    } else {
-                        item.style.display = 'none'; // Hide non-matching test item
-                    }
+                        item.classList.add('highlight');
+                        highlightedItem = item;
+                    });
                 });
-            } else {
-                testItems.forEach(item => {
-                    item.style.display = 'block'; // Show all test items
-                });
-                detailsElements.forEach(detail => {
-                    detail.open = false; // Collapse all details elements
+
+                // Event listeners for the filter articles
+                const filters = document.querySelectorAll('.filter');
+                filters.forEach(filter => {
+                    filter.addEventListener('click', () => {
+                       const status = filter.getAttribute('data-status');
+                        filters.forEach(f => {
+                            if (f.getAttribute('data-status') !== 'all') {
+                                f.classList.remove('active');
+                            }
+                        });
+                        if (status !== 'all') {
+                            filter.classList.add('active');
+                        }
+                        applyFilter(status);
+                    });
                 });
             }
-            attachEventListeners(); // Reattach event listeners after filtering
-        });
 
-        const ctx = document.getElementById('testChart').getContext('2d');
-        new Chart(ctx, {
+            function applyFilter(status) {
+                const testItems = document.querySelectorAll('[data-test-id]');
+                const detailsElements = document.querySelectorAll('details');
+
+                detailsElements.forEach(details => {
+                    let shouldShowDetails = false;
+                    const items = details.querySelectorAll('[data-test-id]');
+                    items.forEach(item => {
+                        const testStatus = item.getAttribute('data-test-status');
+                       if (status === 'all' || testStatus === status || (status === 'failed' && 
+                                        (testStatus === 'failed' || testStatus === 'timedOut'))) {
+                            item.style.display = 'block'; // Show the item
+                            shouldShowDetails = true; // Set shouldShowDetails to true
+                        } else {
+                            item.style.display = 'none'; // Hide the item
+                        }
+                    });
+                details.open = shouldShowDetails; // Open the details element if it has any matching items
+                details.style.display = shouldShowDetails ? 'block' : 'none'; // Show/hide the details element
+                });
+            }
+
+
+            const searchInput = document.querySelector('input[name="search"]');
+            const detailsElements = document.querySelectorAll('details');
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const testItems = document.querySelectorAll('[data-test-id]');
+
+                if (searchTerm) {
+                    detailsElements.forEach(detail => {
+                        detail.open = false; // Collapse all details initially
+                    });
+
+                    testItems.forEach(item => {
+                        const testTitle = item.textContent.toLowerCase();
+                        if (testTitle.includes(searchTerm)) {
+                            item.style.display = 'block'; // Show matching test item
+
+                            let parent = item.parentElement;
+                            while (parent && parent.tagName !== 'ASIDE') {
+                                if (parent.tagName === 'DETAILS') {
+                                    parent.open = true;
+                                }
+                                parent = parent.parentElement;
+                            }
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                } else {
+                    testItems.forEach(item => {
+                        item.style.display = 'block'; 
+                    });
+                    detailsElements.forEach(detail => {
+                        detail.open = false;
+                    });
+                }
+            });
+
+            const ctx = document.getElementById('testChart').getContext('2d');
+            new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Passed', 'Failed', 'Skipped'],
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
+                backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
                     }]
                 },
             options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
             }
-        }
             });
+            attachEventListeners();
         });
     </script>
+    <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
 </body>
-
 </html>

@@ -5,7 +5,7 @@ import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 import { ReporterConfig } from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
-import { msToTime, normalizeFilePath } from './utils/time';
+import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
 
 class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
@@ -28,12 +28,17 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
+        let status:any = result.status;
+        if (test.outcome() === 'flaky') {
+            status = 'flaky';
+        }
         const testResult: TestResultData = {
+            isRetry: result.retry,
             totalDuration: "",
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
             title: test.title,
-            status: result.status,
+            status: status,
             flaky: test.outcome(),
             duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
@@ -64,8 +69,9 @@ class OrtoniReport implements Reporter {
 
         this.results.push(testResult);
     }
-
+    private _successRate:string="";
     onEnd(result: FullResult) {
+        this._successRate = ((this.results.filter(r => r.status === 'passed').length / this.results.length) * 100).toFixed(2);
         this.results[0].totalDuration = msToTime(result.duration);
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
@@ -84,10 +90,29 @@ class OrtoniReport implements Reporter {
             return acc;
         }, {});
 
-        // Register the json helper
+        // Register HBS hadler
         Handlebars.registerHelper('json', function (context) {
             return safeStringify(context);
         });
+        Handlebars.registerHelper('eq', function (actualStatus, expectedStatus  ) {
+            return actualStatus === expectedStatus
+        });
+        Handlebars.registerHelper('or', () => {
+            var args = Array.prototype.slice.call(arguments);
+            var options = args.pop();
+        
+            for (var i = 0; i < args.length; i++) {
+                if (args[i]) {
+                    return options.fn(this);
+                }
+            }
+        
+            return options.inverse(this);
+        });
+        Handlebars.registerHelper('gt', function (a, b) {
+            return a > b;
+        });
+
 
         const html = this.generateHTML();
         const outputPath = path.resolve(process.cwd(), 'ortoni-report.html'); // Save in project root folder
@@ -108,9 +133,11 @@ class OrtoniReport implements Reporter {
             flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
             totalCount: this.results.length,
             groupedResults: this.groupedResults,
-            projectName: this.config.projectName, // Include project name
-            authorName: this.config.authorName,   // Include author name
-            testType: this.config.testType        // Include test type
+            projectName: this.config.projectName,
+            authorName: this.config.authorName,  
+            testType: this.config.testType,
+            successRate:this._successRate,
+            lastRunDate: formatDate(new Date())
         };
         return template(data);
     }

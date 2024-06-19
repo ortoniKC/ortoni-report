@@ -2,8 +2,10 @@
 
 We are excited to announce the release of OrtoniReport (Playwright report - unofficial), a powerful and customizable HTML report generator for Playwright tests. This release includes key features that enhance the reporting capabilities and make it easier to visualize and organize test results.
 
-![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/f96b7697-8ec0-4c6d-a681-b305e6d5843a)
+[Click here to check the live Demo](https://ortoni.netlify.app/)
 
+
+![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/f96b7697-8ec0-4c6d-a681-b305e6d5843a)
 
 ## Features
 
@@ -52,7 +54,7 @@ These features collectively enhance the readability, usability, and accessibilit
   ```JS/TS
   reporter: [["ortoni-report",
     {
-      projectName: 'Plawright Sample',
+      projectName: 'LetCode Playwright Report',
       authorName: 'Koushik',
       testType: 'E2E'
     }],
@@ -85,12 +87,11 @@ Configure OrtoniReport in your `playwright.config.ts`:
 
 ``` javascript/typescript
 import { defineConfig } from '@playwright/test';
-import OrtoniReport from 'ortoni-report';
 
 export default defineConfig({
   reporter: [["ortoni-report",
     {
-      projectName: 'Plawright Sample',
+      projectName: 'LetCode Playwright Report',
       authorName: 'Koushik',
       testType: 'E2E'
     }],

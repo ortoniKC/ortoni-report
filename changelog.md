@@ -1,5 +1,27 @@
 # Change Log:
 
+## Version 1.1.2
+
+**New Features:**
+- **Ellipsis Styling for Test Names:** Long test names are now truncated with ellipsis for better readability.
+- **Retry, Pass, Fail, and Skip Indicators:** Added visual indicators (images) to denote the status of each test, including retries.
+- **Enhanced `msToTime` Function:** Duration now includes milliseconds for more precise time tracking.
+- **Summary Filters:** Clicking on summary filters (passed, failed & other) to display the selected filter.
+
+**Improvements:**
+- **Unified Status Handling:** The `applyFilter` function now treats `failed` and `timedOut` statuses as the same for consistent filtering.
+- **Date and Time Formatting:** Passed date in the format `DD-MMM-YYYY` and included time for more detailed reporting.
+- **Success Rate and Last Run Data:** Added the ability to pass `successRate` and `lastRun` data to the `onEnd` method for comprehensive report details.
+
+**Bug Fixes:**
+- Fixed issues with conditionals in Handlebars for status checking.
+- Improved event listener attachment for filtering and search functionalities.
+
+**Notes:**
+- Screenshot handling has been enhanced with modal dialogs, using Pico.css for styling.
+
+This release includes several visual and functional enhancements aimed at improving the usability and readability of the Playwright test reports. The added features and improvements will help users better understand test outcomes and statuses at a glance.
+
 ### Version 1.1.0
 
 ## New Features
