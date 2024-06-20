@@ -144,14 +144,14 @@
                 {{#each groupedResults}}
                 <details>
                     <summary>
-                     <img src="node_modules/ortoni-report/dist/icon/file.png" alt="retry">
+                     <img src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
                     <span>{{@key}}<span>
                     </summary>
                     <ul>
                         {{#each this}}
                         <details>
                             <summary>
-                            <img src="node_modules/ortoni-report/dist/icon/test.png" alt="retry">
+                            <img src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
                             <span>{{@key}}<span>
                             </summary>
                             <ul>
@@ -160,7 +160,7 @@
                                     <summary>{{@key}}</summary>
                                     <ul>
                                         {{#each this}}
-                                    <li data-suite-name="{{suite}}" data-project-name="{{projectName}}" data-test-id="{{index}}" data-test-status="{{status}}">
+                                        <li data-suite-name="{{suite}}" data-project-name="{{projectName}}" data-test-id="{{index}}" data-test-status="{{status}}">
                                         {{#if isRetry}}
                                             <img src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
                                         {{/if}}
@@ -178,6 +178,9 @@
                                             <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
                                         {{/if}}
                                         <span>{{title}}</span>
+                                        {{#if retryCount}}
+                                            <p>Retry Count: {{retryCount}}</p>
+                                        {{/if}}
                                     </li>
                                         {{/each}}
                                     </ul>
@@ -225,6 +228,12 @@
                         <article class="clickable filter" data-status="flaky">
                             <header>Flaky</header>
                             <p class="text-flaky">{{flakyCount}}</p>
+                        </article>
+                    </div>
+                     <div>
+                        <article data-status="retry">
+                            <header>Retry</header>
+                            <p class="text-skip">{{retryCount}}</p>
                         </article>
                     </div>
                 </section>
@@ -378,7 +387,7 @@
                     const items = details.querySelectorAll('[data-test-id]');
                     items.forEach(item => {
                         const testStatus = item.getAttribute('data-test-status');
-                       if (status === 'all' || testStatus === status || (status === 'failed' && 
+                        if (status === 'all' || testStatus === status || (status === 'failed' && 
                                         (testStatus === 'failed' || testStatus === 'timedOut'))) {
                             item.style.display = 'block'; // Show the item
                             shouldShowDetails = true; // Set shouldShowDetails to true

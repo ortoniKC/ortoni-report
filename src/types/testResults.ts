@@ -1,10 +1,9 @@
 export interface TestResultData {
     isRetry: number;
-    totalDuration: string;
     projectName: any;
     suite: any;
     title: string;
-    status: 'passed' | 'failed' | 'timedout' | 'interrupted' | 'skipped' | 'timedOut' | 'flaky';
+    status:"passed" | "failed" | "timedOut" | "skipped" | "interrupted" | "expected" | "unexpected" | "flaky";
     flaky: string;
     duration: string;
     errors: any[];
