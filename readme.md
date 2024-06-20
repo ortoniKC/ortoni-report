@@ -21,6 +21,7 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 
 4. **Summary Statistics:**
    - Provide summary statistics for total tests, passed tests, failed tests, skipped tests, and flaky tests.
+   - Success Rate of test suite.
 
 5. **Chart Visualization:**
    - Visualize test results using a doughnut chart to represent the distribution of passed, failed, and skipped tests.
