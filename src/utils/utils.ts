@@ -24,14 +24,6 @@ export function msToTime(duration: number): string {
     return result;
 }
 
-// Examples:
-console.log(msToTime(3723000)); // "01h:02m:03s"
-console.log(msToTime(62000));   // "01m:02s"
-console.log(msToTime(1000));    // "01s"
-console.log(msToTime(500));     // ".500"
-console.log(msToTime(3601000)); // "01h:00m:01s"
-
-
 export function normalizeFilePath(filePath: string): string {
     // Normalize the path to handle different separators
     const normalizedPath = path.normalize(filePath);
