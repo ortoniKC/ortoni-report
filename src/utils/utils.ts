@@ -6,13 +6,31 @@ export function msToTime(duration: number): string {
     const minutes = Math.floor((duration / (1000 * 60)) % 60);
     const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-    const hoursStr = (hours < 10) ? "0" + hours : hours;
-    const minutesStr = (minutes < 10) ? "0" + minutes : minutes;
-    const secondsStr = (seconds < 10) ? "0" + seconds : seconds;
-    const millisecondsStr = (milliseconds < 100) ? "0" + milliseconds : milliseconds;
+    let result = '';
 
-    return `${hoursStr}:${minutesStr}:${secondsStr}.${millisecondsStr}`;
+    if (hours > 0) {
+        result += (hours < 10 ? "0" + hours : hours) + "h:";
+    }
+    if (minutes > 0 || hours > 0) { // Include minutes if hours are included
+        result += (minutes < 10 ? "0" + minutes : minutes) + "m:";
+    }
+    if (seconds > 0 || minutes > 0 || hours > 0) { // Include seconds if minutes or hours are included
+        result += (seconds < 10 ? "0" + seconds : seconds) + "s";
+    }
+    if (milliseconds > 0) {
+        result += ":" + (milliseconds < 100 ? "0" + milliseconds : milliseconds) + "ms";
+    }
+
+    return result;
 }
+
+// Examples:
+console.log(msToTime(3723000)); // "01h:02m:03s"
+console.log(msToTime(62000));   // "01m:02s"
+console.log(msToTime(1000));    // "01s"
+console.log(msToTime(500));     // ".500"
+console.log(msToTime(3601000)); // "01h:00m:01s"
+
 
 export function normalizeFilePath(filePath: string): string {
     // Normalize the path to handle different separators
