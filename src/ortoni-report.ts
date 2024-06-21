@@ -52,7 +52,6 @@ class OrtoniReport implements Reporter {
             screenshotPath: null,
             filePath: normalizeFilePath(test.titlePath()[2]),
         };
-
         if (result.attachments) {
             const screenshotsDir = path.resolve(process.cwd(), 'screenshots', test.id);
             if (!fs.existsSync(screenshotsDir)) {
