@@ -76,7 +76,10 @@ class OrtoniReport implements Reporter {
     }
     onEnd(result: FullResult) {
         const filteredResults: TestResultData[] = this.results.filter(r => r.status !== 'skipped' && !r.isRetry);
-        const successRate: string = ((filteredResults.filter(r => r.status === 'passed').length / filteredResults.length) * 100).toFixed(2);
+        const totalTests = this.results.length;
+        const passedTests = this.results.filter(r => r.status === 'passed').length;
+        const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
+        const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const totalDuration = msToTime(result.duration);
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;

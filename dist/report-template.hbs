@@ -52,7 +52,7 @@
         }
 
         .text-flaky {
-            color: #d5d4a1;
+            color: #b5e35e;
         }
 
         div#testDetails {
@@ -189,6 +189,9 @@
                                             {{#if (eq status "timedOut")}}
                                             <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
                                             {{/if}}
+                                            {{#if (eq status "flaky")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/flaky.png" alt="flaky">
+                                            {{/if}}
                                             <span>{{title}}</span>
                                             {{#if retryCount}}
                                             <p>Retry Count: {{retryCount}}</p>
@@ -313,13 +316,22 @@
             summary.style.display = 'none';
             testDetails.style.display = 'block';
             backButton.style.display = 'block';
+            let statusClass = '';
+            let statusText = test.status.toUpperCase();
+            if (test.status.startsWith('passed')) {
+                statusClass = 'text-success';
+            } else if (test.status === 'flaky') {
+                statusClass = 'text-flaky';
+            } else {
+                statusClass = 'text-failure';
+            } 
             testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
                     <h3>${test.title}</h3>
                     <div class="grid">
                         <div>
                             <h4>Status</h4>
-                            <p class="${test.status.startsWith('passed') ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                            <p class="${statusClass}">${statusText}</p>
                             ${test.duration != '0s' ? `
                             <h4>Duration</h4>
                             <p>${test.duration}</p>` : ""}
@@ -427,6 +439,9 @@
                     } else if ((status === 'retry' && testStatus.includes('retry'))) {
                         item.style.display = 'block'; // Show the item
                         shouldShowDetails = true; // Set shouldShowDetails to true
+                    }else if ((status === 'flaky' && testStatus.includes('flaky'))) {
+                        item.style.display = 'block'; // Show the item
+                        shouldShowDetails = true; // Set shouldShowDetails to true
                     } else {
                         item.style.display = 'none'; // Hide the item
                     }
@@ -479,10 +494,10 @@
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Passed', 'Failed', 'Skipped'],
+                labels: ['Passed', 'Failed', 'Skipped','Flaky'],
                 datasets: [{
-                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
+                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
+            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#b5e35e']
                     }]
                 },
             options: {
