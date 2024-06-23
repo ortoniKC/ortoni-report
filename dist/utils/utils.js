@@ -1,13 +1,16 @@
-import path from 'path';
-
-export function msToTime(duration: number): string {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatDate = exports.normalizeFilePath = exports.msToTime = void 0;
+const path_1 = __importDefault(require("path"));
+function msToTime(duration) {
     const milliseconds = Math.floor((duration % 1000));
     const seconds = Math.floor((duration / 1000) % 60);
     const minutes = Math.floor((duration / (1000 * 60)) % 60);
     const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
     let result = '';
-
     if (hours > 0) {
         result += (hours < 10 ? "0" + hours : hours) + "h:";
     }
@@ -20,20 +23,22 @@ export function msToTime(duration: number): string {
     if (milliseconds > 0) {
         result += ":" + (milliseconds < 100 ? "0" + milliseconds : milliseconds) + "ms";
     }
-
     return result;
 }
-
-export function normalizeFilePath(filePath: string): string {
+exports.msToTime = msToTime;
+function normalizeFilePath(filePath) {
     // Normalize the path to handle different separators
-    const normalizedPath = path.normalize(filePath);
+    const normalizedPath = path_1.default.normalize(filePath);
     // Get the base name of the file (removes any leading directories)
-    return path.basename(normalizedPath);
+    return path_1.default.basename(normalizedPath);
 }
-export function formatDate(date: Date) {
+exports.normalizeFilePath = normalizeFilePath;
+function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = date.toLocaleString('default', { month: 'short' });
     const year = date.getFullYear();
     const time = date.toLocaleTimeString();
     return `${day}-${month}-${year} ${time}`;
-};
+}
+exports.formatDate = formatDate;
+;

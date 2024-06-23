@@ -1,5 +1,18 @@
 # Change Log:
 
+## Version 1.1.3
+
+**New Features:**
+- Added detailed steps to the testDetails section in the HTML report.
+- Introduced a new flaky icon for better visual representation in the report.
+- Display of test steps in the HTML report.
+- Added a filter for retry tests to better categorize and display them.
+
+**Improved:**
+- Updated the package dependencies to remove vulnerabilities.
+- Enhanced time formatting to include milliseconds in the duration display.
+- Enhanced the calculation and display of the success rate in the HTML report.
+
 ## Version 1.1.2
 
 **New Features:**

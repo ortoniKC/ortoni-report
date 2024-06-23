@@ -28,31 +28,36 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     onTestEnd(test: TestCase, result: TestResult) {
-        let status:any = result.status;
+        let status: any = result.status;
         if (test.outcome() === 'flaky') {
             status = 'flaky';
         }
+        
         const testResult: TestResultData = {
+            retry: result.retry > 0 ? "retry": "",
             isRetry: result.retry,
-            totalDuration: "",
-            projectName: test.titlePath()[1], // Get the project name
-            suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
+            projectName: test.titlePath()[1],
+            suite: test.titlePath()[3],
             title: test.title,
             status: status,
             flaky: test.outcome(),
             duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
-                title: step.title,
+                titlePath:step.titlePath,
                 category: step.category,
-                duration: step.duration,
-                status: result.status
+                duration:step.duration,
+                error:step.error,
+                location:step.location,
+                parent:step.parent,
+                startTime:step.startTime,
+                steps: step.steps,
+                title: step.title,
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             screenshotPath: null,
             filePath: normalizeFilePath(test.titlePath()[2]),
         };
-
         if (result.attachments) {
             const screenshotsDir = path.resolve(process.cwd(), 'screenshots', test.id);
             if (!fs.existsSync(screenshotsDir)) {
@@ -69,10 +74,9 @@ class OrtoniReport implements Reporter {
 
         this.results.push(testResult);
     }
-    private _successRate:string="";
     onEnd(result: FullResult) {
-        this._successRate = ((this.results.filter(r => r.status === 'passed').length / this.results.length) * 100).toFixed(2);
-        this.results[0].totalDuration = msToTime(result.duration);
+        const filteredResults: TestResultData[] = this.results.filter(r => r.status !== 'skipped' && !r.isRetry);
+        const totalDuration = msToTime(result.duration);
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
             const suiteName = result.suite;
@@ -94,56 +98,60 @@ class OrtoniReport implements Reporter {
         Handlebars.registerHelper('json', function (context) {
             return safeStringify(context);
         });
-        Handlebars.registerHelper('eq', function (actualStatus, expectedStatus  ) {
+        Handlebars.registerHelper('eq', function (actualStatus, expectedStatus) {
             return actualStatus === expectedStatus
         });
         Handlebars.registerHelper('or', () => {
             var args = Array.prototype.slice.call(arguments);
             var options = args.pop();
-        
+
             for (var i = 0; i < args.length; i++) {
                 if (args[i]) {
                     return options.fn(this);
                 }
             }
-        
+
             return options.inverse(this);
         });
         Handlebars.registerHelper('gt', function (a, b) {
             return a > b;
         });
 
-
-        const html = this.generateHTML();
+        const html = this.generateHTML(filteredResults, totalDuration);
         const outputPath = path.resolve(process.cwd(), 'ortoni-report.html'); // Save in project root folder
         fs.writeFileSync(outputPath, html);
         console.log(`Ortoni HTML report generated at ${outputPath}`);
     }
 
-    generateHTML() {
+    generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+        const totalTests = filteredResults.length;
+        const passedTests = this.results.filter(r => r.status === 'passed').length;
+        const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
+        const failed = filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut').length
+        const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
         const data = {
-            totalDuration: this.results[0].totalDuration,
+            totalDuration: totalDuration,
             suiteName: this.suiteName,
             results: this.results,
-            passCount: this.results.filter(r => r.status === 'passed').length,
-            failCount: this.results.filter(r => r.status === 'failed' || r.status === 'timedOut').length,
+            retryCount: this.results.filter(r => r.isRetry).length,
+            passCount: passedTests,
+            failCount: failed,
             skipCount: this.results.filter(r => r.status === 'skipped').length,
-            flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
-            totalCount: this.results.length,
+            flakyCount: flakyTests,
+            totalCount: filteredResults.length,
             groupedResults: this.groupedResults,
             projectName: this.config.projectName,
-            authorName: this.config.authorName,  
+            authorName: this.config.authorName,
             testType: this.config.testType,
-            successRate:this._successRate,
+            successRate: successRate,
             lastRunDate: formatDate(new Date())
         };
         return template(data);
     }
 }
 
-// Utility function to remove circular references
 function safeStringify(obj: any, indent = 2) {
     const cache = new Set();
     const json = JSON.stringify(obj, (key, value) => {

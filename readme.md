@@ -8,7 +8,6 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 ![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/88237970-b97f-4339-94cd-a1e4f3488b10)
 
 
-
 ## Features
 
 1. **Hierarchical Grouping:** 
@@ -23,9 +22,10 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 
 4. **Summary Statistics:**
    - Provide summary statistics for total tests, passed tests, failed tests, skipped tests, and flaky tests.
+   - Success Rate of test suite.
 
 5. **Chart Visualization:**
-   - Visualize test results using a doughnut chart to represent the distribution of passed, failed, and skipped tests.
+   - Visualize test results using a doughnut chart to represent the distribution of passed, failed, skipped and flaky tests.
 
 6. **Project Information:**
    - Include project name, author name, and test type information in the report.
@@ -48,6 +48,14 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 
 12. **Ease of Use:**
     - Enable easy navigation between test results and summary sections.
+
+13. **Success Rate**
+    - The success rate in this project is calculated based on the outcomes of the tests executed using Playwright. The calculation considers tests that pass initially as well as tests that initially fail but pass upon retry
+    - Success Rate Formula
+    The success rate (successRate) is calculated using the following formula:
+    ```
+    const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
+    ```
 
 These features collectively enhance the readability, usability, and accessibility of the test report, providing valuable insights into test execution and results.
 

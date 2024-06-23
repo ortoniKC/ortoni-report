@@ -11,11 +11,20 @@ function msToTime(duration) {
   const seconds = Math.floor(duration / 1e3 % 60);
   const minutes = Math.floor(duration / (1e3 * 60) % 60);
   const hours = Math.floor(duration / (1e3 * 60 * 60) % 24);
-  const hoursStr = hours < 10 ? "0" + hours : hours;
-  const minutesStr = minutes < 10 ? "0" + minutes : minutes;
-  const secondsStr = seconds < 10 ? "0" + seconds : seconds;
-  const millisecondsStr = milliseconds < 100 ? "0" + milliseconds : milliseconds;
-  return `${hoursStr}:${minutesStr}:${secondsStr}.${millisecondsStr}`;
+  let result = "";
+  if (hours > 0) {
+    result += (hours < 10 ? "0" + hours : hours) + "h:";
+  }
+  if (minutes > 0 || hours > 0) {
+    result += (minutes < 10 ? "0" + minutes : minutes) + "m:";
+  }
+  if (seconds > 0 || minutes > 0 || hours > 0) {
+    result += (seconds < 10 ? "0" + seconds : seconds) + "s";
+  }
+  if (milliseconds > 0) {
+    result += ":" + (milliseconds < 100 ? "0" + milliseconds : milliseconds) + "ms";
+  }
+  return result;
 }
 function normalizeFilePath(filePath) {
   const normalizedPath = path.normalize(filePath);
@@ -33,7 +42,6 @@ function formatDate(date) {
 var OrtoniReport = class {
   constructor(config = {}) {
     this.results = [];
-    this._successRate = "";
     this.config = config;
   }
   onBegin(config, suite) {
@@ -52,22 +60,25 @@ var OrtoniReport = class {
       status = "flaky";
     }
     const testResult = {
+      retry: result.retry > 0 ? "retry" : "",
       isRetry: result.retry,
-      totalDuration: "",
       projectName: test.titlePath()[1],
-      // Get the project name
       suite: test.titlePath()[3],
-      // Adjust the index based on your suite hierarchy
       title: test.title,
       status,
       flaky: test.outcome(),
       duration: msToTime(result.duration),
       errors: result.errors.map((e) => colors.strip(e.message || e.toString())),
       steps: result.steps.map((step) => ({
-        title: step.title,
+        titlePath: step.titlePath,
         category: step.category,
         duration: step.duration,
-        status: result.status
+        error: step.error,
+        location: step.location,
+        parent: step.parent,
+        startTime: step.startTime,
+        steps: step.steps,
+        title: step.title
       })),
       logs: colors.strip(result.stdout.concat(result.stderr).map((log) => log).join("\n")),
       screenshotPath: null,
@@ -89,8 +100,8 @@ var OrtoniReport = class {
     this.results.push(testResult);
   }
   onEnd(result) {
-    this._successRate = (this.results.filter((r) => r.status === "passed").length / this.results.length * 100).toFixed(2);
-    this.results[0].totalDuration = msToTime(result.duration);
+    const filteredResults = this.results.filter((r) => r.status !== "skipped" && !r.isRetry);
+    const totalDuration = msToTime(result.duration);
     this.groupedResults = this.results.reduce((acc, result2, index) => {
       const filePath = result2.filePath;
       const suiteName = result2.suite;
@@ -126,28 +137,34 @@ var OrtoniReport = class {
     Handlebars.registerHelper("gt", function(a, b) {
       return a > b;
     });
-    const html = this.generateHTML();
+    const html = this.generateHTML(filteredResults, totalDuration);
     const outputPath = path2.resolve(process.cwd(), "ortoni-report.html");
     fs.writeFileSync(outputPath, html);
     console.log(`Ortoni HTML report generated at ${outputPath}`);
   }
-  generateHTML() {
+  generateHTML(filteredResults, totalDuration) {
+    const totalTests = filteredResults.length;
+    const passedTests = this.results.filter((r) => r.status === "passed").length;
+    const flakyTests = this.results.filter((r) => r.flaky === "flaky").length;
+    const failed = filteredResults.filter((r) => r.status === "failed" || r.status === "timedOut").length;
+    const successRate = ((passedTests + flakyTests) / totalTests * 100).toFixed(2);
     const templateSource = fs.readFileSync(path2.resolve(__dirname, "report-template.hbs"), "utf-8");
     const template = Handlebars.compile(templateSource);
     const data = {
-      totalDuration: this.results[0].totalDuration,
+      totalDuration,
       suiteName: this.suiteName,
       results: this.results,
-      passCount: this.results.filter((r) => r.status === "passed").length,
-      failCount: this.results.filter((r) => r.status === "failed" || r.status === "timedOut").length,
+      retryCount: this.results.filter((r) => r.isRetry).length,
+      passCount: passedTests,
+      failCount: failed,
       skipCount: this.results.filter((r) => r.status === "skipped").length,
-      flakyCount: this.results.filter((r) => r.flaky === "flaky").length,
-      totalCount: this.results.length,
+      flakyCount: flakyTests,
+      totalCount: filteredResults.length,
       groupedResults: this.groupedResults,
       projectName: this.config.projectName,
       authorName: this.config.authorName,
       testType: this.config.testType,
-      successRate: this._successRate,
+      successRate,
       lastRunDate: formatDate(/* @__PURE__ */ new Date())
     };
     return template(data);

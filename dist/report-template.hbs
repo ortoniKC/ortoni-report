@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,7 @@
         }
 
         .highlight {
-            background-color: var(--pico-primary-background);
+            color: var(--pico-primary-background);
         }
 
         .filter.active {
@@ -51,9 +52,9 @@
         }
 
         .text-flaky {
-            color: #d5d4a1;
+            color: #b5e35e;
         }
-        
+
         div#testDetails {
             position: sticky;
             top: 0;
@@ -62,7 +63,8 @@
 
         .sidebar {
             overflow-y: auto;
-            max-height: calc(100vh - 100px); /* Adjust as needed */
+            max-height: calc(100vh - 100px);
+            /* Adjust as needed */
             border-right: 1px solid #ddd;
             padding-right: 10px;
         }
@@ -78,7 +80,8 @@
             display: none;
             margin-bottom: 1rem;
         }
-         .clickable {
+
+        .clickable {
             cursor: pointer;
             transition: background-color 0.3s;
         }
@@ -86,33 +89,40 @@
         .clickable:hover {
             background-color: #607D8B;
         }
+
         li[data-test-id] {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 25ch;
         }
-        li img{
+
+        li img {
             max-width: 8%
         }
-        summary img{
+
+        summary img {
             max-width: 5%
         }
+
         dialog article {
             max-width: 768px;
         }
+
         ::-webkit-scrollbar {
             width: 0px;
             background-color: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
-            background-color: var(--pico-secondary-background);;
+            background-color: var(--pico-secondary-background);
+            ;
             border-radius: 0px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background-color: var(--pico-secondary-background);;
+            background-color: var(--pico-secondary-background);
+            ;
         }
 
         ::-webkit-scrollbar-track {
@@ -124,6 +134,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="container">
         <div class="header">
@@ -144,15 +155,15 @@
                 {{#each groupedResults}}
                 <details>
                     <summary>
-                     <img src="node_modules/ortoni-report/dist/icon/file.png" alt="retry">
-                    <span>{{@key}}<span>
+                        <img src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                        <span>{{@key}}<span>
                     </summary>
                     <ul>
                         {{#each this}}
                         <details>
                             <summary>
-                            <img src="node_modules/ortoni-report/dist/icon/test.png" alt="retry">
-                            <span>{{@key}}<span>
+                                <img src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                <span>{{@key}}<span>
                             </summary>
                             <ul>
                                 {{#each this}}
@@ -160,25 +171,32 @@
                                     <summary>{{@key}}</summary>
                                     <ul>
                                         {{#each this}}
-                                    <li data-suite-name="{{suite}}" data-project-name="{{projectName}}" data-test-id="{{index}}" data-test-status="{{status}}">
-                                        {{#if isRetry}}
+                                        <li data-suite-name="{{suite}}" data-project-name="{{projectName}}"
+                                            data-test-id="{{index}}" data-test-status="{{status}} {{retry}}">
+                                            {{#if isRetry}}
                                             <img src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
-                                        {{/if}}
-                                        {{#if (eq status "passed")}}
+                                            {{/if}}
+                                            {{#if (eq status "passed")}}
                                             <img src="node_modules/ortoni-report/dist/icon/pass.png" alt="Pass">
-                                        {{/if}}
-                                        {{#if (eq status "failed")}}
+                                            {{/if}}
+                                            {{#if (eq status "failed")}}
                                             <img src="node_modules/ortoni-report/dist/icon/fail.png" alt="Fail">
                                             {{else}}
                                             {{#if (eq status "skipped")}}
-                                                <img src="node_modules/ortoni-report/dist/icon/skip.png" alt="Skip">
-                                                {{/if}}
-                                        {{/if}}
-                                        {{#if (eq status "timedOut")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/skip.png" alt="Skip">
+                                            {{/if}}
+                                            {{/if}}
+                                            {{#if (eq status "timedOut")}}
                                             <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
-                                        {{/if}}
-                                        <span>{{title}}</span>
-                                    </li>
+                                            {{/if}}
+                                            {{#if (eq status "flaky")}}
+                                            <img src="node_modules/ortoni-report/dist/icon/flaky.png" alt="flaky">
+                                            {{/if}}
+                                            <span>{{title}}</span>
+                                            {{#if retryCount}}
+                                            <p>Retry Count: {{retryCount}}</p>
+                                            {{/if}}
+                                        </li>
                                         {{/each}}
                                     </ul>
                                 </details>
@@ -227,6 +245,12 @@
                             <p class="text-flaky">{{flakyCount}}</p>
                         </article>
                     </div>
+                    <div>
+                        <article class="clickable filter" data-status="retry">
+                            <header>Retry</header>
+                            <p class="text-skip">{{retryCount}}</p>
+                        </article>
+                    </div>
                 </section>
                 {{!-- Suite details with chart --}}
                 <section>
@@ -272,33 +296,42 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
-            const testDetails = document.getElementById('testDetails');
-            const summary = document.getElementById('summary');
-            const backButton = document.querySelector('.back-button');
-            let highlightedItem = null;
+        const testDetails = document.getElementById('testDetails');
+        const summary = document.getElementById('summary');
+        const backButton = document.querySelector('.back-button');
+        let highlightedItem = null;
 
-            function showSummary() {
-                summary.style.display = 'block';
-                testDetails.style.display = 'none';
-                backButton.style.display = 'none';
-                if (highlightedItem) {
-                    highlightedItem.classList.remove('highlight');
-                }
+        function showSummary() {
+            summary.style.display = 'block';
+            testDetails.style.display = 'none';
+            backButton.style.display = 'none';
+            if (highlightedItem) {
+                highlightedItem.classList.remove('highlight');
             }
+        }
 
-            window.showSummary = showSummary;
+        window.showSummary = showSummary;
 
-            function displayTestDetails(test) {
-                summary.style.display = 'none';
-                testDetails.style.display = 'block';
-                backButton.style.display = 'block';
-                testDetails.innerHTML = `
+        function displayTestDetails(test) {
+            summary.style.display = 'none';
+            testDetails.style.display = 'block';
+            backButton.style.display = 'block';
+            let statusClass = '';
+            let statusText = test.status.toUpperCase();
+            if (test.status.startsWith('passed')) {
+                statusClass = 'text-success';
+            } else if (test.status === 'flaky') {
+                statusClass = 'text-flaky';
+            } else {
+                statusClass = 'text-failure';
+            } 
+            testDetails.innerHTML = `
                     <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
                     <h3>${test.title}</h3>
                     <div class="grid">
                         <div>
                             <h4>Status</h4>
-                            <p class="${test.status === 'passed' ? 'text-success' : 'text-failure'}">${test.status.toUpperCase()}</p>
+                            <p class="${statusClass}">${statusText}</p>
                             ${test.duration != '0s' ? `
                             <h4>Duration</h4>
                             <p>${test.duration}</p>` : ""}
@@ -319,6 +352,12 @@
                                 </dialog>` : ''}
                         </div>
                     </div>
+                    <div class="grid">
+                        <details>
+                            <summary><h4>Steps</h4></summary>
+                            <span id="stepDetails"></span>
+                        </details>
+                    </div>
                     <div>
                     ${test.errors.length ? `
                             <h4>Errors</h4>
@@ -334,125 +373,147 @@
                             ` : ''}
                     </div>
                 `;
-            }
+            const stepDetailsDiv = document.getElementById('stepDetails');
+            const stepsList = attachSteps(test);
+            stepDetailsDiv.appendChild(stepsList);
+        }
 
-            function attachEventListeners() {
-                const testItems = document.querySelectorAll('[data-test-id]');
-                testItems.forEach(item => {
-                    item.addEventListener('click', () => {
-                        const testId = item.getAttribute('data-test-id');
-                        const test = testData[testId];
-                        displayTestDetails(test);
-                        if (highlightedItem) {
-                            highlightedItem.classList.remove('highlight');
-                        }
-                        item.classList.add('highlight');
-                        highlightedItem = item;
-                    });
+        function attachSteps(test) {
+            const stepsList = document.createElement("ul");
+            stepsList.setAttribute("id", "steps");
+            stepsList.innerHTML = '';
+            test.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong class=${step.error ? 'text-failure' : 'test-success'}> ${step.title}</strong>`;
+                stepsList.appendChild(li);
+            });
+            return stepsList;
+        }
+
+        function attachEventListeners() {
+            const testItems = document.querySelectorAll('[data-test-id]');
+            testItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const testId = item.getAttribute('data-test-id');
+                    const test = testData[testId];
+                    displayTestDetails(test);
+                    if (highlightedItem) {
+                        highlightedItem.classList.remove('highlight');
+                    }
+                    item.classList.add('highlight');
+                    highlightedItem = item;
                 });
-
-                // Event listeners for the filter articles
-                const filters = document.querySelectorAll('.filter');
-                filters.forEach(filter => {
-                    filter.addEventListener('click', () => {
-                       const status = filter.getAttribute('data-status');
-                        filters.forEach(f => {
-                            if (f.getAttribute('data-status') !== 'all') {
-                                f.classList.remove('active');
-                            }
-                        });
-                        if (status !== 'all') {
-                            filter.classList.add('active');
-                        }
-                        applyFilter(status);
-                    });
-                });
-            }
-
-            function applyFilter(status) {
-                const testItems = document.querySelectorAll('[data-test-id]');
-                const detailsElements = document.querySelectorAll('details');
-
-                detailsElements.forEach(details => {
-                    let shouldShowDetails = false;
-                    const items = details.querySelectorAll('[data-test-id]');
-                    items.forEach(item => {
-                        const testStatus = item.getAttribute('data-test-status');
-                       if (status === 'all' || testStatus === status || (status === 'failed' && 
-                                        (testStatus === 'failed' || testStatus === 'timedOut'))) {
-                            item.style.display = 'block'; // Show the item
-                            shouldShowDetails = true; // Set shouldShowDetails to true
-                        } else {
-                            item.style.display = 'none'; // Hide the item
-                        }
-                    });
-                details.open = shouldShowDetails; // Open the details element if it has any matching items
-                details.style.display = shouldShowDetails ? 'block' : 'none'; // Show/hide the details element
-                });
-            }
-
-
-            const searchInput = document.querySelector('input[name="search"]');
-            const detailsElements = document.querySelectorAll('details');
-
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const testItems = document.querySelectorAll('[data-test-id]');
-
-                if (searchTerm) {
-                    detailsElements.forEach(detail => {
-                        detail.open = false; // Collapse all details initially
-                    });
-
-                    testItems.forEach(item => {
-                        const testTitle = item.textContent.toLowerCase();
-                        if (testTitle.includes(searchTerm)) {
-                            item.style.display = 'block'; // Show matching test item
-
-                            let parent = item.parentElement;
-                            while (parent && parent.tagName !== 'ASIDE') {
-                                if (parent.tagName === 'DETAILS') {
-                                    parent.open = true;
-                                }
-                                parent = parent.parentElement;
-                            }
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                } else {
-                    testItems.forEach(item => {
-                        item.style.display = 'block'; 
-                    });
-                    detailsElements.forEach(detail => {
-                        detail.open = false;
-                    });
-                }
             });
 
-            const ctx = document.getElementById('testChart').getContext('2d');
-            new Chart(ctx, {
+            // Event listeners for the filter articles
+            const filters = document.querySelectorAll('.filter');
+            filters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    const status = filter.getAttribute('data-status');
+                    filters.forEach(f => {
+                        if (f.getAttribute('data-status') !== 'all') {
+                            f.classList.remove('active');
+                        }
+                    });
+                    if (status !== 'all') {
+                        filter.classList.add('active');
+                    }
+                    applyFilter(status);
+                });
+            });
+        }
+
+        function applyFilter(status) {
+            const testItems = document.querySelectorAll('li[data-test-id]');
+            const detailsElements = document.querySelectorAll('details');
+
+            detailsElements.forEach(details => {
+                let shouldShowDetails = false;
+                const items = details.querySelectorAll('li[data-test-id]');
+                items.forEach(item => {
+                    const testStatus = item.getAttribute('data-test-status');
+                    if (status === 'all' || testStatus.trim() === status ||
+                        (status === 'failed' && (testStatus.trim() === 'failed' || testStatus.trim() === 'timedOut'))) {
+                        item.style.display = 'block'; // Show the item
+                        shouldShowDetails = true; // Set shouldShowDetails to true
+                    } else if ((status === 'retry' && testStatus.includes('retry'))) {
+                        item.style.display = 'block'; // Show the item
+                        shouldShowDetails = true; // Set shouldShowDetails to true
+                    }else if ((status === 'flaky' && testStatus.includes('flaky'))) {
+                        item.style.display = 'block'; // Show the item
+                        shouldShowDetails = true; // Set shouldShowDetails to true
+                    } else {
+                        item.style.display = 'none'; // Hide the item
+                    }
+                });
+                details.open = shouldShowDetails; // Open the details element if it has any matching items
+                details.style.display = shouldShowDetails ? 'block' : 'none'; // Show/hide the details element
+            });
+        }
+
+
+        const searchInput = document.querySelector('input[name="search"]');
+        const detailsElements = document.querySelectorAll('details');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const testItems = document.querySelectorAll('[data-test-id]');
+
+            if (searchTerm) {
+                detailsElements.forEach(detail => {
+                    detail.open = false; // Collapse all details initially
+                });
+
+                testItems.forEach(item => {
+                    const testTitle = item.textContent.toLowerCase();
+                    if (testTitle.includes(searchTerm)) {
+                        item.style.display = 'block'; // Show matching test item
+
+                        let parent = item.parentElement;
+                        while (parent && parent.tagName !== 'ASIDE') {
+                            if (parent.tagName === 'DETAILS') {
+                                parent.open = true;
+                            }
+                            parent = parent.parentElement;
+                        }
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            } else {
+                testItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+                detailsElements.forEach(detail => {
+                    detail.open = false;
+                });
+            }
+        });
+
+        const ctx = document.getElementById('testChart').getContext('2d');
+        new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Passed', 'Failed', 'Skipped'],
+                labels: ['Passed', 'Failed', 'Skipped','Flaky'],
                 datasets: [{
-                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}],
-                backgroundColor: ['#28a745', '#dc3545', '#d5d4a1']
+                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
+            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#b5e35e']
                     }]
                 },
             options: {
             responsive: true,
             maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
             }
+        }
             });
-            attachEventListeners();
+        attachEventListeners();
         });
     </script>
     <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
 </body>
+
 </html>
