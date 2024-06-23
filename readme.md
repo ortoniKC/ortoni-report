@@ -5,7 +5,7 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 [Click here to check the live Demo](https://ortoni.netlify.app/)
 
 
-![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/f96b7697-8ec0-4c6d-a681-b305e6d5843a)
+![Ortoni Report](https://github.com/ortoniKC/ortoni-report/assets/58769833/88237970-b97f-4339-94cd-a1e4f3488b10)
 
 ## Features
 
