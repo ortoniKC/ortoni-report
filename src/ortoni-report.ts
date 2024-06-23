@@ -36,8 +36,8 @@ class OrtoniReport implements Reporter {
         const testResult: TestResultData = {
             retry: result.retry > 0 ? "retry": "",
             isRetry: result.retry,
-            projectName: test.titlePath()[1], // Get the project name
-            suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
+            projectName: test.titlePath()[1],
+            suite: test.titlePath()[3],
             title: test.title,
             status: status,
             flaky: test.outcome(),
@@ -76,10 +76,6 @@ class OrtoniReport implements Reporter {
     }
     onEnd(result: FullResult) {
         const filteredResults: TestResultData[] = this.results.filter(r => r.status !== 'skipped' && !r.isRetry);
-        const totalTests = this.results.length;
-        const passedTests = this.results.filter(r => r.status === 'passed').length;
-        const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
-        const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const totalDuration = msToTime(result.duration);
         this.groupedResults = this.results.reduce((acc: any, result, index) => {
             const filePath = result.filePath;
@@ -121,26 +117,29 @@ class OrtoniReport implements Reporter {
             return a > b;
         });
 
-
-        const html = this.generateHTML(filteredResults, totalDuration, successRate);
+        const html = this.generateHTML(filteredResults, totalDuration);
         const outputPath = path.resolve(process.cwd(), 'ortoni-report.html'); // Save in project root folder
         fs.writeFileSync(outputPath, html);
         console.log(`Ortoni HTML report generated at ${outputPath}`);
     }
 
-    generateHTML(filteredResults: TestResultData[], totalDuration: string, successRate: string) {
+    generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+        const totalTests = filteredResults.length;
+        const passedTests = this.results.filter(r => r.status === 'passed').length;
+        const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
+        const failed = filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut').length
+        const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
-        // const nonRetryFailedResults = filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut');
         const data = {
             totalDuration: totalDuration,
             suiteName: this.suiteName,
             results: this.results,
             retryCount: this.results.filter(r => r.isRetry).length,
-            passCount: this.results.filter(r => r.status === 'passed').length,
-            failCount: filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut').length,
+            passCount: passedTests,
+            failCount: failed,
             skipCount: this.results.filter(r => r.status === 'skipped').length,
-            flakyCount: this.results.filter(r => r.flaky === 'flaky').length,
+            flakyCount: flakyTests,
             totalCount: filteredResults.length,
             groupedResults: this.groupedResults,
             projectName: this.config.projectName,
@@ -153,7 +152,6 @@ class OrtoniReport implements Reporter {
     }
 }
 
-// Utility function to remove circular references
 function safeStringify(obj: any, indent = 2) {
     const cache = new Set();
     const json = JSON.stringify(obj, (key, value) => {
