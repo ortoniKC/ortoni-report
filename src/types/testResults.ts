@@ -1,3 +1,5 @@
+import { TestStep } from "@playwright/test/reporter";
+
 export interface TestResultData {
     isRetry: number;
     projectName: any;
@@ -7,7 +9,7 @@ export interface TestResultData {
     flaky: string;
     duration: string;
     errors: any[];
-    steps: any[];
+    steps:TestStep[];
     logs: string;
     screenshotPath: string | null;
     filePath: any;

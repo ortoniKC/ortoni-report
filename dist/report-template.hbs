@@ -29,7 +29,7 @@
         }
 
         .highlight {
-            background-color: var(--pico-primary-background);
+            color: var(--pico-primary-background);
         }
 
         .filter.active {
@@ -328,8 +328,11 @@
                                 </dialog>` : ''}
                         </div>
                     </div>
-                    <div id="stepDetails">
-                        <h4>Steps</h4>
+                    <div class="grid">
+                        <details>
+                            <summary><h4>Steps</h4></summary>
+                            <span id="stepDetails"></span>
+                        </details>
                     </div>
                     <div>
                     ${test.errors.length ? `
@@ -357,8 +360,8 @@
                 stepsList.innerHTML = '';
                 test.steps.forEach(step => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<strong>${step.title}</strong> (${step.category}) - Duration: ${step.duration} - Status: ${step.status}`;
-                    stepsList.appendChild(li);
+                    li.innerHTML = `<strong class=${step.error ? 'text-failure' : 'test-success'}> ${step.title}</strong>`;
+                    stepsList.appendChild(li); 
                 });
                 return stepsList;
             }

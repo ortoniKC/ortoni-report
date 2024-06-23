@@ -43,10 +43,15 @@ class OrtoniReport implements Reporter {
             duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
-                title: step.title,
+                titlePath:step.titlePath,
                 category: step.category,
-                duration: step.duration,
-                status: result.status
+                duration:step.duration,
+                error:step.error,
+                location:step.location,
+                parent:step.parent,
+                startTime:step.startTime,
+                steps: step.steps,
+                title: step.title,
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             screenshotPath: null,
