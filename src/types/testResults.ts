@@ -1,6 +1,7 @@
 import { TestStep } from "@playwright/test/reporter";
 
 export interface TestResultData {
+    retry:string,
     isRetry: number;
     projectName: any;
     suite: any;

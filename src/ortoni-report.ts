@@ -34,6 +34,7 @@ class OrtoniReport implements Reporter {
         }
         
         const testResult: TestResultData = {
+            retry: result.retry > 0 ? "retry": "",
             isRetry: result.retry,
             projectName: test.titlePath()[1], // Get the project name
             suite: test.titlePath()[3], // Adjust the index based on your suite hierarchy
