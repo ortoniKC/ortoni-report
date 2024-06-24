@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="auto">
 
 <head>
     <meta charset="UTF-8">
@@ -7,106 +7,12 @@
     <meta name="description" content="Plawright HTML report by LetCode Koushik">
     <title>Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
-    <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/pico.css">
-    <style>
-        body {
-            zoom: 0.9;
-        }
+    <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
+</head>
+<style>
 
-        main.container {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        .header {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            grid-column-gap: 20px;
-            grid-row-gap: 20px;
-            justify-items: stretch;
-            align-items: center;
-            justify-content: space-evenly;
-        }
-
-        .highlight {
-            color: var(--pico-primary-background);
-        }
-
-        .filter.active {
-            background-color: var(--pico-primary-hover-background);
-            color: var(--pico-primary-hover-color);
-        }
-
-
-        .text-success {
-            color: #28a745;
-        }
-
-        .text-failure {
-            color: #dc3545;
-        }
-
-        .text-skip {
-            color: #d5d4a1;
-        }
-
-        .text-flaky {
-            color: #b5e35e;
-        }
-
-        div#testDetails {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .sidebar {
-            overflow-y: auto;
-            max-height: calc(100vh - 100px);
-            /* Adjust as needed */
-            border-right: 1px solid #ddd;
-            padding-right: 10px;
-        }
-
-        pre {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-        }
-
-        .back-button {
-            display: none;
-            margin-bottom: 1rem;
-        }
-
-        .clickable {
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .clickable:hover {
-            background-color: #607D8B;
-        }
-
-        li[data-test-id] {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 25ch;
-        }
-
-        li img {
-            max-width: 8%
-        }
-
-        summary img {
-            max-width: 5%
-        }
-
-        dialog article {
-            max-width: 768px;
+       .filter.active {
+            background-color: var(--bulma-background-active);
         }
 
         ::-webkit-scrollbar {
@@ -132,71 +38,147 @@
         ::-webkit-scrollbar-corner {
             background-color: #fff;
         }
-    </style>
-</head>
+        div#testDetails {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .sidebar {
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
+            /* Adjust as needed */
+            border-right: 1px solid #ddd;
+            padding-right: 10px;
+        }
+        aside li {
+            cursor: pointer;
+        }
+        details summary {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        details summary::after {
+            content: '';
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(136, 145, 164)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            transform:rotate(-90deg);
+            background-size: 1em;
+            background-repeat: no-repeat;
+            background-position:right-center;
+            width: 1em;
+            height: 1em;
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary::after {
+            transform: rotate(90deg);
+        }
+
+</style>
 
 <body>
-    <header class="container">
-        <div class="header">
-            {{!-- Custom Project Name --}}
-            <div>
-                {{#if projectName}}<h1>{{projectName}}</h1>{{/if}}
+
+    <!-- Header -->
+    <section class="section">
+        <header class="container">
+            <div class="columns is-vcentered">
+                <div class="column is-one-third">
+                    {{!-- Custom Project Name --}}
+                    {{#if projectName}}<h1 class="title">{{projectName}}</h1>{{/if}}
+                </div>
+                <div class="column">
+                    <div class="control">
+                        <input class="input" name="search" type="search" placeholder="Search by test title" />
+                    </div>
+                </div>
+                <div class="column is-1">
+                    <div class="control">
+                        <button id="toggle-theme"class="button">Theme</button>
+                    </div>
+                </div>
             </div>
-            <div>
-                <input name="search" type="search" placeholder="Search by test title" />
-            </div>
-        </div>
-    </header>
-    <main class="container">
-        {{!-- Test Scripts --}}
-        <aside class="sidebar">
-            <h2>Tests</h2>
-            <div>
-                {{#each groupedResults}}
-                <details>
-                    <summary>
-                        <img src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
-                        <span>{{@key}}<span>
-                    </summary>
-                    <ul>
-                        {{#each this}}
-                        <details>
-                            <summary>
-                                <img src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
-                                <span>{{@key}}<span>
+        </header>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <main class="container">
+            <div class="columns">
+                <aside class="column is-one-third sidebar">
+                    <h2 class="title is-4">Tests</h2>
+                    <div class="content">
+                        {{#each groupedResults}}
+                        <details class="box">
+                            <summary class="is-size-5 has-icon-right">
+                                <div class="icon-text">
+                                    <span class="icon has-text-info">
+                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                    </span>
+                                    <span>{{@key}}</span>
+                                </div>
                             </summary>
                             <ul>
                                 {{#each this}}
                                 <details>
-                                    <summary>{{@key}}</summary>
+                                    <summary class="is-size-5">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                            </span>
+                                            <span>{{@key}}</span>
+                                        </div>
+                                    </summary>
                                     <ul>
                                         {{#each this}}
-                                        <li data-suite-name="{{suite}}" data-project-name="{{projectName}}"
-                                            data-test-id="{{index}}" data-test-status="{{status}} {{retry}}">
-                                            {{#if isRetry}}
-                                            <img src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
-                                            {{/if}}
-                                            {{#if (eq status "passed")}}
-                                            <img src="node_modules/ortoni-report/dist/icon/pass.png" alt="Pass">
-                                            {{/if}}
-                                            {{#if (eq status "failed")}}
-                                            <img src="node_modules/ortoni-report/dist/icon/fail.png" alt="Fail">
-                                            {{else}}
-                                            {{#if (eq status "skipped")}}
-                                            <img src="node_modules/ortoni-report/dist/icon/skip.png" alt="Skip">
-                                            {{/if}}
-                                            {{/if}}
-                                            {{#if (eq status "timedOut")}}
-                                            <img src="node_modules/ortoni-report/dist/icon/timeout.png" alt="timedOut">
-                                            {{/if}}
-                                            {{#if (eq status "flaky")}}
-                                            <img src="node_modules/ortoni-report/dist/icon/flaky.png" alt="flaky">
-                                            {{/if}}
-                                            <span>{{title}}</span>
-                                            {{#if retryCount}}
-                                            <p>Retry Count: {{retryCount}}</p>
-                                            {{/if}}
-                                        </li>
+                                        <details>
+                                            <summary>{{@key}}</summary>
+                                            <ul>
+                                                {{#each this}}
+                                                <li class="media" data-suite-name="{{suite}}"
+                                                    data-project-name="{{projectName}}" data-test-id="{{index}}"
+                                                    data-test-status="{{status}} {{retry}}">
+                                                    <div class="icon-text">
+                                                        {{#if isRetry}}
+                                                        <span class="icon has-text-info">
+                                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
+                                                                alt="Retry"></span>
+                                                        {{/if}}
+                                                        {{#if (eq status "passed")}}
+                                                        <span class="icon has-text-info">
+                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
+                                                            alt="Pass"></span>
+                                                        {{/if}}
+                                                        {{#if (eq status "failed")}}
+                                                        <span class="icon has-text-info">
+                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
+                                                            alt="Fail"></span>
+                                                        {{else}}
+                                                        {{#if (eq status "skipped")}}
+                                                        <span class="icon has-text-info">
+                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
+                                                            alt="Skip"></span>
+                                                        {{/if}}
+                                                        {{/if}}
+                                                        {{#if (eq status "timedOut")}}
+                                                        <span class="icon has-text-info">
+                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
+                                                            alt="timedOut"></span>
+                                                        {{/if}}
+                                                        {{#if (eq status "flaky")}}
+                                                        <span class="icon has-text-info">
+                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
+                                                            alt="flaky"></span>
+                                                        {{/if}}
+                                                        <span>{{title}}</span>
+                                                        {{#if retryCount}}
+                                                        <p>Retry Count: {{retryCount}}</p>
+                                                        {{/if}}
+                                                    </div>
+                                                </li>
+                                                {{/each}}
+                                            </ul>
+                                        </details>
                                         {{/each}}
                                     </ul>
                                 </details>
@@ -204,81 +186,117 @@
                             </ul>
                         </details>
                         {{/each}}
-                    </ul>
-                </details>
-                {{/each}}
-            </div>
-        </aside>
-        <section>
-            {{!-- Overall summary --}}
-            <div id="summary">
-                <section class="grid">
-                    <div>
-                        <article class="clickable filter" data-status="all">
-                            <header>All Tests</header>
-                            <p>{{totalCount}}</p>
-                        </article>
                     </div>
-                    <div>
-                        <article class="clickable filter" data-status="passed">
-                            <header>Passed</header>
-                            <p class="text-success">{{passCount}}</p>
-                        </article>
-                    </div>
-                    <div>
-                        <article class="clickable filter" data-status="failed">
-                            <header>Failed</header>
-                            <p class="text-failure">{{failCount}}</p>
-                        </article>
-                    </div>
-                </section>
-                <section class="grid">
-                    <div>
-                        <article class="clickable filter" data-status="skipped">
-                            <header>Skipped</header>
-                            <p class="text-skip">{{skipCount}}</p>
-                        </article>
-                    </div>
-                    <div>
-                        <article class="clickable filter" data-status="flaky">
-                            <header>Flaky</header>
-                            <p class="text-flaky">{{flakyCount}}</p>
-                        </article>
-                    </div>
-                    <div>
-                        <article class="clickable filter" data-status="retry">
-                            <header>Retry</header>
-                            <p class="text-skip">{{retryCount}}</p>
-                        </article>
-                    </div>
-                </section>
-                {{!-- Suite details with chart --}}
-                <section>
-                    <article>
-                        <header>Suite</header>
-                        <div class="grid">
-                            <div>
-                                {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
-                                {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
-                                {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
-                                <h4>Success Rate: {{successRate}} %</h4>
-                                <h4>Last Run: {{lastRunDate}}</h4>
+                </aside>
+
+                <section class="column">
+                    {{!-- Overall summary --}}
+                    <div id="summary">
+                        <div class="columns is-multiline">
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="all">
+                                    <header class="card-header has-text-centered">
+                                        <p class="card-header-title">All Tests</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-primary">{{totalCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="chart-container">
-                                <canvas id="testChart"></canvas>
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="passed">
+                                    <header class="card-header has-text-centered">
+                                        <p class="card-header-title">Passed</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-success">{{passCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="failed">
+                                    <header class="card-header">
+                                        <p class="card-header-title has-text-centered">Failed</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-danger">{{failCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </article>
+                        <div class="columns is-multiline">
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="skipped">
+                                    <header class="card-header has-text-centered">
+                                        <p class="card-header-title">Skipped</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-info">{{skipCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="flaky">
+                                    <header class="card-header has-text-centered">
+                                        <p class="card-header-title">Flaky</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-warning">{{flakyCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-one-third">
+                                <div class="card is-clickable filter" data-status="retry">
+                                    <header class="card-header has-text-centered">
+                                        <p class="card-header-title">Retry</p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+                                            <p class="has-text-centered has-text-info">{{retryCount}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{!-- Suite details with chart --}}
+                        <div class="box">
+                            <header class="has-text-centered title is-4">Suite</header>
+                            <div class="columns">
+                                <div class="column is-half">
+                                    {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
+                                    {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
+                                    {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
+                                    <h4>Success Rate: {{successRate}} %</h4>
+                                    <h4>Last Run: {{lastRunDate}}</h4>
+                                </div>
+                                <div class="column is-half">
+                                    <div class="chart-container">
+                                        <canvas id="testChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{!-- Test details --}}
+                    <div id="testDetails" style="display: none;">
+                        <!-- Back button should be outside the dynamic content -->
+                        <button class="button content" id="back-to-summary"onclick="showSummary()">Back to Summary</button>
+                        <!-- Test Details will be displayed here -->
+                    </div>
                 </section>
             </div>
-            {{!-- Test details --}}
-            <div id="testDetails" style="display: none;">
-                <!-- Back button should be outside the dynamic content -->
-                <button class="back-button" onclick="showSummary()">Back to Summary</button>
-                <!-- Test Details will be displayed here -->
-            </div>
-        </section>
-    </main>
+        </main>
+    </section>
     <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
     <script>
         function escapeHtml(unsafe) {
@@ -296,221 +314,242 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
-        const testDetails = document.getElementById('testDetails');
-        const summary = document.getElementById('summary');
-        const backButton = document.querySelector('.back-button');
-        let highlightedItem = null;
+            const testDetails = document.getElementById('testDetails');
+            const summary = document.getElementById('summary');
+            const backButton = document.querySelector('button#back-to-summary');
+            let highlightedItem = null;
 
-        function showSummary() {
-            summary.style.display = 'block';
-            testDetails.style.display = 'none';
-            backButton.style.display = 'none';
-            if (highlightedItem) {
-                highlightedItem.classList.remove('highlight');
-            }
-        }
-
-        window.showSummary = showSummary;
-
-        function displayTestDetails(test) {
-            summary.style.display = 'none';
-            testDetails.style.display = 'block';
-            backButton.style.display = 'block';
-            let statusClass = '';
-            let statusText = test.status.toUpperCase();
-            if (test.status.startsWith('passed')) {
-                statusClass = 'text-success';
-            } else if (test.status === 'flaky') {
-                statusClass = 'text-flaky';
-            } else {
-                statusClass = 'text-failure';
-            } 
-            testDetails.innerHTML = `
-                    <button class="back-button" style="display: block" onclick="showSummary()">Back to Summary</button>
-                    <h3>${test.title}</h3>
-                    <div class="grid">
-                        <div>
-                            <h4>Status</h4>
-                            <p class="${statusClass}">${statusText}</p>
-                            ${test.duration != '0s' ? `
-                            <h4>Duration</h4>
-                            <p>${test.duration}</p>` : ""}
-                        </div>
-                        <div>
-                            ${test.screenshotPath ? `
-                            <img src="${test.screenshotPath}" data-target="modal-example" onclick="toggleModal(event)" alt="Screenshot">
-                            <dialog id="modal-example">
-                                <article>
-                                    <header>
-                                    <button aria-label="Close" rel="prev" data-target="modal-example" onclick="toggleModal(event)"></button>
-                                    <p>
-                                        <strong>Screenshot</strong>
-                                    </p>
-                                    </header><p>
-                                    <img src="${test.screenshotPath}" alt="Screenshot"></p>
-                                </article>
-                                </dialog>` : ''}
-                        </div>
-                    </div>
-                    <div class="grid">
-                        <details>
-                            <summary><h4>Steps</h4></summary>
-                            <span id="stepDetails"></span>
-                        </details>
-                    </div>
-                    <div>
-                    ${test.errors.length ? `
-                            <h4>Errors</h4>
-                            <div class="grid">
-                            <pre>${escapeHtml(test.errors.join('\n'))}</pre></div>
-                            ` : ''}
-                    </div>
-                    <div>
-                    ${test.logs ? `
-                            <h4>Logs</h4>
-                            <div class="grid">
-                            <pre>${escapeHtml(test.logs)}</pre></div>
-                            ` : ''}
-                    </div>
-                `;
-            const stepDetailsDiv = document.getElementById('stepDetails');
-            const stepsList = attachSteps(test);
-            stepDetailsDiv.appendChild(stepsList);
-        }
-
-        function attachSteps(test) {
-            const stepsList = document.createElement("ul");
-            stepsList.setAttribute("id", "steps");
-            stepsList.innerHTML = '';
-            test.steps.forEach(step => {
-                const li = document.createElement('li');
-                li.innerHTML = `<strong class=${step.error ? 'text-failure' : 'test-success'}> ${step.title}</strong>`;
-                stepsList.appendChild(li);
-            });
-            return stepsList;
-        }
-
-        function attachEventListeners() {
-            const testItems = document.querySelectorAll('[data-test-id]');
-            testItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const testId = item.getAttribute('data-test-id');
-                    const test = testData[testId];
-                    displayTestDetails(test);
-                    if (highlightedItem) {
-                        highlightedItem.classList.remove('highlight');
-                    }
-                    item.classList.add('highlight');
-                    highlightedItem = item;
-                });
-            });
-
-            // Event listeners for the filter articles
-            const filters = document.querySelectorAll('.filter');
-            filters.forEach(filter => {
-                filter.addEventListener('click', () => {
-                    const status = filter.getAttribute('data-status');
-                    filters.forEach(f => {
-                        if (f.getAttribute('data-status') !== 'all') {
-                            f.classList.remove('active');
-                        }
-                    });
-                    if (status !== 'all') {
-                        filter.classList.add('active');
-                    }
-                    applyFilter(status);
-                });
-            });
-        }
-
-        function applyFilter(status) {
-            const testItems = document.querySelectorAll('li[data-test-id]');
-            const detailsElements = document.querySelectorAll('details');
-
-            detailsElements.forEach(details => {
-                let shouldShowDetails = false;
-                const items = details.querySelectorAll('li[data-test-id]');
-                items.forEach(item => {
-                    const testStatus = item.getAttribute('data-test-status');
-                    if (status === 'all' || testStatus.trim() === status ||
-                        (status === 'failed' && (testStatus.trim() === 'failed' || testStatus.trim() === 'timedOut'))) {
-                        item.style.display = 'block'; // Show the item
-                        shouldShowDetails = true; // Set shouldShowDetails to true
-                    } else if ((status === 'retry' && testStatus.includes('retry'))) {
-                        item.style.display = 'block'; // Show the item
-                        shouldShowDetails = true; // Set shouldShowDetails to true
-                    }else if ((status === 'flaky' && testStatus.includes('flaky'))) {
-                        item.style.display = 'block'; // Show the item
-                        shouldShowDetails = true; // Set shouldShowDetails to true
-                    } else {
-                        item.style.display = 'none'; // Hide the item
-                    }
-                });
-                details.open = shouldShowDetails; // Open the details element if it has any matching items
-                details.style.display = shouldShowDetails ? 'block' : 'none'; // Show/hide the details element
-            });
-        }
-
-
-        const searchInput = document.querySelector('input[name="search"]');
-        const detailsElements = document.querySelectorAll('details');
-
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const testItems = document.querySelectorAll('[data-test-id]');
-
-            if (searchTerm) {
-                detailsElements.forEach(detail => {
-                    detail.open = false; // Collapse all details initially
-                });
-
-                testItems.forEach(item => {
-                    const testTitle = item.textContent.toLowerCase();
-                    if (testTitle.includes(searchTerm)) {
-                        item.style.display = 'block'; // Show matching test item
-
-                        let parent = item.parentElement;
-                        while (parent && parent.tagName !== 'ASIDE') {
-                            if (parent.tagName === 'DETAILS') {
-                                parent.open = true;
-                            }
-                            parent = parent.parentElement;
-                        }
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            } else {
-                testItems.forEach(item => {
-                    item.style.display = 'block';
-                });
-                detailsElements.forEach(detail => {
-                    detail.open = false;
-                });
-            }
-        });
-
-        const ctx = document.getElementById('testChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Passed', 'Failed', 'Skipped','Flaky'],
-                datasets: [{
-                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
-            backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#b5e35e']
-                    }]
-                },
-            options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
+            function showSummary() {
+                summary.style.display = 'block';
+                testDetails.style.display = 'none';
+                backButton.style.display = 'none';
+                if (highlightedItem) {
+                    highlightedItem.classList.remove('highlight');
                 }
             }
-        }
+
+            window.showSummary = showSummary;
+
+            function displayTestDetails(test) {
+                const summary = document.getElementById('summary');
+                const testDetails = document.getElementById('testDetails');
+                const backButton = document.querySelector('button#back-to-summary');
+                summary.style.display = 'none';
+                testDetails.style.display = 'block';
+                backButton.style.display = 'block';
+
+                let statusClass = '';
+                let statusText = test.status.toUpperCase();
+                if (test.status.startsWith('passed')) {
+                    statusClass = 'tag is-success';
+                } else if (test.status === 'flaky') {
+                    statusClass = 'tag is-warning';
+                } else if (test.status === 'failed') {
+                    statusClass = 'tag is-danger';
+                } else {
+                    statusClass = 'tag is-info';
+                }
+
+                testDetails.innerHTML = `
+                    <button class="button content" id="back-to-summary" style="display: block" onclick="showSummary()">Back to Summary</button>
+                    <h3 class="title is-3 has-text-centered">${test.title}</h3>
+                    <div class="columns">
+                        <div class="column content">
+                            <h4 class="title is-4">Status</h4>
+                            <p class="${statusClass}">${statusText}</p>
+                            ${test.duration.length > 0 ? `
+                            <h4 class="title is-4">Duration</h4>
+                            <p>${test.duration}</p>` : ""}
+                        </div>
+                        <div class="column content">
+                            ${test.screenshotPath ? `
+                            <div id="modal-js-example" class="modal">
+                                <div class="modal-background"></div>
+                                    <div class="modal-content">
+                                        <p class="image is-16by9">
+                                        <img src="${test.screenshotPath}" alt="screenshot">
+                                        </p>
+                                    </div>
+                                <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
+                            </div>
+                             <figure  class="image is-16by9">
+                                <img onclick="openModal()" src="${test.screenshotPath}" alt="Screenshot">
+                            </figure>` : ''}
+                        </div>
+                    </div>
+                    <div class="content">
+                        ${test.steps.length > 0 ? `
+                        <details>
+                            <summary><h4 class="title is-4">Steps</h4></summary>
+                            <span id="stepDetails" class="content"></span>
+                        </details>
+                        `: ``}
+                    </div class="content">
+                    <div>
+                        ${test.errors.length ? `
+                        <h4 class="title is-4">Errors</h4>
+                        <div class="content">
+                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                        </div>` : ''}
+                    </div>
+                    <div>
+                        ${test.logs ? `
+                        <h4 class="title is-4">Logs</h4>
+                        <div class="box">
+                            <pre>${escapeHtml(test.logs)}</pre>
+                        </div>` : ''}
+                    </div>
+                `;
+
+                const stepDetailsDiv = document.getElementById('stepDetails');
+                if(stepDetailsDiv){
+                    const stepsList = attachSteps(test);
+                    stepDetailsDiv.appendChild(stepsList);
+                }
+            }
+
+            function attachSteps(test) {
+                const stepsList = document.createElement("ul");
+                stepsList.setAttribute("id", "steps");
+                stepsList.innerHTML = '';
+                test.steps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<strong class="${step.error ? 'has-text-danger' : ''}">${step.title}</strong>`;
+                    stepsList.appendChild(li);
+                });
+                return stepsList;
+            }
+
+            function attachEventListeners() {
+                const testItems = document.querySelectorAll('[data-test-id]');
+                testItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const testId = item.getAttribute('data-test-id');
+                        const test = testData[testId];
+                        displayTestDetails(test);
+                        if (highlightedItem) {
+                            highlightedItem.classList.remove('highlight');
+                        }
+                        item.classList.add('highlight');
+                        highlightedItem = item;
+                    });
+                });
+
+                // Event listeners for the filter articles
+                const filters = document.querySelectorAll('.filter');
+                filters.forEach(filter => {
+                    filter.addEventListener('click', () => {
+                        const status = filter.getAttribute('data-status');
+                        filters.forEach(f => {
+                            if (f.getAttribute('data-status')) {
+                                f.classList.remove('active');
+                            }
+                        });
+                        filter.classList.add('active');
+                        applyFilter(status);
+                    });
+                });
+            }
+
+            function applyFilter(status) {
+                const testItems = document.querySelectorAll('li[data-test-id]');
+                const detailsElements = document.querySelectorAll('details');
+
+                detailsElements.forEach(details => {
+                    let shouldShowDetails = false;
+                    const items = details.querySelectorAll('li[data-test-id]');
+                    items.forEach(item => {
+                        const testStatus = item.getAttribute('data-test-status').trim();
+                        if (status === 'all' || testStatus === status ||
+                            (status === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
+                            (status === 'retry' && testStatus.includes('retry')) ||
+                            (status === 'flaky' && testStatus.includes('flaky'))) {
+                            item.classList.remove('is-hidden'); // Show the item
+                            shouldShowDetails = true; // Set shouldShowDetails to true
+                        } else {
+                            item.classList.add('is-hidden'); // Hide the item
+                        }
+                    });
+                    details.open = shouldShowDetails; // Open the details element if it has any matching items
+                    details.classList.toggle('is-hidden', !shouldShowDetails); // Show/hide the details element
+                });
+            }
+
+            const searchInput = document.querySelector('input[name="search"]');
+            const detailsElements = document.querySelectorAll('details');
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const testItems = document.querySelectorAll('[data-test-id]');
+
+                if (searchTerm) {
+                    detailsElements.forEach(detail => {
+                        detail.open = false; // Collapse all details initially
+                    });
+
+                    testItems.forEach(item => {
+                        const testTitle = item.textContent.toLowerCase();
+                        if (testTitle.includes(searchTerm)) {
+                            item.style.display = 'block'; // Show matching test item
+
+                            let parent = item.parentElement;
+                            while (parent && parent.tagName !== 'ASIDE') {
+                                if (parent.tagName === 'DETAILS') {
+                                    parent.open = true;
+                                }
+                                parent = parent.parentElement;
+                            }
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                } else {
+                    testItems.forEach(item => {
+                        item.style.display = 'block';
+                    });
+                    detailsElements.forEach(detail => {
+                        detail.open = false;
+                    });
+                }
             });
-        attachEventListeners();
+            
+            const themeButton = document.getElementById("toggle-theme");
+            themeButton.addEventListener('click', () => {
+                const htmlElement = document.documentElement;
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', newTheme);
+                if (newTheme === 'dark') {
+                    themeButton.classList.remove('is-light');
+                    themeButton.classList.add('is-dark');
+                    themeButton.textContent = 'Dark';
+                } else {
+                    themeButton.classList.remove('is-dark');
+                    themeButton.classList.add('is-light');
+                    themeButton.textContent = 'Light';
+                }
+            });
+            const ctx = document.getElementById('testChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Passed', 'Failed', 'Skipped','Flaky'],
+                    datasets: [{
+                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
+                        backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#b5e35e']
+                        }]
+                    },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            attachEventListeners();
         });
     </script>
     <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
