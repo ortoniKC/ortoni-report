@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
 </head>
 <style>
-
        .filter.active {
             background-color: var(--bulma-background-active);
         }
@@ -47,9 +46,8 @@
         .sidebar {
             overflow-y: auto;
             max-height: calc(100vh - 100px);
-            border-right: 1px solid #ddd;
-            padding-right: 10px;
         }
+
         aside li {
             cursor: pointer;
         }
@@ -104,12 +102,12 @@
         <main class="container">
             <div class="columns">
                 <aside class="column is-one-third sidebar">
-                 <div class="columns">
+                    <div class="columns">
                         <div class="column">
                             <h2 class="title is-4">Tests</h2>
                         </div>
                         <div class="column">
-                            <div class="select">
+                            <div class="select is-pulled-right">
                                 <select id="project-filter">
                                     <option value="all">All Projects</option>
                                     {{#each projects}}
@@ -118,6 +116,7 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
                     <div class="content">
                         {{#each groupedResults}}
                         <details class="box">
@@ -328,7 +327,6 @@
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
-            let highlightedItem = null;
 
             const themeButton = document.getElementById("toggle-theme");
             const preferredTheme = themeButton.getAttribute("data-theme-status");
@@ -363,9 +361,6 @@
                 summary.style.display = 'block';
                 testDetails.style.display = 'none';
                 backButton.style.display = 'none';
-                if (highlightedItem) {
-                    highlightedItem.classList.remove('highlight');
-                }
             }
 
             window.showSummary = showSummary;
@@ -467,11 +462,6 @@
                         const testId = item.getAttribute('data-test-id');
                         const test = testData[testId];
                         displayTestDetails(test);
-                        // if (highlightedItem) {
-                        //     highlightedItem.classList.remove('highlight');
-                        // }
-                        // item.classList.add('highlight');
-                        // highlightedItem = item;
                     });
                 });
 
