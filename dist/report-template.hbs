@@ -386,7 +386,7 @@
                             <p class="${statusClass}">${statusText}</p>
                             ${test.duration.length > 0 ? `
                             <h4 class="title is-4">Duration</h4>
-                            <p>${test.duration}</p>` : ""}
+                            <p class="${statusClass}">${test.duration}</p>` : ""}
                         </div>
                         <div class="column content">
                             ${test.screenshotPath ? `
@@ -394,13 +394,13 @@
                                 <div class="modal-background"></div>
                                     <div class="modal-content">
                                         <p class="image is-16by9">
-                                        <img src="${test.screenshotPath}" alt="screenshot">
+                                        <img src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
                                         </p>
                                     </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
                              <figure  class="image is-16by9">
-                                <img onclick="openModal()" src="${test.screenshotPath}" alt="Screenshot">
+                             <img onclick="openModal()" src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
                             </figure>` : ''}
                         </div>
                     </div>

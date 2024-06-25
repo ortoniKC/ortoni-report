@@ -18,11 +18,6 @@ class OrtoniReport implements Reporter {
     }
     onBegin(config: FullConfig, suite: Suite) {
         this.results = [];
-        const screenshotsDir = path.resolve(process.cwd(), 'screenshots');
-        if (fs.existsSync(screenshotsDir)) {
-            fs.rmSync(screenshotsDir, { recursive: true, force: true });
-        }
-        fs.mkdirSync(screenshotsDir, { recursive: true });
     }
 
     onTestBegin(test: TestCase, result: TestResult) { }
@@ -59,17 +54,10 @@ class OrtoniReport implements Reporter {
             filePath: normalizeFilePath(test.titlePath()[2]),
         };
         if (result.attachments) {
-            const screenshotsDir = path.resolve(process.cwd(), 'screenshots', test.id);
-            if (!fs.existsSync(screenshotsDir)) {
-                fs.mkdirSync(screenshotsDir, { recursive: true });
-            }
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
                 const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
-                const screenshotBase64 = screenshotContent.toString();
-                // const screenshotFileName = path.join('screenshots', test.id, path.basename(screenshot.path));
-                // fs.writeFileSync(path.resolve(process.cwd(), screenshotFileName), screenshotContent, 'base64');
-                testResult.screenshotPath = screenshotBase64;
+                testResult.screenshotPath = screenshotContent;
             }
         }
 
