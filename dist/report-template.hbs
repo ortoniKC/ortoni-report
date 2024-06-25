@@ -104,7 +104,20 @@
         <main class="container">
             <div class="columns">
                 <aside class="column is-one-third sidebar">
-                    <h2 class="title is-4">Tests</h2>
+                 <div class="columns">
+                        <div class="column">
+                            <h2 class="title is-4">Tests</h2>
+                        </div>
+                        <div class="column">
+                            <div class="select">
+                                <select id="project-filter">
+                                    <option value="all">All Projects</option>
+                                    {{#each projects}}
+                                        <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
                     <div class="content">
                         {{#each groupedResults}}
                         <details class="box">
@@ -454,11 +467,11 @@
                         const testId = item.getAttribute('data-test-id');
                         const test = testData[testId];
                         displayTestDetails(test);
-                        if (highlightedItem) {
-                            highlightedItem.classList.remove('highlight');
-                        }
-                        item.classList.add('highlight');
-                        highlightedItem = item;
+                        // if (highlightedItem) {
+                        //     highlightedItem.classList.remove('highlight');
+                        // }
+                        // item.classList.add('highlight');
+                        // highlightedItem = item;
                     });
                 });
 
@@ -538,6 +551,32 @@
                     });
                 }
             });
+            
+            const projectFilter = document.getElementById('project-filter');
+            projectFilter.addEventListener('change', () => {
+                const selectedProject = projectFilter.value;
+                applyProjectFilter(selectedProject);
+            });
+            function applyProjectFilter(selectedProject) {
+                const testItems = document.querySelectorAll('li[data-test-id]');
+                const detailsElements = document.querySelectorAll('details');
+                detailsElements.forEach(details => {
+                    let shouldShowDetails = false;
+                    const items = details.querySelectorAll('li[data-test-id]');
+                    items.forEach(item => {
+                        const projectName = item.getAttribute('data-project-name').trim();
+                        if (selectedProject === 'all' || projectName === selectedProject) {
+                            item.classList.remove('is-hidden'); // Show the item
+                            shouldShowDetails = true; // Set shouldShowDetails to true
+                        } else {
+                            item.classList.add('is-hidden'); // Hide the item
+                        }
+                    });
+                    details.open = shouldShowDetails; // Open the details element if it has any matching items
+                    details.classList.toggle('is-hidden', !shouldShowDetails); // Show/hide the details element
+                });
+            }
+
             
             const ctx = document.getElementById('testChart').getContext('2d');
             new Chart(ctx, {

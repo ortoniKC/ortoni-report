@@ -22,12 +22,13 @@ class OrtoniReport implements Reporter {
 
     onTestBegin(test: TestCase, result: TestResult) { }
 
+    private projectSet = new Set<string>();
     onTestEnd(test: TestCase, result: TestResult) {
         let status: any = result.status;
         if (test.outcome() === 'flaky') {
             status = 'flaky';
         }
-        
+        this.projectSet.add(test.titlePath()[1]);
         const testResult: TestResultData = {
             retry: result.retry > 0 ? "retry": "",
             isRetry: result.retry,
@@ -52,6 +53,7 @@ class OrtoniReport implements Reporter {
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             screenshotPath: null,
             filePath: normalizeFilePath(test.titlePath()[2]),
+            projects: this.projectSet,
         };
         if (result.attachments) {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
@@ -113,6 +115,7 @@ class OrtoniReport implements Reporter {
     }
 
     generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+        
         const totalTests = filteredResults.length;
         const passedTests = this.results.filter(r => r.status === 'passed').length;
         const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
@@ -136,7 +139,8 @@ class OrtoniReport implements Reporter {
             testType: this.config.testType,
             preferredTheme: this.config.preferredTheme,
             successRate: successRate,
-            lastRunDate: formatDate(new Date())
+            lastRunDate: formatDate(new Date()),
+            projects: this.projectSet,
         };
         return template(data);
     }
