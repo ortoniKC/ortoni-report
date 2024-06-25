@@ -3,7 +3,7 @@ import path from 'path';
 import Handlebars from "handlebars";
 import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
-import { ReporterConfig } from './types/reporterConfig';
+import  {OrtoniReportConfig}  from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
 import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
 
@@ -11,9 +11,9 @@ class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
     private groupedResults: any;
     private suiteName: string | undefined | TestCase[];
-    private config: ReporterConfig;
+    private config: OrtoniReportConfig;
 
-    constructor(config: ReporterConfig = {}) {
+    constructor(config: OrtoniReportConfig = {}) {
         this.config = config;
     }
     onBegin(config: FullConfig, suite: Suite) {
@@ -66,9 +66,10 @@ class OrtoniReport implements Reporter {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
                 const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
-                const screenshotFileName = path.join('screenshots', test.id, path.basename(screenshot.path));
-                fs.writeFileSync(path.resolve(process.cwd(), screenshotFileName), screenshotContent, 'base64');
-                testResult.screenshotPath = screenshotFileName;
+                const screenshotBase64 = screenshotContent.toString();
+                // const screenshotFileName = path.join('screenshots', test.id, path.basename(screenshot.path));
+                // fs.writeFileSync(path.resolve(process.cwd(), screenshotFileName), screenshotContent, 'base64');
+                testResult.screenshotPath = screenshotBase64;
             }
         }
 
@@ -145,6 +146,7 @@ class OrtoniReport implements Reporter {
             projectName: this.config.projectName,
             authorName: this.config.authorName,
             testType: this.config.testType,
+            preferredTheme: this.config.preferredTheme,
             successRate: successRate,
             lastRunDate: formatDate(new Date())
         };
@@ -157,10 +159,8 @@ function safeStringify(obj: any, indent = 2) {
     const json = JSON.stringify(obj, (key, value) => {
         if (typeof value === 'object' && value !== null) {
             if (cache.has(value)) {
-                // Circular reference found, discard key
                 return;
             }
-            // Store value in our set
             cache.add(value);
         }
         return value;
@@ -169,4 +169,5 @@ function safeStringify(obj: any, indent = 2) {
     return json;
 }
 
-export default OrtoniReport;
+export { OrtoniReport as default };
+export {OrtoniReportConfig}

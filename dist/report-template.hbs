@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="auto">
+<html lang="en" data-theme="{{preferredTheme}}">
 
 <head>
     <meta charset="UTF-8">
@@ -47,7 +47,6 @@
         .sidebar {
             overflow-y: auto;
             max-height: calc(100vh - 100px);
-            /* Adjust as needed */
             border-right: 1px solid #ddd;
             padding-right: 10px;
         }
@@ -72,13 +71,12 @@
             transition: transform 0.2s ease-in-out;
         }
         details[open] > summary::after {
-            transform: rotate(90deg);
+            transform: rotate(0deg);
         }
 
 </style>
 
 <body>
-
     <!-- Header -->
     <section class="section">
         <header class="container">
@@ -94,7 +92,7 @@
                 </div>
                 <div class="column is-1">
                     <div class="control">
-                        <button id="toggle-theme"class="button">Theme</button>
+                        <button id="toggle-theme" data-theme-status="{{preferredTheme}}" class="button">Theme</button>
                     </div>
                 </div>
             </div>
@@ -319,6 +317,35 @@
             const backButton = document.querySelector('button#back-to-summary');
             let highlightedItem = null;
 
+            const themeButton = document.getElementById("toggle-theme");
+            const preferredTheme = themeButton.getAttribute("data-theme-status");
+            const htmlElement = document.documentElement;
+
+            if (preferredTheme === 'dark') {
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeButton.classList.add('is-dark');
+                themeButton.textContent = 'Dark';
+            } else if (preferredTheme === 'light') {
+                htmlElement.setAttribute('data-theme', 'light');
+                themeButton.classList.add('is-light');
+                themeButton.textContent = 'Light';
+            }
+
+            themeButton.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', newTheme);
+                if (newTheme === 'dark') {
+                    themeButton.classList.remove('is-light');
+                    themeButton.classList.add('is-dark');
+                    themeButton.textContent = 'Dark';
+                } else {
+                    themeButton.classList.remove('is-dark');
+                    themeButton.classList.add('is-light');
+                    themeButton.textContent = 'Light';
+                }
+            });
+
             function showSummary() {
                 summary.style.display = 'block';
                 testDetails.style.display = 'none';
@@ -477,7 +504,6 @@
 
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
-
             searchInput.addEventListener('input', () => {
                 const searchTerm = searchInput.value.toLowerCase();
                 const testItems = document.querySelectorAll('[data-test-id]');
@@ -513,22 +539,6 @@
                 }
             });
             
-            const themeButton = document.getElementById("toggle-theme");
-            themeButton.addEventListener('click', () => {
-                const htmlElement = document.documentElement;
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                htmlElement.setAttribute('data-theme', newTheme);
-                if (newTheme === 'dark') {
-                    themeButton.classList.remove('is-light');
-                    themeButton.classList.add('is-dark');
-                    themeButton.textContent = 'Dark';
-                } else {
-                    themeButton.classList.remove('is-dark');
-                    themeButton.classList.add('is-light');
-                    themeButton.textContent = 'Light';
-                }
-            });
             const ctx = document.getElementById('testChart').getContext('2d');
             new Chart(ctx, {
                 type: 'doughnut',
