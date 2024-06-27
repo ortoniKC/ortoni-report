@@ -322,276 +322,265 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const testData = {{{ json results }}};
-            const testDetails = document.getElementById('testDetails');
-            const summary = document.getElementById('summary');
-            const backButton = document.querySelector('button#back-to-summary');
+    document.addEventListener('DOMContentLoaded', () => {
+        const testData = {{{ json results }}};
+        const testDetails = document.getElementById('testDetails');
+        const summary = document.getElementById('summary');
+        const backButton = document.querySelector('button#back-to-summary');
 
-            const themeButton = document.getElementById("toggle-theme");
-            const preferredTheme = themeButton.getAttribute("data-theme-status");
-            const htmlElement = document.documentElement;
+        const themeButton = document.getElementById("toggle-theme");
+        const preferredTheme = themeButton.getAttribute("data-theme-status");
+        const htmlElement = document.documentElement;
 
-            if (preferredTheme === 'dark') {
-                htmlElement.setAttribute('data-theme', 'dark');
+        if (preferredTheme === 'dark') {
+            htmlElement.setAttribute('data-theme', 'dark');
+            themeButton.classList.add('is-dark');
+            themeButton.textContent = 'Dark';
+        } else if (preferredTheme === 'light') {
+            htmlElement.setAttribute('data-theme', 'light');
+            themeButton.classList.add('is-light');
+            themeButton.textContent = 'Light';
+        }
+
+        themeButton.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            htmlElement.setAttribute('data-theme', newTheme);
+            if (newTheme === 'dark') {
+                themeButton.classList.remove('is-light');
                 themeButton.classList.add('is-dark');
                 themeButton.textContent = 'Dark';
-            } else if (preferredTheme === 'light') {
-                htmlElement.setAttribute('data-theme', 'light');
+            } else {
+                themeButton.classList.remove('is-dark');
                 themeButton.classList.add('is-light');
                 themeButton.textContent = 'Light';
             }
+        });
 
-            themeButton.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                htmlElement.setAttribute('data-theme', newTheme);
-                if (newTheme === 'dark') {
-                    themeButton.classList.remove('is-light');
-                    themeButton.classList.add('is-dark');
-                    themeButton.textContent = 'Dark';
-                } else {
-                    themeButton.classList.remove('is-dark');
-                    themeButton.classList.add('is-light');
-                    themeButton.textContent = 'Light';
-                }
-            });
+        function showSummary() {
+            summary.style.display = 'block';
+            testDetails.style.display = 'none';
+            backButton.style.display = 'none';
+        }
 
-            function showSummary() {
-                summary.style.display = 'block';
-                testDetails.style.display = 'none';
-                backButton.style.display = 'none';
+        window.showSummary = showSummary;
+
+        function displayTestDetails(test) {
+            const summary = document.getElementById('summary');
+            const testDetails = document.getElementById('testDetails');
+            const backButton = document.querySelector('button#back-to-summary');
+            summary.style.display = 'none';
+            testDetails.style.display = 'block';
+            backButton.style.display = 'block';
+
+            let statusClass = '';
+            let statusText = test.status.toUpperCase();
+            if (test.status.startsWith('passed')) {
+                statusClass = 'tag is-success';
+            } else if (test.status === 'flaky') {
+                statusClass = 'tag is-warning';
+            } else if (test.status === 'failed') {
+                statusClass = 'tag is-danger';
+            } else {
+                statusClass = 'tag is-info';
             }
 
-            window.showSummary = showSummary;
-
-            function displayTestDetails(test) {
-                const summary = document.getElementById('summary');
-                const testDetails = document.getElementById('testDetails');
-                const backButton = document.querySelector('button#back-to-summary');
-                summary.style.display = 'none';
-                testDetails.style.display = 'block';
-                backButton.style.display = 'block';
-
-                let statusClass = '';
-                let statusText = test.status.toUpperCase();
-                if (test.status.startsWith('passed')) {
-                    statusClass = 'tag is-success';
-                } else if (test.status === 'flaky') {
-                    statusClass = 'tag is-warning';
-                } else if (test.status === 'failed') {
-                    statusClass = 'tag is-danger';
-                } else {
-                    statusClass = 'tag is-info';
-                }
-
-                testDetails.innerHTML = `
-                    <button class="button content" id="back-to-summary" style="display: block" onclick="showSummary()">Back to Summary</button>
-                    <h3 class="title is-3 has-text-centered">${test.title}</h3>
-                    <div class="columns">
-                        <div class="column content">
-                            <h4 class="title is-4">Status</h4>
-                            <p class="${statusClass}">${statusText}</p>
-                            ${test.duration.length > 0 ? `
-                            <h4 class="title is-4">Duration</h4>
-                            <p class="${statusClass}">${test.duration}</p>` : ""}
-                        </div>
-                        <div class="column content">
-                            ${test.screenshotPath ? `
-                            <div id="modal-js-example" class="modal">
-                                <div class="modal-background"></div>
-                                    <div class="modal-content">
-                                        <p class="image is-16by9">
-                                        <img src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
-                                        </p>
-                                    </div>
-                                <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
-                            </div>
-                             <figure  class="image is-16by9">
-                             <img onclick="openModal()" src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
-                            </figure>` : ''}
-                        </div>
+            testDetails.innerHTML = `
+                <button class="button content" id="back-to-summary" style="display: block" onclick="showSummary()">Back to Summary</button>
+                <h3 class="title is-3 has-text-centered">${test.title}</h3>
+                <div class="columns">
+                    <div class="column content">
+                        <h4 class="title is-4">Status</h4>
+                        <p class="${statusClass}">${statusText}</p>
+                        ${test.duration.length > 0 ? `
+                        <h4 class="title is-4">Duration</h4>
+                        <p class="${statusClass}">${test.duration}</p>` : ""}
                     </div>
+                    <div class="column content">
+                        ${test.screenshotPath ? `
+                        <div id="modal-js-example" class="modal">
+                            <div class="modal-background"></div>
+                                <div class="modal-content">
+                                    <p class="image is-16by9">
+                                    <img src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
+                                    </p>
+                                </div>
+                            <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
+                        </div>
+                        <figure  class="image is-16by9">
+                        <img onclick="openModal()" src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
+                        </figure>` : ''}
+                    </div>
+                </div>
+                <div class="content">
+                    ${test.steps.length > 0 ? `
+                    <details>
+                        <summary><h4 class="title is-4">Steps</h4></summary>
+                        <span id="stepDetails" class="content"></span>
+                    </details>
+                    `: ``}
+                </div class="content">
+                <div>
+                    ${test.errors.length ? `
+                    <h4 class="title is-4">Errors</h4>
                     <div class="content">
-                        ${test.steps.length > 0 ? `
-                        <details>
-                            <summary><h4 class="title is-4">Steps</h4></summary>
-                            <span id="stepDetails" class="content"></span>
-                        </details>
-                        `: ``}
-                    </div class="content">
-                    <div>
-                        ${test.errors.length ? `
-                        <h4 class="title is-4">Errors</h4>
-                        <div class="content">
-                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
-                        </div>` : ''}
-                    </div>
-                    <div>
-                        ${test.logs ? `
-                        <h4 class="title is-4">Logs</h4>
-                        <div class="box">
-                            <pre>${escapeHtml(test.logs)}</pre>
-                        </div>` : ''}
-                    </div>
-                `;
+                        <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                    </div>` : ''}
+                </div>
+                <div>
+                    ${test.logs ? `
+                    <h4 class="title is-4">Logs</h4>
+                    <div class="box">
+                        <pre>${escapeHtml(test.logs)}</pre>
+                    </div>` : ''}
+                </div>
+            `;
 
-                const stepDetailsDiv = document.getElementById('stepDetails');
-                if(stepDetailsDiv){
-                    const stepsList = attachSteps(test);
-                    stepDetailsDiv.appendChild(stepsList);
-                }
+            const stepDetailsDiv = document.getElementById('stepDetails');
+            if(stepDetailsDiv){
+                const stepsList = attachSteps(test);
+                stepDetailsDiv.appendChild(stepsList);
             }
+        }
 
-            function attachSteps(test) {
-                const stepsList = document.createElement("ul");
-                stepsList.setAttribute("id", "steps");
-                stepsList.innerHTML = '';
-                test.steps.forEach(step => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<strong class="${step.error ? 'has-text-danger' : ''}">${step.title}</strong>`;
-                    stepsList.appendChild(li);
-                });
-                return stepsList;
-            }
-
-            function attachEventListeners() {
-                const testItems = document.querySelectorAll('[data-test-id]');
-                testItems.forEach(item => {
-                    item.addEventListener('click', () => {
-                        const testId = item.getAttribute('data-test-id');
-                        const test = testData[testId];
-                        displayTestDetails(test);
-                    });
-                });
-
-                // Event listeners for the filter articles
-                const filters = document.querySelectorAll('.filter');
-                filters.forEach(filter => {
-                    filter.addEventListener('click', () => {
-                        const status = filter.getAttribute('data-status');
-                        filters.forEach(f => {
-                            if (f.getAttribute('data-status')) {
-                                f.classList.remove('active');
-                            }
-                        });
-                        filter.classList.add('active');
-                        applyFilter(status);
-                    });
-                });
-            }
-
-            function applyFilter(status) {
-                const testItems = document.querySelectorAll('li[data-test-id]');
-                const detailsElements = document.querySelectorAll('details');
-
-                detailsElements.forEach(details => {
-                    let shouldShowDetails = false;
-                    const items = details.querySelectorAll('li[data-test-id]');
-                    items.forEach(item => {
-                        const testStatus = item.getAttribute('data-test-status').trim();
-                        if (status === 'all' || testStatus === status ||
-                            (status === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
-                            (status === 'retry' && testStatus.includes('retry')) ||
-                            (status === 'flaky' && testStatus.includes('flaky'))) {
-                            item.classList.remove('is-hidden'); // Show the item
-                            shouldShowDetails = true; // Set shouldShowDetails to true
-                        } else {
-                            item.classList.add('is-hidden'); // Hide the item
-                        }
-                    });
-                    details.open = shouldShowDetails; // Open the details element if it has any matching items
-                    details.classList.toggle('is-hidden', !shouldShowDetails); // Show/hide the details element
-                });
-            }
-
-            const searchInput = document.querySelector('input[name="search"]');
-            const detailsElements = document.querySelectorAll('details');
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const testItems = document.querySelectorAll('[data-test-id]');
-
-                if (searchTerm) {
-                    detailsElements.forEach(detail => {
-                        detail.open = false; // Collapse all details initially
-                    });
-
-                    testItems.forEach(item => {
-                        const testTitle = item.textContent.toLowerCase();
-                        if (testTitle.includes(searchTerm)) {
-                            item.style.display = 'block'; // Show matching test item
-
-                            let parent = item.parentElement;
-                            while (parent && parent.tagName !== 'ASIDE') {
-                                if (parent.tagName === 'DETAILS') {
-                                    parent.open = true;
-                                }
-                                parent = parent.parentElement;
-                            }
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                } else {
-                    testItems.forEach(item => {
-                        item.style.display = 'block';
-                    });
-                    detailsElements.forEach(detail => {
-                        detail.open = false;
-                    });
-                }
+        function attachSteps(test) {
+            const stepsList = document.createElement("ul");
+            stepsList.setAttribute("id", "steps");
+            stepsList.innerHTML = '';
+            test.steps.forEach(step => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong class="${step.error ? 'has-text-danger' : ''}">${step.title}</strong>`;
+                stepsList.appendChild(li);
             });
-            
+            return stepsList;
+        }
+
+        function attachEventListeners() {
+            const testItems = document.querySelectorAll('[data-test-id]');
+            testItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const testId = item.getAttribute('data-test-id');
+                    const test = testData[testId];
+                    displayTestDetails(test);
+                });
+            });
+
+            // Event listeners for the filter articles
+            const filters = document.querySelectorAll('.filter');
+            filters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    const status = filter.getAttribute('data-status');
+                    filters.forEach(f => {
+                        if (f.getAttribute('data-status')) {
+                            f.classList.remove('active');
+                        }
+                    });
+                    filter.classList.add('active');
+                    applyFilters();
+                });
+            });
+
             const projectFilter = document.getElementById('project-filter');
             projectFilter.addEventListener('change', () => {
-                const selectedProject = projectFilter.value;
-                applyProjectFilter(selectedProject);
+                applyFilters();
             });
-            function applyProjectFilter(selectedProject) {
-                const testItems = document.querySelectorAll('li[data-test-id]');
-                const detailsElements = document.querySelectorAll('details');
-                detailsElements.forEach(details => {
-                    let shouldShowDetails = false;
-                    const items = details.querySelectorAll('li[data-test-id]');
-                    items.forEach(item => {
-                        const projectName = item.getAttribute('data-project-name').trim();
-                        if (selectedProject === 'all' || projectName === selectedProject) {
-                            item.classList.remove('is-hidden'); // Show the item
-                            shouldShowDetails = true; // Set shouldShowDetails to true
-                        } else {
-                            item.classList.add('is-hidden'); // Hide the item
+        }
+
+        function applyFilters() {
+            const selectedProject = document.getElementById('project-filter').value;
+            const activeFilter = document.querySelector('.filter.active');
+            const selectedStatus = activeFilter ? activeFilter.getAttribute('data-status') : 'all';
+
+            const testItems = document.querySelectorAll('li[data-test-id]');
+            const detailsElements = document.querySelectorAll('details');
+
+            detailsElements.forEach(details => {
+                let shouldShowDetails = false;
+                const items = details.querySelectorAll('li[data-test-id]');
+                items.forEach(item => {
+                    const projectName = item.getAttribute('data-project-name').trim();
+                    const testStatus = item.getAttribute('data-test-status').trim();
+                    const matchesProject = (selectedProject === 'all' || projectName === selectedProject);
+                    const matchesStatus = (selectedStatus === 'all' || testStatus.includes(selectedStatus) ||
+                        (selectedStatus === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
+                        (selectedStatus === 'retry' && testStatus.includes('retry')) ||
+                        (selectedStatus === 'flaky' && testStatus.includes('flaky')));
+
+                    if (matchesProject && matchesStatus) {
+                        item.classList.remove('is-hidden');
+                        shouldShowDetails = true;
+                    } else {
+                        item.classList.add('is-hidden');
+                    }
+                });
+                details.open = shouldShowDetails;
+                details.classList.toggle('is-hidden', !shouldShowDetails);
+            });
+        }
+
+        const searchInput = document.querySelector('input[name="search"]');
+        const detailsElements = document.querySelectorAll('details');
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const testItems = document.querySelectorAll('[data-test-id]');
+
+            if (searchTerm) {
+                detailsElements.forEach(detail => {
+                    detail.open = false; // Collapse all details initially
+                });
+
+                testItems.forEach(item => {
+                    const testTitle = item.textContent.toLowerCase();
+                    if (testTitle.includes(searchTerm)) {
+                        item.style.display = 'block'; // Show matching test item
+
+                        let parent = item.parentElement;
+                        while (parent && parent.tagName !== 'ASIDE') {
+                            if (parent.tagName === 'DETAILS') {
+                                parent.open = true;
+                            }
+                            parent = parent.parentElement;
                         }
-                    });
-                    details.open = shouldShowDetails; // Open the details element if it has any matching items
-                    details.classList.toggle('is-hidden', !shouldShowDetails); // Show/hide the details element
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            } else {
+                testItems.forEach(item => {
+                    item.style.display = 'block';
+                });
+                detailsElements.forEach(detail => {
+                    detail.open = false;
                 });
             }
+        });
 
-            
-            const ctx = document.getElementById('testChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Passed', 'Failed', 'Skipped','Flaky'],
-                    datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
-                        backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#b5e35e']
-                        }]
-                    },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+        const ctx = document.getElementById('testChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Passed', 'Failed', 'Skipped','Flaky'],
+                datasets: [{
+                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
+                    backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#FFB704']
+                    }]
+                },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
                     }
                 }
-            });
-            attachEventListeners();
+            }
         });
-    </script>
-    <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
+
+    attachEventListeners();
+});
+
+</script>
+<script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
 </body>
 
 </html>
