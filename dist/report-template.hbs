@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
 </head>
 <style>
+        #summary, #testDetails, button#back-to-summary {
+            transition: opacity 0.2s ease-in-out;
+        }
        .filter.active {
             background-color: var(--bulma-background-active);
         }
@@ -369,9 +372,14 @@
             const summary = document.getElementById('summary');
             const testDetails = document.getElementById('testDetails');
             const backButton = document.querySelector('button#back-to-summary');
-            summary.style.display = 'none';
-            testDetails.style.display = 'block';
-            backButton.style.display = 'block';
+                summary.style.display = 'none';
+                testDetails.style.opacity = '0';
+                testDetails.style.display = 'block';
+                setTimeout(() => {
+                    testDetails.style.opacity = '1';
+                    backButton.style.opacity = '1';
+                }, 50);
+           
 
             let statusClass = '';
             let statusText = test.status.toUpperCase();
@@ -414,7 +422,7 @@
                 </div>
                 <div class="content">
                     ${test.steps.length > 0 ? `
-                    <details>
+                    <details id="stepopen">
                         <summary><h4 class="title is-4">Steps</h4></summary>
                         <span id="stepDetails" class="content"></span>
                     </details>
@@ -439,6 +447,8 @@
             const stepDetailsDiv = document.getElementById('stepDetails');
             if(stepDetailsDiv){
                 const stepsList = attachSteps(test);
+                const detail = document.getElementById("stepopen");
+                detail.setAttribute("open", "");
                 stepDetailsDiv.appendChild(stepsList);
             }
         }
