@@ -77,20 +77,15 @@ We are excited to announce the release of OrtoniReport (Playwright report - unof
 - **Flexible Configuration:** The reporter can be easily configured within your Playwright configuration file. Example:
   ```JS/TS
   import {OrtoniReportConfig} from "ortoni-report";
-   let reportConfig: OrtoniReportConfig = {
+   const reportConfig: OrtoniReportConfig = {
         projectName: "Ortoni",
         testType: "Regression",
         authorName: "Koushik",
         preferredTheme: "light"
    };
 
-  reporter: [["ortoni-report",
-    {
-      projectName: 'LetCode Playwright Report',
-      authorName: 'Koushik',
-      testType: 'E2E'
-    }],
-  ["dot"]],
+  reporter: [["ortoni-report", reportConfig],
+             ["dot"]],
   ```
 
 ### Comprehensive Test Details
@@ -118,20 +113,15 @@ Configure OrtoniReport in your `playwright.config.ts`:
 ```javascript/typescript
 import { defineConfig } from '@playwright/test';
 import {OrtoniReportConfig} from "ortoni-report";
-   let reportConfig: OrtoniReportConfig = {
+   const reportConfig: OrtoniReportConfig = {
         projectName: "Ortoni",
         testType: "Regression",
         authorName: "Koushik",
         preferredTheme: "light"
    };
 export default defineConfig({
-  reporter: [["ortoni-report",
-    {
-      projectName: 'LetCode Playwright Report',
-      authorName: 'Koushik',
-      testType: 'E2E'
-    }],
-  ["dot"]],
+  reporter: [["ortoni-report", reportConfig],
+             ["dot"]],
   // Other Playwright configurations
 });
 ```
