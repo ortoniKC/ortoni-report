@@ -1,5 +1,29 @@
 # Change Log:
 
+## Version 1.1.4
+
+1. **CSS Enhancement**: Updated CSS framework to Bulma for improved visualization and mobile responsiveness.
+   
+2. **Screenshots**: Implemented screenshot attachment as base64 images for enhanced report details.
+   
+3. **Toggle Theme Button**: Added a toggle theme button allowing users to switch between dark and light themes for better readability.
+   
+4. **Project Filtering**: Implemented filtering of tests by projects (e.g., chromium, firefox) to streamline test result views.
+   
+5. **Configuration Option**: Introduced `OrtoniReportConfig` for customizable report settings:
+   ```typescript
+    import {OrtoniReportConfig} from "ortoni-report";
+    let reportConfig: OrtoniReportConfig = {
+        projectName: "Ortoni",
+        testType: "Regression",
+        authorName: "Koushik",
+        preferredTheme: "light"
+    };
+    reporter:[["ortoni-report", reportConfig]],
+   ```
+6. **Design Improvements**: Made overall design enhancements and added CSS transitions for smoother user interactions.
+
+
 ## Version 1.1.3
 
 **New Features:**
