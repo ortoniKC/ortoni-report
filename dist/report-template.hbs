@@ -105,7 +105,7 @@
         <main class="container">
             <div class="columns">
                 <aside class="column is-one-third sidebar">
-                    <div class="columns">
+                    <div class="columns is-mobile">
                         <div class="column">
                             <h2 class="title is-4">Tests</h2>
                         </div>
@@ -530,8 +530,8 @@
 
         const searchInput = document.querySelector('input[name="search"]');
         const detailsElements = document.querySelectorAll('details');
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
+        function filterTests(search){
+            const searchTerm = search.toLowerCase();
             const testItems = document.querySelectorAll('[data-test-id]');
 
             if (searchTerm) {
@@ -563,7 +563,20 @@
                     detail.open = false;
                 });
             }
-        });
+        }
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        
+        const debouncedSearch = debounce((event) => {
+            filterTests(event.target.value);
+        }, 300);
+
+        searchInput.addEventListener('input', debouncedSearch);
 
         const ctx = document.getElementById('testChart').getContext('2d');
         new Chart(ctx, {
