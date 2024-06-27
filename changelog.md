@@ -1,4 +1,6 @@
 # Change Log:
+## Version 1.1.5
+- Added config properly to readme
 
 ## Version 1.1.4
 
