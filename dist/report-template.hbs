@@ -145,10 +145,11 @@
                                     <ul>
                                         {{#each this}}
                                         <details>
-                                            <summary>{{@key}}</summary>
+                                            <summary class="is-capitalized">{{@key}}</summary>
                                             <ul>
                                                 {{#each this}}
                                                 <li class="media" data-suite-name="{{suite}}"
+                                                    data-test-duration="{{duration}}"
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
                                                     <div class="icon-text">
@@ -448,7 +449,9 @@
             if(stepDetailsDiv){
                 const stepsList = attachSteps(test);
                 const detail = document.getElementById("stepopen");
-                detail.setAttribute("open", "");
+                if(test.errors.length > 0){
+                    detail.setAttribute("open", "");
+                }
                 stepDetailsDiv.appendChild(stepsList);
             }
         }

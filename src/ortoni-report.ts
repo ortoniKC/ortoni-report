@@ -37,7 +37,7 @@ class OrtoniReport implements Reporter {
             title: test.title,
             status: status,
             flaky: test.outcome(),
-            duration: msToTime(result.duration),
+            duration: result.duration.toString(),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
                 titlePath:step.titlePath,
