@@ -14,4 +14,5 @@ export interface TestResultData {
     logs: string;
     screenshotPath: string | null;
     filePath: any;
+    projects:Set<string>;
 }

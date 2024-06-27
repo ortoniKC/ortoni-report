@@ -1,7 +1,7 @@
 import path from 'path';
 
 export function msToTime(duration: number): string {
-    const milliseconds = Math.floor((duration % 1000));
+    const milliseconds = Math.floor(duration % 1000);
     const seconds = Math.floor((duration / 1000) % 60);
     const minutes = Math.floor((duration / (1000 * 60)) % 60);
     const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
@@ -9,16 +9,18 @@ export function msToTime(duration: number): string {
     let result = '';
 
     if (hours > 0) {
-        result += (hours < 10 ? "0" + hours : hours) + "h:";
+        result += `${hours}h:`;
     }
-    if (minutes > 0 || hours > 0) { // Include minutes if hours are included
-        result += (minutes < 10 ? "0" + minutes : minutes) + "m:";
+    if (minutes > 0 || hours > 0) {
+        result += `${minutes < 10 ? '0' + minutes : minutes}m:`;
     }
-    if (seconds > 0 || minutes > 0 || hours > 0) { // Include seconds if minutes or hours are included
-        result += (seconds < 10 ? "0" + seconds : seconds) + "s";
+    if (seconds > 0 || minutes > 0 || hours > 0) {
+        result += `${seconds < 10 ? '0' + seconds : seconds}s`;
     }
-    if (milliseconds > 0) {
-        result += ":" + (milliseconds < 100 ? "0" + milliseconds : milliseconds) + "ms";
+    if (milliseconds > 0 && !(seconds > 0 || minutes > 0 || hours > 0)) {
+        result += `${milliseconds}ms`;
+    } else if (milliseconds > 0) {
+        result += `:${milliseconds < 100 ? '0' + milliseconds : milliseconds}ms`;
     }
 
     return result;

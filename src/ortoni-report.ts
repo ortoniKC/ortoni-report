@@ -3,7 +3,7 @@ import path from 'path';
 import Handlebars from "handlebars";
 import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
-import { ReporterConfig } from './types/reporterConfig';
+import  {OrtoniReportConfig}  from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
 import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
 
@@ -11,28 +11,24 @@ class OrtoniReport implements Reporter {
     private results: TestResultData[] = [];
     private groupedResults: any;
     private suiteName: string | undefined | TestCase[];
-    private config: ReporterConfig;
+    private config: OrtoniReportConfig;
 
-    constructor(config: ReporterConfig = {}) {
+    constructor(config: OrtoniReportConfig = {}) {
         this.config = config;
     }
     onBegin(config: FullConfig, suite: Suite) {
         this.results = [];
-        const screenshotsDir = path.resolve(process.cwd(), 'screenshots');
-        if (fs.existsSync(screenshotsDir)) {
-            fs.rmSync(screenshotsDir, { recursive: true, force: true });
-        }
-        fs.mkdirSync(screenshotsDir, { recursive: true });
     }
 
     onTestBegin(test: TestCase, result: TestResult) { }
 
+    private projectSet = new Set<string>();
     onTestEnd(test: TestCase, result: TestResult) {
         let status: any = result.status;
         if (test.outcome() === 'flaky') {
             status = 'flaky';
         }
-        
+        this.projectSet.add(test.titlePath()[1]);
         const testResult: TestResultData = {
             retry: result.retry > 0 ? "retry": "",
             isRetry: result.retry,
@@ -57,18 +53,13 @@ class OrtoniReport implements Reporter {
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             screenshotPath: null,
             filePath: normalizeFilePath(test.titlePath()[2]),
+            projects: this.projectSet,
         };
         if (result.attachments) {
-            const screenshotsDir = path.resolve(process.cwd(), 'screenshots', test.id);
-            if (!fs.existsSync(screenshotsDir)) {
-                fs.mkdirSync(screenshotsDir, { recursive: true });
-            }
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
                 const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
-                const screenshotFileName = path.join('screenshots', test.id, path.basename(screenshot.path));
-                fs.writeFileSync(path.resolve(process.cwd(), screenshotFileName), screenshotContent, 'base64');
-                testResult.screenshotPath = screenshotFileName;
+                testResult.screenshotPath = screenshotContent;
             }
         }
 
@@ -124,6 +115,7 @@ class OrtoniReport implements Reporter {
     }
 
     generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+        
         const totalTests = filteredResults.length;
         const passedTests = this.results.filter(r => r.status === 'passed').length;
         const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
@@ -145,8 +137,10 @@ class OrtoniReport implements Reporter {
             projectName: this.config.projectName,
             authorName: this.config.authorName,
             testType: this.config.testType,
+            preferredTheme: this.config.preferredTheme,
             successRate: successRate,
-            lastRunDate: formatDate(new Date())
+            lastRunDate: formatDate(new Date()),
+            projects: this.projectSet,
         };
         return template(data);
     }
@@ -157,10 +151,8 @@ function safeStringify(obj: any, indent = 2) {
     const json = JSON.stringify(obj, (key, value) => {
         if (typeof value === 'object' && value !== null) {
             if (cache.has(value)) {
-                // Circular reference found, discard key
                 return;
             }
-            // Store value in our set
             cache.add(value);
         }
         return value;
@@ -169,4 +161,5 @@ function safeStringify(obj: any, indent = 2) {
     return json;
 }
 
-export default OrtoniReport;
+export { OrtoniReport as default };
+export {OrtoniReportConfig}

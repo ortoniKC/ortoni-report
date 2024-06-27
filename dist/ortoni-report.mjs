@@ -13,16 +13,18 @@ function msToTime(duration) {
   const hours = Math.floor(duration / (1e3 * 60 * 60) % 24);
   let result = "";
   if (hours > 0) {
-    result += (hours < 10 ? "0" + hours : hours) + "h:";
+    result += `${hours}h:`;
   }
   if (minutes > 0 || hours > 0) {
-    result += (minutes < 10 ? "0" + minutes : minutes) + "m:";
+    result += `${minutes < 10 ? "0" + minutes : minutes}m:`;
   }
   if (seconds > 0 || minutes > 0 || hours > 0) {
-    result += (seconds < 10 ? "0" + seconds : seconds) + "s";
+    result += `${seconds < 10 ? "0" + seconds : seconds}s`;
   }
-  if (milliseconds > 0) {
-    result += ":" + (milliseconds < 100 ? "0" + milliseconds : milliseconds) + "ms";
+  if (milliseconds > 0 && !(seconds > 0 || minutes > 0 || hours > 0)) {
+    result += `${milliseconds}ms`;
+  } else if (milliseconds > 0) {
+    result += `:${milliseconds < 100 ? "0" + milliseconds : milliseconds}ms`;
   }
   return result;
 }
@@ -42,15 +44,11 @@ function formatDate(date) {
 var OrtoniReport = class {
   constructor(config = {}) {
     this.results = [];
+    this.projectSet = /* @__PURE__ */ new Set();
     this.config = config;
   }
   onBegin(config, suite) {
     this.results = [];
-    const screenshotsDir = path2.resolve(process.cwd(), "screenshots");
-    if (fs.existsSync(screenshotsDir)) {
-      fs.rmSync(screenshotsDir, { recursive: true, force: true });
-    }
-    fs.mkdirSync(screenshotsDir, { recursive: true });
   }
   onTestBegin(test, result) {
   }
@@ -59,6 +57,7 @@ var OrtoniReport = class {
     if (test.outcome() === "flaky") {
       status = "flaky";
     }
+    this.projectSet.add(test.titlePath()[1]);
     const testResult = {
       retry: result.retry > 0 ? "retry" : "",
       isRetry: result.retry,
@@ -82,19 +81,14 @@ var OrtoniReport = class {
       })),
       logs: colors.strip(result.stdout.concat(result.stderr).map((log) => log).join("\n")),
       screenshotPath: null,
-      filePath: normalizeFilePath(test.titlePath()[2])
+      filePath: normalizeFilePath(test.titlePath()[2]),
+      projects: this.projectSet
     };
     if (result.attachments) {
-      const screenshotsDir = path2.resolve(process.cwd(), "screenshots", test.id);
-      if (!fs.existsSync(screenshotsDir)) {
-        fs.mkdirSync(screenshotsDir, { recursive: true });
-      }
       const screenshot = result.attachments.find((attachment) => attachment.name === "screenshot");
       if (screenshot && screenshot.path) {
         const screenshotContent = fs.readFileSync(screenshot.path, "base64");
-        const screenshotFileName = path2.join("screenshots", test.id, path2.basename(screenshot.path));
-        fs.writeFileSync(path2.resolve(process.cwd(), screenshotFileName), screenshotContent, "base64");
-        testResult.screenshotPath = screenshotFileName;
+        testResult.screenshotPath = screenshotContent;
       }
     }
     this.results.push(testResult);
@@ -164,8 +158,10 @@ var OrtoniReport = class {
       projectName: this.config.projectName,
       authorName: this.config.authorName,
       testType: this.config.testType,
+      preferredTheme: this.config.preferredTheme,
       successRate,
-      lastRunDate: formatDate(/* @__PURE__ */ new Date())
+      lastRunDate: formatDate(/* @__PURE__ */ new Date()),
+      projects: this.projectSet
     };
     return template(data);
   }
@@ -184,7 +180,6 @@ function safeStringify(obj, indent = 2) {
   cache.clear();
   return json;
 }
-var ortoni_report_default = OrtoniReport;
 export {
-  ortoni_report_default as default
+  OrtoniReport as default
 };

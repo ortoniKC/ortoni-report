@@ -1,9 +1,10 @@
 import { TestStep, Reporter, FullConfig, Suite, TestCase, TestResult, FullResult } from '@playwright/test/reporter';
 
-interface ReporterConfig {
+interface OrtoniReportConfig {
     projectName?: string;
     authorName?: string;
     testType?: string;
+    preferredTheme?: 'light' | 'dark';
 }
 
 interface TestResultData {
@@ -20,6 +21,7 @@ interface TestResultData {
     logs: string;
     screenshotPath: string | null;
     filePath: any;
+    projects: Set<string>;
 }
 
 declare class OrtoniReport implements Reporter {
@@ -27,12 +29,13 @@ declare class OrtoniReport implements Reporter {
     private groupedResults;
     private suiteName;
     private config;
-    constructor(config?: ReporterConfig);
+    constructor(config?: OrtoniReportConfig);
     onBegin(config: FullConfig, suite: Suite): void;
     onTestBegin(test: TestCase, result: TestResult): void;
+    private projectSet;
     onTestEnd(test: TestCase, result: TestResult): void;
     onEnd(result: FullResult): void;
     generateHTML(filteredResults: TestResultData[], totalDuration: string): string;
 }
 
-export { OrtoniReport as default };
+export { OrtoniReportConfig, OrtoniReport as default };
