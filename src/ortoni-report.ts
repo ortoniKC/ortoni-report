@@ -40,21 +40,17 @@ class OrtoniReport implements Reporter {
             duration: result.duration.toString(),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
-                titlePath:step.titlePath,
-                category: step.category,
-                duration:step.duration,
-                error:step.error,
-                location:step.location,
-                parent:step.parent,
-                startTime:step.startTime,
-                steps: step.steps,
+                snippet:step.error?.snippet,
                 title: step.title,
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
-            screenshotPath: null,
             filePath: normalizeFilePath(test.titlePath()[2]),
             projects: this.projectSet,
         };
+        testResult.steps.map(s=>{
+            console.log(s.title)
+            console.log(s?.snippet);
+        })
         if (result.attachments) {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {

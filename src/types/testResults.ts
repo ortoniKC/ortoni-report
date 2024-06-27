@@ -1,5 +1,8 @@
-import { TestStep } from "@playwright/test/reporter";
-
+import { TestError, TestStep } from "@playwright/test/reporter";
+interface steps{
+    snippet: string | undefined,
+    title:string
+}
 export interface TestResultData {
     retry:string,
     isRetry: number;
@@ -10,9 +13,9 @@ export interface TestResultData {
     flaky: string;
     duration: string;
     errors: any[];
-    steps:TestStep[];
+    steps:steps[];
     logs: string;
-    screenshotPath: string | null;
-    filePath: any;
+    screenshotPath?: string | null | undefined;
+    filePath: string;
     projects:Set<string>;
 }
