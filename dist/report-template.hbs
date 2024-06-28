@@ -404,6 +404,11 @@
                         ${test.duration.length > 0 ? `
                         <h4 class="title is-4">Duration</h4>
                         <p class="${statusClass}">${test.duration}</p>` : ""}
+                        ${test.tracePath.length > 0 ?
+                            `<div class="trace-link">
+                                <a href="${test.tracePath}" class="is-link" id="download-trace" download>Download Trace</a>
+                                <a href="#" class="is-link" onclick="openTrace()" id="open-trace" data-trace="${test.tracePath}">Open Trace</a>
+                            </div>`: ''}
                     </div>
                     <div class="column content">
                         ${test.screenshotPath ? `
@@ -462,7 +467,12 @@
             stepsList.innerHTML = '';
             test.steps.forEach(step => {
                 const li = document.createElement('li');
-                li.innerHTML = `<strong class="${step.error ? 'has-text-danger' : ''}">${step.title}</strong>`;
+                li.innerHTML = `<strong class="${step.snippet ? 'has-text-danger' : ''}">${step.title}</strong>`;
+                if (step.snippet) {
+                    const pre = document.createElement('pre');
+                    pre.textContent = step.snippet;
+                    li.appendChild(pre);
+                }
                 stepsList.appendChild(li);
             });
             return stepsList;
@@ -478,7 +488,6 @@
                 });
             });
 
-            // Event listeners for the filter articles
             const filters = document.querySelectorAll('.filter');
             filters.forEach(filter => {
                 filter.addEventListener('click', () => {

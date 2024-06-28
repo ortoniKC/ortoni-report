@@ -1,21 +1,23 @@
 import { TestError, TestStep } from "@playwright/test/reporter";
-interface steps{
+interface steps {
     snippet: string | undefined,
-    title:string
+    title: string
 }
 export interface TestResultData {
-    retry:string,
+    retry: string,
     isRetry: number;
     projectName: any;
     suite: any;
     title: string;
-    status:"passed" | "failed" | "timedOut" | "skipped" | "interrupted" | "expected" | "unexpected" | "flaky";
+    status: "passed" | "failed" | "timedOut" | "skipped" | "interrupted" | "expected" | "unexpected" | "flaky";
     flaky: string;
     duration: string;
     errors: any[];
-    steps:steps[];
+    steps: steps[];
     logs: string;
     screenshotPath?: string | null | undefined;
     filePath: string;
-    projects:Set<string>;
+    projects: Set<string>;
+    tracePath?: string;
+    videoPath?: string
 }

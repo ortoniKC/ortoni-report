@@ -3,7 +3,7 @@ import path from 'path';
 import Handlebars from "handlebars";
 import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
-import  {OrtoniReportConfig}  from './types/reporterConfig';
+import { OrtoniReportConfig } from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
 import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
 
@@ -30,7 +30,7 @@ class OrtoniReport implements Reporter {
         }
         this.projectSet.add(test.titlePath()[1]);
         const testResult: TestResultData = {
-            retry: result.retry > 0 ? "retry": "",
+            retry: result.retry > 0 ? "retry" : "",
             isRetry: result.retry,
             projectName: test.titlePath()[1],
             suite: test.titlePath()[3],
@@ -40,22 +40,26 @@ class OrtoniReport implements Reporter {
             duration: result.duration.toString(),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
-                snippet:step.error?.snippet,
+                snippet: colors.strip(step.error?.snippet || ''),
                 title: step.title,
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             filePath: normalizeFilePath(test.titlePath()[2]),
             projects: this.projectSet,
         };
-        testResult.steps.map(s=>{
-            console.log(s.title)
-            console.log(s?.snippet);
-        })
         if (result.attachments) {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
                 const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
                 testResult.screenshotPath = screenshotContent;
+            }
+            const tracePath = result.attachments.find(attachment => attachment.name === 'trace');
+            if (tracePath?.path) {
+                testResult.tracePath =  path.resolve(__dirname, tracePath.path);
+            }
+            const videoPath = result.attachments.find(attachment => attachment.name === 'video');
+            if (videoPath?.path) {
+                testResult.videoPath =  path.resolve(__dirname, videoPath.path);
             }
         }
 
@@ -111,7 +115,6 @@ class OrtoniReport implements Reporter {
     }
 
     generateHTML(filteredResults: TestResultData[], totalDuration: string) {
-        
         const totalTests = filteredResults.length;
         const passedTests = this.results.filter(r => r.status === 'passed').length;
         const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
@@ -136,7 +139,7 @@ class OrtoniReport implements Reporter {
             preferredTheme: this.config.preferredTheme,
             successRate: successRate,
             lastRunDate: formatDate(new Date()),
-            projects: this.projectSet,
+            projects: this.projectSet,            
         };
         return template(data);
     }
@@ -158,4 +161,4 @@ function safeStringify(obj: any, indent = 2) {
 }
 
 export { OrtoniReport as default };
-export {OrtoniReportConfig}
+export { OrtoniReportConfig }
