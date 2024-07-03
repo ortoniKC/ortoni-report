@@ -16,6 +16,7 @@ class OrtoniReport implements Reporter {
     constructor(config: OrtoniReportConfig = {}) {
         this.config = config;
     }
+
     onBegin(config: FullConfig, suite: Suite) {
         this.results = [];
     }
@@ -23,30 +24,43 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     private projectSet = new Set<string>();
+
     onTestEnd(test: TestCase, result: TestResult) {
         let status: any = result.status;
         if (test.outcome() === 'flaky') {
             status = 'flaky';
         }
-        this.projectSet.add(test.titlePath()[1]);
+        const projectName = test.titlePath()[1];
+        this.projectSet.add(projectName);
+        const location = test.location;
+        const filePath = normalizeFilePath(test.titlePath()[2]);
+        const tagPattern = /@[\w]+/g;
+        const testTags = test.title.match(tagPattern) || [];
+        const title = test.title.replace(tagPattern, '').trim();
+        const suiteTags = test.titlePath()[3].match(tagPattern) || [];
+        const suite = test.titlePath()[3].replace(tagPattern, '').trim();
         const testResult: TestResultData = {
+            suiteTags: suiteTags,
+            testTags: testTags,
+            location: `${filePath}:${location.line}:${location.column}`,
             retry: result.retry > 0 ? "retry" : "",
             isRetry: result.retry,
-            projectName: test.titlePath()[1],
-            suite: test.titlePath()[3],
-            title: test.title,
+            projectName: projectName,
+            suite: suite,
+            title: title,
             status: status,
             flaky: test.outcome(),
-            duration: result.duration.toString(),
+            duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
             steps: result.steps.map(step => ({
                 snippet: colors.strip(step.error?.snippet || ''),
                 title: step.title,
             })),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
-            filePath: normalizeFilePath(test.titlePath()[2]),
+            filePath: filePath,
             projects: this.projectSet,
         };
+
         if (result.attachments) {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
             if (screenshot && screenshot.path) {
@@ -55,16 +69,17 @@ class OrtoniReport implements Reporter {
             }
             const tracePath = result.attachments.find(attachment => attachment.name === 'trace');
             if (tracePath?.path) {
-                testResult.tracePath =  path.resolve(__dirname, tracePath.path);
+                testResult.tracePath = path.resolve(__dirname, tracePath.path);
             }
             const videoPath = result.attachments.find(attachment => attachment.name === 'video');
             if (videoPath?.path) {
-                testResult.videoPath =  path.resolve(__dirname, videoPath.path);
+                testResult.videoPath = path.resolve(__dirname, videoPath.path);
             }
         }
 
         this.results.push(testResult);
     }
+
     onEnd(result: FullResult) {
         const filteredResults: TestResultData[] = this.results.filter(r => r.status !== 'skipped' && !r.isRetry);
         const totalDuration = msToTime(result.duration);
@@ -90,7 +105,7 @@ class OrtoniReport implements Reporter {
             return safeStringify(context);
         });
         Handlebars.registerHelper('eq', function (actualStatus, expectedStatus) {
-            return actualStatus === expectedStatus
+            return actualStatus === expectedStatus;
         });
         Handlebars.registerHelper('or', () => {
             var args = Array.prototype.slice.call(arguments);
@@ -118,7 +133,7 @@ class OrtoniReport implements Reporter {
         const totalTests = filteredResults.length;
         const passedTests = this.results.filter(r => r.status === 'passed').length;
         const flakyTests = this.results.filter(r => r.flaky === 'flaky').length;
-        const failed = filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut').length
+        const failed = filteredResults.filter(r => r.status === 'failed' || r.status === 'timedOut').length;
         const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
@@ -139,7 +154,7 @@ class OrtoniReport implements Reporter {
             preferredTheme: this.config.preferredTheme,
             successRate: successRate,
             lastRunDate: formatDate(new Date()),
-            projects: this.projectSet,            
+            projects: this.projectSet,
         };
         return template(data);
     }
