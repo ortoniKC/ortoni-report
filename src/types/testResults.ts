@@ -1,9 +1,11 @@
-import { TestError, TestStep } from "@playwright/test/reporter";
 interface steps {
     snippet: string | undefined,
     title: string
 }
 export interface TestResultData {
+    suiteTags:string[],
+    testTags:string[],
+    location:string,
     retry: string,
     isRetry: number;
     projectName: any;
