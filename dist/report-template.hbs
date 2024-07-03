@@ -396,7 +396,10 @@
 
             testDetails.innerHTML = `
                 <button class="button content" id="back-to-summary" style="display: block" onclick="showSummary()">Back to Summary</button>
-                <h3 class="title is-3 has-text-centered">${test.title}</h3>
+                <div class="content has-text-centered">
+                    <p class="title">${test.title}</p>
+                    <p class="subtitle">${test.location}</p>
+                </div>
                 <div class="columns">
                     <div class="column content">
                         <h4 class="title is-4">Status</h4>
@@ -405,7 +408,7 @@
                         <h4 class="title is-4">Duration</h4>
                         <p class="${statusClass}">${test.duration}</p>` : ""}
                         ${test.tracePath.length > 0 ?
-                            `<div class="trace-link">
+                            `<div class="trace-link is-hidden">
                                 <a href="${test.tracePath}" class="is-link" id="download-trace" download>Download Trace</a>
                                 <a href="#" class="is-link" onclick="openTrace()" id="open-trace" data-trace="${test.tracePath}">Open Trace</a>
                             </div>`: ''}
