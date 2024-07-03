@@ -1,11 +1,11 @@
-export interface OrtoniReportConfig extends download {
+export interface OrtoniReportConfig extends Download {
     projectName?: string;
     authorName?: string;
     testType?: string;
     preferredTheme?: 'light' | 'dark';
     base64Image?:boolean;
 }
-export interface download {
+export interface Download {
     download?:false | {
         includeVideos?:boolean,
         includeTrace?:boolean,
