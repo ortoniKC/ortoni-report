@@ -33,7 +33,8 @@
   "homepage": "https://github.com/ortoniKC/ortoni-report#readme",
   "dependencies": {
     "colors": "^1.4.0",
-    "handlebars": "^4.7.8"
+    "handlebars": "^4.7.8",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.1",
