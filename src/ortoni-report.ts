@@ -24,6 +24,8 @@ class OrtoniReport implements Reporter {
     onTestBegin(test: TestCase, result: TestResult) { }
 
     private projectSet = new Set<string>();
+    // TODO: add tags to the filter dropdown
+    private tagsSet = new Set<string>();
 
     onTestEnd(test: TestCase, result: TestResult) {
         let status: any = result.status;
