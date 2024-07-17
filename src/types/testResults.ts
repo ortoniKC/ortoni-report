@@ -1,6 +1,7 @@
-interface steps {
+interface Steps {
     snippet: string | undefined,
-    title: string
+    title: string,
+    location:string
 }
 export interface TestResultData {
     suiteTags:string[],
@@ -15,11 +16,12 @@ export interface TestResultData {
     flaky: string;
     duration: string;
     errors: any[];
-    steps: steps[];
+    steps: Steps[];
     logs: string;
     screenshotPath?: string | null | undefined;
     filePath: string;
     projects: Set<string>;
     tracePath?: string;
-    videoPath?: string
+    videoPath?: string;
+    base64Image:boolean | undefined;
 }

@@ -1,4 +1,4 @@
-export interface OrtoniReportConfig extends Download {
+export interface OrtoniReportConfig {
     projectName?: string;
     authorName?: string;
     testType?: string;
