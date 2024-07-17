@@ -1,4 +1,14 @@
 # Change Log:
+
+## Version 1.1.6
+- Implemented debounce function to reduce search event handling frequency.
+- Modified steps details to open only if a test has errors, enhancing UI clarity.
+- Optimized data load by removing unnecessary inner steps, improving performance.
+- Enhanced debug experience by adding file locations for each test step.
+- Implemented tags feature on test panels to categorize and filter tests efficiently.
+- Added support for attaching videos to test reports, enriching test documentation.
+- Introduced user option to choose between base64 images and file path for screenshots.
+
 ## Version 1.1.5
 - Added config properly to readme
 
