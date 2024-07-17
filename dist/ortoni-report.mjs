@@ -43,12 +43,16 @@ function formatDate(date) {
 // src/ortoni-report.ts
 var OrtoniReport = class {
   constructor(config = {}) {
+    this.projectRoot = "";
     this.results = [];
     this.projectSet = /* @__PURE__ */ new Set();
+    // TODO: add tags to the filter dropdown
+    this.tagsSet = /* @__PURE__ */ new Set();
     this.config = config;
   }
   onBegin(config, suite) {
     this.results = [];
+    this.projectRoot = config.rootDir;
   }
   onTestBegin(test, result) {
   }
@@ -57,38 +61,60 @@ var OrtoniReport = class {
     if (test.outcome() === "flaky") {
       status = "flaky";
     }
-    this.projectSet.add(test.titlePath()[1]);
+    const projectName = test.titlePath()[1];
+    this.projectSet.add(projectName);
+    const location = test.location;
+    const filePath = normalizeFilePath(test.titlePath()[2]);
+    const tagPattern = /@[\w]+/g;
+    const testTags = test.title.match(tagPattern) || [];
+    const title = test.title.replace(tagPattern, "").trim();
+    const suiteTags = test.titlePath()[3].match(tagPattern) || [];
+    const suite = test.titlePath()[3].replace(tagPattern, "").trim();
     const testResult = {
+      suiteTags,
+      testTags,
+      location: `${filePath}:${location.line}:${location.column}`,
       retry: result.retry > 0 ? "retry" : "",
       isRetry: result.retry,
-      projectName: test.titlePath()[1],
-      suite: test.titlePath()[3],
-      title: test.title,
+      projectName,
+      suite,
+      title,
       status,
       flaky: test.outcome(),
       duration: msToTime(result.duration),
       errors: result.errors.map((e) => colors.strip(e.message || e.toString())),
-      steps: result.steps.map((step) => ({
-        titlePath: step.titlePath,
-        category: step.category,
-        duration: step.duration,
-        error: step.error,
-        location: step.location,
-        parent: step.parent,
-        startTime: step.startTime,
-        steps: step.steps,
-        title: step.title
-      })),
+      steps: result.steps.map((step) => {
+        const location2 = step.location ? `${path2.relative(this.projectRoot, step.location.file)}:${step.location.line}:${step.location.column}` : "";
+        return {
+          snippet: colors.strip(step.error?.snippet || ""),
+          title: step.title,
+          location: step.error ? location2 : ""
+        };
+      }),
       logs: colors.strip(result.stdout.concat(result.stderr).map((log) => log).join("\n")),
-      screenshotPath: null,
-      filePath: normalizeFilePath(test.titlePath()[2]),
-      projects: this.projectSet
+      filePath,
+      projects: this.projectSet,
+      base64Image: this.config.base64Image
     };
     if (result.attachments) {
       const screenshot = result.attachments.find((attachment) => attachment.name === "screenshot");
-      if (screenshot && screenshot.path) {
-        const screenshotContent = fs.readFileSync(screenshot.path, "base64");
-        testResult.screenshotPath = screenshotContent;
+      if (this.config.base64Image) {
+        if (screenshot && screenshot.path) {
+          const screenshotContent = fs.readFileSync(screenshot.path, "base64");
+          testResult.screenshotPath = `data:image/png;base64,${screenshotContent}`;
+        }
+      } else {
+        if (screenshot && screenshot.path) {
+          testResult.screenshotPath = path2.resolve(screenshot.path);
+        }
+      }
+      const tracePath = result.attachments.find((attachment) => attachment.name === "trace");
+      if (tracePath?.path) {
+        testResult.tracePath = path2.resolve(__dirname, tracePath.path);
+      }
+      const videoPath = result.attachments.find((attachment) => attachment.name === "video");
+      if (videoPath?.path) {
+        testResult.videoPath = path2.resolve(__dirname, videoPath.path);
       }
     }
     this.results.push(testResult);
