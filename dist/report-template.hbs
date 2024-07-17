@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Plawright HTML report by LetCode Koushik - V1.1.5">
+    <meta name="description" content="Plawright HTML report by LetCode Koushik - V1.1.6">
     <title>Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
@@ -134,7 +134,7 @@
                             <ul>
                                 {{#each this}}
                                 <details>
-                                    <summary class="is-size-5">
+                                    <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
                                             <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
@@ -145,7 +145,7 @@
                                     <ul>
                                         {{#each this}}
                                         <details>
-                                            <summary class="is-capitalized">{{@key}}</summary>
+                                            <summary class="is-capitalized is-size-6">{{@key}}</summary>
                                             <ul>
                                                 {{#each this}}
                                                 <li class="media" data-suite-name="{{suite}}"
@@ -202,7 +202,6 @@
                         {{/each}}
                     </div>
                 </aside>
-
                 <section class="column">
                     {{!-- Overall summary --}}
                     <div id="summary">
@@ -418,25 +417,35 @@
                             <h4 class="title is-4">Duration</h4>
                             <p class="${statusClass}">${test.duration}</p>` : ""}
                             <div class="tags" id="attachTags"></div>
-                            ${test.tracePath.length > 0 ?
-                                `<div class="trace-link is-hidden">
-                                    <a href="${test.tracePath}" class="is-link" id="download-trace" download>Download Trace</a>
-                                    <a href="#" class="is-link" onclick="openTrace()" id="open-trace" data-trace="${test.tracePath}">Open Trace</a>
-                                </div>`: ''}
+                            ${test.videoPath ? `
+                            <div id="testVideo" class="modal">
+                                <div class="modal-background"></div>
+                                    <div class="modal-content">
+                                        <figure>
+                                            <video controls>
+                                                <source src="file://${test.videoPath}" type="video/webm">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </figure>
+                                    </div>
+                                <button onclick="closeVideo()" class="modal-close is-large" aria-label="close"></button>
+                            </div>
+                            <button class="button" onclick="openVideo()">Attachment: Video</button>
+                            `:''}
                         </div>
                         <div class="column content">
                             ${test.screenshotPath ? `
-                            <div id="modal-js-example" class="modal">
+                            <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
-                                    <div class="modal-content">
-                                        <p class="image is-16by9">
-                                        <img src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
-                                        </p>
-                                    </div>
+                                <div class="modal-content">
+                                    <p class="image is-16by9">
+                                        <img src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
+                                    </p>
+                                </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
-                            <figure  class="image is-16by9">
-                            <img onclick="openModal()" src="data:image/png;base64, ${test.screenshotPath}" alt="Screenshot">
+                            <figure class="image">
+                                <img onclick="openModal()" src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
                             </figure>` : ''}
                         </div>
                     </div>
@@ -452,7 +461,7 @@
                         ${test.errors.length ? `
                         <h4 class="title is-4">Errors</h4>
                         <div class="content">
-                            <pre>${escapeHtml(test.errors.join('\n'))}</pre>
+                            <pre><code class="data-lang=js">${escapeHtml(test.errors.join('\n'))}</code></pre>
                         </div>` : ''}
                     </div>
                     <div>
@@ -485,13 +494,18 @@
                     li.innerHTML = `<strong class="${step.snippet ? 'has-text-danger' : ''}">${step.title}</strong>`;
                     if (step.snippet) {
                         const pre = document.createElement('pre');
-                        pre.textContent = step.snippet;
+                        const code = document.createElement('code');
+                        const locationText = step.location ? `\n\nat: ${step.location}` : '';
+                        code.textContent = `${step.snippet}${locationText}`;
+                        code.setAttribute('data-lang', 'js');
+                        pre.appendChild(code);
                         li.appendChild(pre);
                     }
                     stepsList.appendChild(li);
                 });
                 return stepsList;
             }
+
 
             function attachEventListeners() {
                 const testItems = document.querySelectorAll('[data-test-id]');
