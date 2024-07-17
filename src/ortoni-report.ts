@@ -8,6 +8,7 @@ import { TestResultData } from './types/testResults';
 import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
 
 class OrtoniReport implements Reporter {
+    private projectRoot: string = '';
     private results: TestResultData[] = [];
     private groupedResults: any;
     private suiteName: string | undefined | TestCase[];
@@ -19,6 +20,7 @@ class OrtoniReport implements Reporter {
 
     onBegin(config: FullConfig, suite: Suite) {
         this.results = [];
+        this.projectRoot = config.rootDir
     }
 
     onTestBegin(test: TestCase, result: TestResult) { }
@@ -54,20 +56,32 @@ class OrtoniReport implements Reporter {
             flaky: test.outcome(),
             duration: msToTime(result.duration),
             errors: result.errors.map(e => colors.strip(e.message || e.toString())),
-            steps: result.steps.map(step => ({
-                snippet: colors.strip(step.error?.snippet || ''),
-                title: step.title,
-            })),
+            steps: result.steps.map(step => {
+                const location = step.location ? 
+                `${path.relative(this.projectRoot, step.location.file)}:${step.location.line}:${step.location.column}` : '';
+                return {
+                    snippet: colors.strip(step.error?.snippet || ''),
+                    title: step.title,
+                    location: step.error ? location : '',
+                };
+            }),
             logs: colors.strip(result.stdout.concat(result.stderr).map(log => log).join('\n')),
             filePath: filePath,
             projects: this.projectSet,
+            base64Image: this.config.base64Image
         };
 
         if (result.attachments) {
             const screenshot = result.attachments.find(attachment => attachment.name === 'screenshot');
-            if (screenshot && screenshot.path) {
-                const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
-                testResult.screenshotPath = screenshotContent;
+            if (this.config.base64Image) {
+                if (screenshot && screenshot.path) {
+                    const screenshotContent = fs.readFileSync(screenshot.path, 'base64');
+                    testResult.screenshotPath = `data:image/png;base64,${screenshotContent}`;
+                }
+            } else {
+                if (screenshot && screenshot.path) {
+                    testResult.screenshotPath = path.resolve(screenshot.path);
+                }
             }
             const tracePath = result.attachments.find(attachment => attachment.name === 'trace');
             if (tracePath?.path) {
@@ -112,13 +126,11 @@ class OrtoniReport implements Reporter {
         Handlebars.registerHelper('or', () => {
             var args = Array.prototype.slice.call(arguments);
             var options = args.pop();
-
             for (var i = 0; i < args.length; i++) {
                 if (args[i]) {
                     return options.fn(this);
                 }
             }
-
             return options.inverse(this);
         });
         Handlebars.registerHelper('gt', function (a, b) {
