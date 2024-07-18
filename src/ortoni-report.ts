@@ -136,7 +136,6 @@ class OrtoniReport implements Reporter {
         Handlebars.registerHelper('gt', function (a, b) {
             return a > b;
         });
-
         const html = this.generateHTML(filteredResults, totalDuration);
         const outputPath = path.resolve(process.cwd(), 'ortoni-report.html'); // Save in project root folder
         fs.writeFileSync(outputPath, html);
@@ -151,7 +150,9 @@ class OrtoniReport implements Reporter {
         const successRate: string = (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
         const templateSource = fs.readFileSync(path.resolve(__dirname, 'report-template.hbs'), 'utf-8');
         const template = Handlebars.compile(templateSource);
+        const logo = this.config.logo;
         const data = {
+            logo: logo ? path.resolve(logo) : undefined,
             totalDuration: totalDuration,
             suiteName: this.suiteName,
             results: this.results,

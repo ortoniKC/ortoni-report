@@ -4,6 +4,7 @@ export interface OrtoniReportConfig {
     testType?: string;
     preferredTheme?: 'light' | 'dark';
     base64Image?:boolean;
+    logo?:string
 }
 export interface Download {
     download?:false | {
