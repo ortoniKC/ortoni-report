@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Plawright HTML report by LetCode Koushik - V1.1.7">
-    <title>Ortoni Plawright Test Report</title>
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V1.1.7">
+    <title>Ortoni Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
 </head>
@@ -107,7 +107,7 @@
     <section class="section">
         <main class="container">
             <div class="columns">
-                <aside class="column is-two-fifths sidebar">
+                <aside class="column is-two-fifths">
                     <div class="columns is-mobile">
                         <div class="column">
                             <h2 class="title is-4">Tests</h2>
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content">
+                    <div class="content sidebar">
                         {{#each groupedResults}}
                         <details class="box">
                             <summary class="is-size-5 has-icon-right">
@@ -136,7 +136,7 @@
                             </summary>
                             <ul>
                                 {{#each this}}
-                                <details>
+                                <details class="mt-1">
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
@@ -147,7 +147,7 @@
                                     </summary>
                                     <ul>
                                         {{#each this}}
-                                        <details>
+                                        <details class="mb-1">
                                             <summary class="is-capitalized is-size-6">{{@key}}</summary>
                                             <ul>
                                                 {{#each this}}
@@ -441,13 +441,13 @@
                             <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
                                 <div class="modal-content">
-                                    <p class="image is-16by9">
+                                    <p class="image">
                                         <img src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
                                     </p>
                                 </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
-                            <figure class="image">
+                            <figure class="image box">
                                 <img onclick="openModal()" src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
                             </figure>` : ''}
                         </div>
