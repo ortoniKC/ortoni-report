@@ -5,7 +5,7 @@ import colors from 'colors/safe';
 import type { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
 import { OrtoniReportConfig } from './types/reporterConfig';
 import { TestResultData } from './types/testResults';
-import { formatDate, msToTime, normalizeFilePath } from './utils/utils';
+import { formatDate, msToTime, normalizeFilePath, safeStringify } from './utils/utils';
 
 class OrtoniReport implements Reporter {
     private projectRoot: string = '';
@@ -175,21 +175,6 @@ class OrtoniReport implements Reporter {
             return `<html><body><h1>Report generation failed</h1><pre>${error.stack}</pre></body></html>`;
         }
     }
-}
-
-function safeStringify(obj: any, indent = 2) {
-    const cache = new Set();
-    const json = JSON.stringify(obj, (key, value) => {
-        if (typeof value === 'object' && value !== null) {
-            if (cache.has(value)) {
-                return;
-            }
-            cache.add(value);
-        }
-        return value;
-    }, indent);
-    cache.clear();
-    return json;
 }
 
 export { OrtoniReport as default };
