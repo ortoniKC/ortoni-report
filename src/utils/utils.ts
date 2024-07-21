@@ -39,3 +39,18 @@ export function formatDate(date: Date) {
     const time = date.toLocaleTimeString();
     return `${day}-${month}-${year} ${time}`;
 };
+
+export function safeStringify(obj: any, indent = 2) {
+    const cache = new Set();
+    const json = JSON.stringify(obj, (key, value) => {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.has(value)) {
+                return;
+            }
+            cache.add(value);
+        }
+        return value;
+    }, indent);
+    cache.clear();
+    return json;
+}

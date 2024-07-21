@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Plawright HTML report by LetCode Koushik - V1.1.6">
-    <title>Playwright Test Report</title>
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V1.1.7">
+    <title>Ortoni Playwright Test Report</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
 </head>
@@ -13,33 +13,28 @@
         #summary, #testDetails, button#back-to-summary {
             transition: opacity 0.2s ease-in-out;
         }
-       .filter.active {
+
+        .filter.active {
             background-color: var(--bulma-background-active);
         }
-
         ::-webkit-scrollbar {
-            width: 0px;
-            background-color: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: var(--pico-secondary-background);
-            ;
-            border-radius: 0px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: var(--pico-secondary-background);
-            ;
+            width: 8px;
+            height: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background-color: #f1f1f1;
+            background: #f1f1f1;
         }
 
-        ::-webkit-scrollbar-corner {
-            background-color: #fff;
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
         }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
         div#testDetails {
             position: sticky;
             top: 0;
@@ -74,17 +69,27 @@
         details[open] > summary::after {
             transform: rotate(0deg);
         }
+        .logoimage{
+            max-width: 100px;
+        }
 
 </style>
 
 <body>
-    <!-- Header -->
     <section class="section">
         <header class="container">
             <div class="columns is-vcentered">
-                <div class="column is-one-third">
-                    {{!-- Custom Project Name --}}
-                    {{#if projectName}}<h1 class="title">{{projectName}}</h1>{{/if}}
+                <div class="column is-two-fifths">
+                    <div class="columns is-desktop is-vcentered is-multiline">
+                        {{#if logo}}
+                        <div class="column-1">
+                        <figure class="image logoimage">
+                            <img src="{{logo}}" />
+                        </figure>
+                        </div>
+                        {{/if}}
+                        {{#if projectName}}<div class="column"><span class="title">{{projectName}}</span></div>{{/if}}
+                    </div>
                 </div>
                 <div class="column">
                     <div class="control">
@@ -99,12 +104,10 @@
             </div>
         </header>
     </section>
-
-    <!-- Main Content -->
     <section class="section">
         <main class="container">
             <div class="columns">
-                <aside class="column is-one-third sidebar">
+                <aside class="column is-two-fifths">
                     <div class="columns is-mobile">
                         <div class="column">
                             <h2 class="title is-4">Tests</h2>
@@ -120,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content">
+                    <div class="content sidebar">
                         {{#each groupedResults}}
                         <details class="box">
                             <summary class="is-size-5 has-icon-right">
@@ -133,7 +136,7 @@
                             </summary>
                             <ul>
                                 {{#each this}}
-                                <details>
+                                <details class="mt-1">
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
@@ -144,7 +147,7 @@
                                     </summary>
                                     <ul>
                                         {{#each this}}
-                                        <details>
+                                        <details class="mb-1">
                                             <summary class="is-capitalized is-size-6">{{@key}}</summary>
                                             <ul>
                                                 {{#each this}}
@@ -202,7 +205,7 @@
                         {{/each}}
                     </div>
                 </aside>
-                <section class="column">
+                <section class="column is-three-fifths">
                     {{!-- Overall summary --}}
                     <div id="summary">
                         <div class="columns is-multiline">
@@ -438,13 +441,13 @@
                             <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
                                 <div class="modal-content">
-                                    <p class="image is-16by9">
+                                    <p class="image">
                                         <img src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
                                     </p>
                                 </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
-                            <figure class="image">
+                            <figure class="image box">
                                 <img onclick="openModal()" src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
                             </figure>` : ''}
                         </div>
@@ -634,7 +637,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'right'
                         }
                     }
                 }
@@ -646,5 +649,4 @@
     </script>
 <script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
 </body>
-
 </html>

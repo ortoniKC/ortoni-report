@@ -1,5 +1,19 @@
 # Change Log:
 
+## Version 1.1.7
+
+### Fixed
+- Layout issue where the test column extends off-screen
+- Screenshot layout of tests executed on mobile viewport 
+
+### New
+- Add custom project/organization logo
+- Exception handling in `ortoni-report.ts`
+- Added docs to the `OrtoniReportConfig`
+
+### Improved
+- Margin on Test List for better spacing
+
 ## Version 1.1.6
 - Implemented debounce function to reduce search event handling frequency.
 - Modified steps details to open only if a test has errors, enhancing UI clarity.

@@ -40,6 +40,9 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
    - Easily integrate with Playwright configurations using TypeScript/JavaScript.
    - Configure reporting preferences within your Playwright setup.
 
+10. **Add logo to the report**
+   - Add relative or absolute path of the image to the config
+
 ### Configurable Report Generation
 
 Configure OrtoniReport in your `playwright.config.ts`:
@@ -49,12 +52,13 @@ import { defineConfig } from '@playwright/test';
 import { OrtoniReportConfig } from 'ortoni-report';
 
 const reportConfig: OrtoniReportConfig = {
-    projectName: 'Ortoni',
-    testType: 'Regression',
-    authorName: 'Koushik',
-    preferredTheme: 'light',
-    base64Image: false, // Example configuration
-};
+  logo: "path/logo.png",
+  authorName: "LetCode Koushik",
+  base64Image: false,
+  preferredTheme: "dark",
+  projectName: "Ortoni Demo Report",
+  testType: "Smoke"
+}
 
 export default defineConfig({
     reporter: [['ortoni-report', reportConfig], ['dot']],
