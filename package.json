@@ -31,12 +31,9 @@
     "url": "https://github.com/ortoniKC/ortoni-report/issues"
   },
   "homepage": "https://github.com/ortoniKC/ortoni-report#readme",
-  "dependencies": {
+  "devDependencies": {
     "colors": "^1.4.0",
     "handlebars": "^4.7.8",
-    "ws": "^8.18.0"
-  },
-  "devDependencies": {
     "@playwright/test": "^1.44.1",
     "@types/node": "^20.14.2",
     "tsup": "^6.5.0",
