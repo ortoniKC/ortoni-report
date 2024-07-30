@@ -1,4 +1,8 @@
 # Change Log:
+## Version 1.1.8
+
+### Fixed
+- CSS issue
 
 ## Version 1.1.7
 
