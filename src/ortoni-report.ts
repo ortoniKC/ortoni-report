@@ -13,6 +13,7 @@ import type {
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
 import {
+  ensureHtmlExtension,
   formatDate,
   msToTime,
   normalizeFilePath,
@@ -37,7 +38,7 @@ class OrtoniReport implements Reporter {
     this.projectRoot = config.rootDir;
   }
 
-  onTestBegin(test: TestCase, result: TestResult) {}
+  onTestBegin(test: TestCase, result: TestResult) { }
 
   onTestEnd(test: TestCase, result: TestResult) {
     try {
@@ -53,15 +54,15 @@ class OrtoniReport implements Reporter {
       const suite = test.titlePath()[3].replace(tagPattern, "").trim();
 
       const testResult: TestResultData = {
-        suiteTags:suiteTags,
-        testTags:testTags,
+        suiteTags: suiteTags,
+        testTags: testTags,
         location: `${filePath}:${location.line}:${location.column}`,
         retry: result.retry > 0 ? "retry" : "",
         isRetry: result.retry,
-        projectName:projectName,
-        suite:suite,
-        title:title,
-        status:status,
+        projectName: projectName,
+        suite: suite,
+        title: title,
+        status: status,
         flaky: test.outcome(),
         duration: msToTime(result.duration),
         errors: result.errors.map((e) =>
@@ -69,9 +70,8 @@ class OrtoniReport implements Reporter {
         ),
         steps: result.steps.map((step) => {
           const stepLocation = step.location
-            ? `${path.relative(this.projectRoot, step.location.file)}:${
-                step.location.line
-              }:${step.location.column}`
+            ? `${path.relative(this.projectRoot, step.location.file)}:${step.location.line
+            }:${step.location.column}`
             : "";
           return {
             snippet: colors.strip(step.error?.snippet || ""),
@@ -85,7 +85,7 @@ class OrtoniReport implements Reporter {
             .map((log) => log)
             .join("\n")
         ),
-        filePath:filePath,
+        filePath: filePath,
         projects: this.projectSet,
         base64Image: this.config.base64Image,
       };
@@ -146,9 +146,9 @@ class OrtoniReport implements Reporter {
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
-
+      const outputFilename = ensureHtmlExtension(this.config.filename || 'ortoni-report.html');
       const html = this.generateHTML(filteredResults, totalDuration);
-      const outputPath = path.resolve(process.cwd(), "ortoni-report.html");
+      const outputPath = path.resolve(process.cwd(), outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
     } catch (error) {
@@ -192,8 +192,8 @@ class OrtoniReport implements Reporter {
         : undefined;
 
       const data = {
-        logo:logo,
-        totalDuration:totalDuration,
+        logo: logo,
+        totalDuration: totalDuration,
         suiteName: this.suiteName,
         results: this.results,
         retryCount: this.results.filter((r) => r.isRetry).length,
@@ -207,7 +207,7 @@ class OrtoniReport implements Reporter {
         authorName: this.config.authorName,
         testType: this.config.testType,
         preferredTheme: this.config.preferredTheme,
-        successRate:successRate,
+        successRate: successRate,
         lastRunDate: formatDate(new Date()),
         projects: this.projectSet,
       };

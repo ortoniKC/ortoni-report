@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.safeStringify = exports.formatDate = exports.normalizeFilePath = exports.msToTime = void 0;
+exports.ensureHtmlExtension = exports.safeStringify = exports.formatDate = exports.normalizeFilePath = exports.msToTime = void 0;
 const path_1 = __importDefault(require("path"));
 function msToTime(duration) {
     const milliseconds = Math.floor(duration % 1000);
@@ -60,3 +60,12 @@ function safeStringify(obj, indent = 2) {
     return json;
 }
 exports.safeStringify = safeStringify;
+function ensureHtmlExtension(filename) {
+    const ext = path_1.default.extname(filename);
+    if (ext && ext.toLowerCase() === '.html') {
+        return filename;
+    }
+    return `${filename}.html`;
+}
+exports.ensureHtmlExtension = ensureHtmlExtension;
+;

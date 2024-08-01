@@ -41,6 +41,11 @@ export interface OrtoniReportConfig {
      * @example "/absolute/path/to/logo.png"
      */
     logo?: string;
+     /**
+     * The filename to the html report.
+     * @example "index.html"
+     */
+    filename?:string;
 }
 
 /**
