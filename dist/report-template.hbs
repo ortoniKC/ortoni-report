@@ -316,6 +316,8 @@
     </section>
     <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
     <script>
+        
+
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
                 const escapeMap = {
@@ -508,7 +510,31 @@
                 });
                 return stepsList;
             }
-
+            function openModal() {
+                let modal = document.querySelector("#testImage");
+                modal.classList.add("is-active");
+            }
+            function openVideo(){
+                let modal = document.querySelector("#testVideo");
+                modal.classList.add("is-active");
+            }
+            function closeVideo(){
+                let modal = document.querySelector("#testVideo");
+                modal.classList.remove("is-active");
+            }
+            function closeModal() {
+                let modal = document.querySelector("#testImage");
+                modal.classList.remove("is-active");
+            }
+            window.openModal = openModal;
+            window.openVideo = openVideo;
+            window.closeVideo = closeVideo;
+            window.closeModal = closeModal;
+            
+            document.addEventListener('keydown', (event) => {
+            if (event.key === "Escape") {
+                closeModal();
+            }});
 
             function attachEventListeners() {
                 const testItems = document.querySelectorAll('[data-test-id]');
@@ -647,6 +673,5 @@
         });
 
     </script>
-<script src="node_modules/ortoni-report/dist/utils/modal.js"></script>
 </body>
 </html>
