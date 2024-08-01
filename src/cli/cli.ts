@@ -25,7 +25,7 @@ program
         }
 
         console.log('Bundling Ortoni Report...');
-        exec(`parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
+        exec(`npx parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error: ${error.message}`);
                 return;

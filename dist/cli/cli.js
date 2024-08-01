@@ -25,7 +25,7 @@ commander_1.program
         process.exit(1);
     }
     console.log('Bundling Ortoni Report...');
-    (0, child_process_1.exec)(`parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
+    (0, child_process_1.exec)(`npx parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return;
