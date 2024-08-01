@@ -9,7 +9,6 @@ const path_1 = __importDefault(require("path"));
 const commander_1 = require("commander");
 const child_process_1 = require("child_process");
 const utils_1 = require("../utils/utils");
-// Utility function to ensure the filename has a .html extension
 commander_1.program
     .name('ortoni-report')
     .description('Ortoni Report by LetCode with Koushik')
@@ -19,7 +18,6 @@ commander_1.program
     .description('Bundle Ortoni Report')
     .option('-f, --filename <filename>', 'Specify the filename for the generated report', 'ortoni-report.html')
     .action((options) => {
-    // Ensure the filename has a .html extension
     const filename = (0, utils_1.ensureHtmlExtension)(options.filename);
     const reportPath = path_1.default.resolve(process.cwd(), filename);
     if (!fs_1.default.existsSync(reportPath)) {
@@ -27,7 +25,7 @@ commander_1.program
         process.exit(1);
     }
     console.log('Bundling Ortoni Report...');
-    (0, child_process_1.exec)(`parcel build ${reportPath} --dist-dir build --public-url ./`, (error, stdout, stderr) => {
+    (0, child_process_1.exec)(`parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return;

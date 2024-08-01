@@ -6,9 +6,6 @@ import { program } from 'commander';
 import { exec } from 'child_process';
 import { ensureHtmlExtension } from '../utils/utils';
 
-// Utility function to ensure the filename has a .html extension
-
-
 program
     .name('ortoni-report')
     .description('Ortoni Report by LetCode with Koushik')
@@ -19,7 +16,6 @@ program
     .description('Bundle Ortoni Report')
     .option('-f, --filename <filename>', 'Specify the filename for the generated report', 'ortoni-report.html')
     .action((options) => {
-        // Ensure the filename has a .html extension
         const filename = ensureHtmlExtension(options.filename);
         const reportPath = path.resolve(process.cwd(), filename);
 
@@ -29,7 +25,7 @@ program
         }
 
         console.log('Bundling Ortoni Report...');
-        exec(`parcel build ${reportPath} --dist-dir build --public-url ./`, (error, stdout, stderr) => {
+        exec(`parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error: ${error.message}`);
                 return;
