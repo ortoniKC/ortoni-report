@@ -24,8 +24,11 @@ commander_1.program
         console.error(`${filename} not found. Please ensure the report has been generated.`);
         process.exit(1);
     }
+    // Resolve the path to the local parcel binary
+    const parcelPath = path_1.default.resolve(__dirname, '../../node_modules/.bin/parcel');
+    const parcelCommand = `${parcelPath} build ${reportPath} --dist-dir ortoni-report --public-url ./`;
     console.log('Bundling Ortoni Report...');
-    (0, child_process_1.exec)(`npx parcel build ${reportPath} --dist-dir ortoni-report --public-url ./`, (error, stdout, stderr) => {
+    (0, child_process_1.exec)(parcelCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error: ${error.message}`);
             return;
