@@ -5,6 +5,7 @@
 ### New Features
 
 - **Configurable Report Filename**: Introduced a new configuration attribute to set the filename for the generated report. The default value is `ortoni-report.html`.
+- **filename**: User can set the report file name.
 
 ### Command-Line Interface
 
