@@ -3,6 +3,6 @@ screenshots
 test-results
 .vscode
 ortoni-report.html
-dist\ortoni-report.d.ts
-dist\ortoni-report.js
-dist\ortoni-report.mjs
+dist/ortoni-report.d.ts
+dist/ortoni-report.js
+dist/ortoni-report.mjs

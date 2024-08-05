@@ -54,3 +54,10 @@ export function safeStringify(obj: any, indent = 2) {
     cache.clear();
     return json;
 }
+export function ensureHtmlExtension(filename: string) {
+    const ext = path.extname(filename);
+    if (ext && ext.toLowerCase() === '.html') {
+        return filename;
+    }
+    return `${filename}.html`;
+};

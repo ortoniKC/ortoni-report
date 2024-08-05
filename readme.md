@@ -1,12 +1,12 @@
-## Playwright Report by Koushik
+# Playwright Report by Koushik
 
-Welcome to OrtoniReport (Playwright report - unofficial), a robust HTML report generator tailored for Playwright tests. This release introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
+Welcome to Ortoni Report (Playwright report - unofficial), a robust HTML report generator tailored for Playwright tests. Ortoni Report introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
 
 Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 
-![OrtoniReport](https://github.com/ortoniKC/ortoni-report/assets/58769833/e88f33d4-eb5c-41c7-b90a-f8a283af0058)
+![alt text](Ortoni-Report.png)
 
-### Key Features
+## Key Features
 
 1. **Hierarchical Grouping**
    - Tests are grouped hierarchically by file name, suite, and project, offering a structured view of test execution.
@@ -32,6 +32,7 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 7. **Customization and Themes**
    - Customize project details, author name, test types, and toggle between dark/light themes.
    - Option to choose between Base64 images or file path for screenshots.
+   - User can set the report file name
 
 8. **Responsive Design**
    - Optimized layout that adapts seamlessly to different screen sizes for accessibility.
@@ -39,9 +40,36 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 9. **Integration and Configuration**
    - Easily integrate with Playwright configurations using TypeScript/JavaScript.
    - Configure reporting preferences within your Playwright setup.
-
+   
 10. **Add logo to the report**
-   - Add relative or absolute path of the image to the config
+      - Add relative or absolute path of the image to the config.
+
+11. **Share report**
+      - Generat the report and zip the folder and share.   
+
+
+### How to Use ortoni-report
+
+### Installation
+
+1. **Install the ortoni-report package**:
+
+    ```sh
+    npm install -g ortoni-report
+    ```
+
+### Generate and Bundle HTML Report
+
+2. **Generate and bundle the report** (Optional):
+
+    ```sh
+    npx ortoni-report gr -f ortoni-report.html
+    ```
+
+### Command Overview
+
+- `npx ortoni-report gr -f <filename>`: Bundle the specified report file.
+  - `-f, --filename <filename>`: Specify the filename for the generated report (default: `ortoni-report.html`).   
 
 ### Configurable Report Generation
 
@@ -52,6 +80,7 @@ import { defineConfig } from '@playwright/test';
 import { OrtoniReportConfig } from 'ortoni-report';
 
 const reportConfig: OrtoniReportConfig = {
+  filename:"myawesomereport.html",
   logo: "path/logo.png",
   authorName: "LetCode Koushik",
   base64Image: false,
@@ -66,9 +95,19 @@ export default defineConfig({
 });
 ```
 
+### Common Issue
+```
+Error: Command failed:
+@parcel/namer-default: Target "main" declares an     
+output file path of "index.js" which does not match  
+the compiled bundle type "html".
+```
+Solution:
+Remove "main" in the ```package.json``` file
+
 ### Comprehensive Test Details
 
-- **Rich Test Information:** Each test includes details like title, status, duration, tags, errors, steps, logs, video, and screenshot paths.
+- **Rich Test Information:** Each test includes details like title, status, duration, tags, errors, steps, logs, video, and screenshot.
 - **Color-coded Status:** Status indicators (green for passed, red for failed, yellow for skipped) for quick identification.
 
 ### Handlebars Template Integration

@@ -1,4 +1,25 @@
 # Change Log:
+
+## Version 1.1.9
+
+### New Features
+
+- **Configurable Report Filename**: Introduced a new configuration attribute to set the filename for the generated report. The default value is `ortoni-report.html`.
+
+### Command-Line Interface
+
+- **Generate Report Command**: Added a new CLI command to generate and bundle the report:
+    ```sh
+    npx ortoni-report gr
+    ```
+  This command allows users to easily generate the report with a single command.
+
+### Enhancements
+
+- **Bundled Report**: The generated report is now bundled into a single file, making it easier to zip and share.
+- **Storage Location**: The bundled report is stored in the `project/ortoni-report` folder for better organization and accessibility.
+
+
 ## Version 1.1.8
 
 ### Fixed
