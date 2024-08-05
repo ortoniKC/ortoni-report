@@ -4,7 +4,7 @@ Welcome to Ortoni Report (Playwright report - unofficial), a robust HTML report 
 
 Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 
-![OrtoniReport](https://github.com/ortoniKC/ortoni-report/assets/58769833/e88f33d4-eb5c-41c7-b90a-f8a283af0058)
+![alt text](Ortoni-Report.png)
 
 ## Key Features
 
@@ -94,6 +94,16 @@ export default defineConfig({
     // Other Playwright configurations
 });
 ```
+
+### Common Issue
+```
+Error: Command failed:
+@parcel/namer-default: Target "main" declares an     
+output file path of "index.js" which does not match  
+the compiled bundle type "html".
+```
+Solution:
+Remove "main" in the ```package.json``` file
 
 ### Comprehensive Test Details
 
