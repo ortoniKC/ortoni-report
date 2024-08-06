@@ -9,6 +9,11 @@ const path_1 = __importDefault(require("path"));
 const commander_1 = require("commander");
 const child_process_1 = require("child_process");
 const utils_1 = require("../utils/utils");
+const findParcelBinary = () => {
+    const localParcel = path_1.default.resolve(__dirname, '../../node_modules/.bin/parcel');
+    const projectParcel = path_1.default.resolve(process.cwd(), 'node_modules/.bin/parcel');
+    return fs_1.default.existsSync(localParcel) ? localParcel : projectParcel;
+};
 commander_1.program
     .name('ortoni-report')
     .description('Ortoni Report by LetCode with Koushik')
@@ -25,7 +30,7 @@ commander_1.program
         process.exit(1);
     }
     // Resolve the path to the local parcel binary
-    const parcelPath = path_1.default.resolve(__dirname, '../../node_modules/.bin/parcel');
+    const parcelPath = findParcelBinary();
     const parcelCommand = `${parcelPath} build ${reportPath} --dist-dir ortoni-report --public-url ./`;
     console.log('Bundling Ortoni Report...');
     (0, child_process_1.exec)(parcelCommand, (error, stdout, stderr) => {
