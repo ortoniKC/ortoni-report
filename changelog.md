@@ -1,5 +1,12 @@
 # Change Log:
 
+## Version 2.0.1
+- Fixed local and root path issue of Parcel bundler.
+- Local config issue
+
+## Version 2.0.0
+- Fixed local and root path issue of Parcel bundler.
+
 ## Version 1.1.9
 
 ### New Features

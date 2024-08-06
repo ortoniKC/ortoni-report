@@ -6,6 +6,12 @@ import { program } from 'commander';
 import { exec } from 'child_process';
 import { ensureHtmlExtension } from '../utils/utils';
 
+const findParcelBinary = () => {
+    const localParcel = path.resolve(__dirname, '../../node_modules/.bin/parcel');
+    const projectParcel = path.resolve(process.cwd(), 'node_modules/.bin/parcel');
+    return fs.existsSync(localParcel) ? localParcel : projectParcel;
+};
+
 program
     .name('ortoni-report')
     .description('Ortoni Report by LetCode with Koushik')
@@ -24,7 +30,7 @@ program
             process.exit(1);
         }
         // Resolve the path to the local parcel binary
-        const parcelPath = path.resolve(__dirname, '../../node_modules/.bin/parcel');
+        const parcelPath = findParcelBinary();
         const parcelCommand = `${parcelPath} build ${reportPath} --dist-dir ortoni-report --public-url ./`;
 
         console.log('Bundling Ortoni Report...');
