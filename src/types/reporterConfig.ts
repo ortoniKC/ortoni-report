@@ -2,11 +2,16 @@
  * Configuration options for OrtoniReport.
  */
 export interface OrtoniReportConfig {
-     /**
-     * Add project on the list of the tests? (Filtering projects still works if hidden)
-     * @example true to display, false to hide.
+    /**
+     * The title of the HTML report.
+     * @example "Ortoni Playwright Test Report"
      */
-    showProject?:boolean
+    title?: string
+    /**
+    * Add project on the list of the tests? (Filtering projects still works if hidden)
+    * @example true to display, false to hide.
+    */
+    showProject?: boolean
     /**
      * The name of the project.
      * @example "Ortoni Project"
@@ -46,11 +51,11 @@ export interface OrtoniReportConfig {
      * @example "/absolute/path/to/logo.png"
      */
     logo?: string;
-     /**
-     * The filename to the html report.
-     * @example "index.html"
-     */
-    filename?:string;
+    /**
+    * The filename to the html report.
+    * @example "index.html"
+    */
+    filename?: string;
 }
 
 /**

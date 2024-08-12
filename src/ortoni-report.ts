@@ -222,7 +222,8 @@ class OrtoniReport implements Reporter {
         successRate: successRate,
         lastRunDate: formatDate(new Date()),
         projects: this.projectSet,
-        showProject: this.config.showProject || false
+        showProject: this.config.showProject || false,
+        title: this.config.title || "Ortoni Playwright Test Report"
       };
       return template(data);
     } catch (error: any) {
