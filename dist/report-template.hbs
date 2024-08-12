@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{preferredTheme}}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,7 +73,6 @@
         }
 
 </style>
-
 <body>
     <section class="section">
         <header class="container">
@@ -124,6 +122,7 @@
                         </div>
                     </div>
                     <div class="content sidebar">
+                        {{#if showProject}}
                         {{#each groupedResults}}
                         <details class="box">
                             <summary class="is-size-5 has-icon-right">
@@ -134,9 +133,9 @@
                                     <span>{{@key}}</span>
                                 </div>
                             </summary>
-                            <ul>
+                            <ul class="mt-4 mb-4">
                                 {{#each this}}
-                                <details class="mt-1">
+                                <details class="mt-2 mb-2">
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
@@ -145,11 +144,11 @@
                                             <span>{{@key}}</span>
                                         </div>
                                     </summary>
-                                    <ul>
+                                    <ul class="mt-4 mb-4">
                                         {{#each this}}
-                                        <details class="mb-1">
+                                        <details class="mt-2 mb-2">
                                             <summary class="is-capitalized is-size-6">{{@key}}</summary>
-                                            <ul>
+                                            <ul class="mt-4 mb-4">
                                                 {{#each this}}
                                                 <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
                                                     data-test-duration="{{duration}}"
@@ -200,6 +199,77 @@
                             </ul>
                         </details>
                         {{/each}}
+                        {{else}}
+                        {{#each groupedResults}}
+                        <details class="box">
+                            <summary class="is-size-5 has-icon-right">
+                                <div class="icon-text">
+                                    <span class="icon has-text-info">
+                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                    </span>
+                                    <span>{{@key}}</span>
+                                </div>
+                            </summary>
+                            <ul class="mt-4 mb-4">
+                                {{#each this}}
+                                <details class="mt-2 mb-2">
+                                    <summary class="is-size-5 is-capitalized">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                            </span>
+                                            <span>{{@key}}</span>
+                                        </div>
+                                    </summary>
+                                    <ul class="mt-4 mb-4">
+                                    {{#each this}}
+                                    <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
+                                        data-test-duration="{{duration}}"
+                                        data-project-name="{{projectName}}" data-test-id="{{index}}"
+                                        data-test-status="{{status}} {{retry}}">
+                                        <div class="icon-text">
+                                            {{#if isRetry}}
+                                            <span class="icon has-text-info">
+                                                <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
+                                                    alt="Retry"></span>
+                                            {{/if}}
+                                            {{#if (eq status "passed")}}
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
+                                                alt="Pass"></span>
+                                            {{/if}}
+                                            {{#if (eq status "failed")}}
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
+                                                alt="Fail"></span>
+                                            {{else}}
+                                            {{#if (eq status "skipped")}}
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
+                                                alt="Skip"></span>
+                                            {{/if}}
+                                            {{/if}}
+                                            {{#if (eq status "timedOut")}}
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
+                                                alt="timedOut"></span>
+                                            {{/if}}
+                                            {{#if (eq status "flaky")}}
+                                            <span class="icon has-text-info">
+                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
+                                                alt="flaky"></span>
+                                            {{/if}}
+                                            <span>{{title}}</span>
+                                        </div>
+                                    </li>
+                                    {{/each}} 
+                                    </ul>   
+                                </details>
+                                {{/each}}
+                            </ul>
+                        </details>
+                        {{/each}}
+                        {{/if}}
                     </div>
                 </aside>
                 <section class="column is-three-fifths">
@@ -325,7 +395,6 @@
                 return escapeMap[match];
             });
         }
-
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
             const testDetails = document.getElementById('testDetails');
@@ -416,6 +485,12 @@
                             ${test.duration.length > 0 ? `
                             <h4 class="title is-4">Duration</h4>
                             <p class="${statusClass}">${test.duration}</p>` : ""}
+                            <div class="control">
+                                <div class="tags has-addons">
+                                <span class="tag is-dark">Project</span>
+                                <span class="tag is-info is-capitalized">${test.projectName}</span>
+                                </div>
+                            </div>
                             <div class="tags" id="attachTags"></div>
                             ${test.videoPath ? `
                             <div id="testVideo" class="modal">
@@ -668,7 +743,6 @@
 
             attachEventListeners();
         });
-
     </script>
 </body>
 </html>

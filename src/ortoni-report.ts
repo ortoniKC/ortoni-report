@@ -157,16 +157,28 @@ class OrtoniReport implements Reporter {
   }
 
   private groupResults() {
-    this.groupedResults = this.results.reduce((acc: any, result, index) => {
-      const { filePath, suite, projectName } = result;
-      acc[filePath] = acc[filePath] || {};
-      acc[filePath][suite] = acc[filePath][suite] || {};
-      acc[filePath][suite][projectName] =
-        acc[filePath][suite][projectName] || [];
-      acc[filePath][suite][projectName].push({ ...result, index });
-      return acc;
-    }, {});
+    if (this.config.showProject) {
+      // Group by filePath, suite, and projectName
+      this.groupedResults = this.results.reduce((acc: any, result, index) => {
+        const { filePath, suite, projectName } = result;
+        acc[filePath] = acc[filePath] || {};
+        acc[filePath][suite] = acc[filePath][suite] || {};
+        acc[filePath][suite][projectName] = acc[filePath][suite][projectName] || [];
+        acc[filePath][suite][projectName].push({ ...result, index });
+        return acc;
+      }, {});
+    } else {
+      // Group by filePath and suite, ignoring projectName
+      this.groupedResults = this.results.reduce((acc: any, result, index) => {
+        const { filePath, suite } = result;
+        acc[filePath] = acc[filePath] || {};
+        acc[filePath][suite] = acc[filePath][suite] || [];
+        acc[filePath][suite].push({ ...result, index });
+        return acc;
+      }, {});
+    }
   }
+
 
   generateHTML(filteredResults: TestResultData[], totalDuration: string) {
     try {
@@ -210,6 +222,7 @@ class OrtoniReport implements Reporter {
         successRate: successRate,
         lastRunDate: formatDate(new Date()),
         projects: this.projectSet,
+        showProject: this.config.showProject || false
       };
       return template(data);
     } catch (error: any) {
