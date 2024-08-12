@@ -151,7 +151,7 @@
                                             <summary class="is-capitalized is-size-6">{{@key}}</summary>
                                             <ul>
                                                 {{#each this}}
-                                                <li class="media" data-suite-name="{{suite}}"
+                                                <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
                                                     data-test-duration="{{duration}}"
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
@@ -313,8 +313,6 @@
     </section>
     <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
     <script>
-        
-
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
                 const escapeMap = {
@@ -578,11 +576,13 @@
                         const projectName = item.getAttribute('data-project-name').trim();
                         const testStatus = item.getAttribute('data-test-status').trim();
                         const matchesProject = (selectedProject === 'all' || projectName === selectedProject);
-                        const matchesStatus = (selectedStatus === 'all' || testStatus.includes(selectedStatus) ||
-                            (selectedStatus === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
-                            (selectedStatus === 'retry' && testStatus.includes('retry')) ||
-                            (selectedStatus === 'flaky' && testStatus.includes('flaky')));
-
+                        const matchesStatus = (selectedStatus === 'all' && testStatus !== 'skipped') ||
+                            (selectedStatus !== 'all' && (
+                                testStatus.includes(selectedStatus) ||
+                                (selectedStatus === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
+                                (selectedStatus === 'retry' && testStatus.includes('retry')) ||
+                                (selectedStatus === 'flaky' && testStatus.includes('flaky'))
+                            ));
                         if (matchesProject && matchesStatus) {
                             item.classList.remove('is-hidden');
                             shouldShowDetails = true;

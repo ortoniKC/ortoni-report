@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Playwright Report By LetCode with Koushik",
   "bin": {
     "ortoni-report": "./dist/cli/cli.js"
