@@ -485,12 +485,13 @@
                             ${test.duration.length > 0 ? `
                             <h4 class="title is-4">Duration</h4>
                             <p class="${statusClass}">${test.duration}</p>` : ""}
+                            ${test.projectName.length > 0 ? `
                             <div class="control">
                                 <div class="tags has-addons">
                                 <span class="tag is-dark">Project</span>
                                 <span class="tag is-info is-capitalized">${test.projectName}</span>
                                 </div>
-                            </div>
+                            </div>`: ""}
                             <div class="tags" id="attachTags"></div>
                             ${test.videoPath ? `
                             <div id="testVideo" class="modal">
@@ -642,7 +643,7 @@
                 const selectedStatus = activeFilter ? activeFilter.getAttribute('data-status') : 'all';
 
                 const testItems = document.querySelectorAll('li[data-test-id]');
-                const detailsElements = document.querySelectorAll('details');
+                const detailsElements = document.querySelectorAll('.sidebar details');
 
                 detailsElements.forEach(details => {
                     let shouldShowDetails = false;
