@@ -374,7 +374,6 @@
                     <div id="testDetails" style="display: none;">
                         <!-- Back button should be outside the dynamic content -->
                         <button class="button content" id="back-to-summary"onclick="showSummary()">Back to Summary</button>
-                        <div class="tags" id="attachTags"></div>
                         <!-- Test Details will be displayed here -->
                     </div>
                 </section>
@@ -435,19 +434,7 @@
                 testDetails.style.display = 'none';
                 backButton.style.display = 'none';
             }
-
             window.showSummary = showSummary;
-
-            function attachTags(testTags){
-                const tags = document.querySelector("#attachTags");
-                    testTags.forEach(tag => {
-                        const tagElement = document.createElement('span');
-                        tagElement.className = 'tag is-info';
-                        tagElement.textContent = tag;
-                        tags.appendChild(tagElement);
-                    });
-            }
-
             function displayTestDetails(test) {
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
@@ -492,7 +479,13 @@
                                 <span class="tag is-info is-capitalized">${test.projectName}</span>
                                 </div>
                             </div>`: ""}
-                            <div class="tags" id="attachTags"></div>
+                            ${test.testTags.length > 0 ? `
+                            <div class="control mt-4">
+                                <div class="tags has-addons">
+                                <span class="tag is-dark">Project</span>
+                                <span class="tag is-info is-capitalized">${test.testTags.join(" ")}</span>
+                                </div>
+                            </div>`: ""}
                             ${test.videoPath ? `
                             <div id="testVideo" class="modal">
                                 <div class="modal-background"></div>
@@ -558,7 +551,6 @@
                     }
                     stepDetailsDiv.appendChild(stepsList);
                 }
-                attachTags(test.testTags);
             }
 
             function attachSteps(test) {
