@@ -7,6 +7,9 @@
     <title>{{title}}</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
 </head>
 <style>
         #summary, #testDetails, button#back-to-summary {
@@ -106,15 +109,18 @@
         <main class="container">
             <div class="columns">
                 <aside class="column is-two-fifths">
-                    <div class="columns is-mobile">
+                    <div class="columns is-mobile is-vcentered">
                         <div class="column">
                             <h2 class="title is-4">Tests</h2>
                         </div>
                         <div class="column">
                             <div class="select is-pulled-right">
                                 <select id="project-filter">
-                                    <option value="all">All Projects</option>
+                                    <option value="all">Filter</option>
                                     {{#each projects}}
+                                        <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
+                                    {{#each allTags}}
                                         <option value="{{this}}">{{this}}</option>
                                     {{/each}}
                                 </select>
@@ -151,7 +157,7 @@
                                             <ul class="mt-4 mb-4">
                                                 {{#each this}}
                                                 <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                                    data-test-duration="{{duration}}"
+                                                    data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
                                                     <div class="icon-text">
@@ -224,7 +230,7 @@
                                     <ul class="mt-4 mb-4">
                                     {{#each this}}
                                     <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                        data-test-duration="{{duration}}"
+                                        data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                         data-project-name="{{projectName}}" data-test-id="{{index}}"
                                         data-test-status="{{status}} {{retry}}">
                                         <div class="icon-text">
@@ -482,8 +488,8 @@
                             ${test.testTags.length > 0 ? `
                             <div class="control mt-4">
                                 <div class="tags has-addons">
-                                <span class="tag is-dark">Project</span>
-                                <span class="tag is-info is-capitalized">${test.testTags.join(" ")}</span>
+                                <span class="tag is-dark">Test Tags</span>
+                                <span class="tag is-info">${test.testTags.join(" ")}</span>
                                 </div>
                             </div>`: ""}
                             ${test.videoPath ? `
@@ -633,14 +639,13 @@
                 const selectedProject = document.getElementById('project-filter').value;
                 const activeFilter = document.querySelector('.filter.active');
                 const selectedStatus = activeFilter ? activeFilter.getAttribute('data-status') : 'all';
-
-                const testItems = document.querySelectorAll('li[data-test-id]');
                 const detailsElements = document.querySelectorAll('.sidebar details');
 
                 detailsElements.forEach(details => {
                     let shouldShowDetails = false;
                     const items = details.querySelectorAll('li[data-test-id]');
                     items.forEach(item => {
+                        const testTags = item.getAttribute('data-test-tags').trim().split(' ');
                         const projectName = item.getAttribute('data-project-name').trim();
                         const testStatus = item.getAttribute('data-test-status').trim();
                         const matchesProject = (selectedProject === 'all' || projectName === selectedProject);
@@ -651,7 +656,8 @@
                                 (selectedStatus === 'retry' && testStatus.includes('retry')) ||
                                 (selectedStatus === 'flaky' && testStatus.includes('flaky'))
                             ));
-                        if (matchesProject && matchesStatus) {
+                        const matchesTag = testTags.includes(selectedProject);    
+                        if (matchesProject && matchesStatus && matchesTag) {
                             item.classList.remove('is-hidden');
                             shouldShowDetails = true;
                         } else {

@@ -86,7 +86,7 @@ class OrtoniReport implements Reporter {
             .join("\n")
         ),
         filePath: filePath,
-        projects: this.projectSet,
+        filters: this.projectSet,
         base64Image: this.config.base64Image,
       };
       this.attachFiles(result, testResult);
@@ -141,12 +141,15 @@ class OrtoniReport implements Reporter {
       const totalDuration = msToTime(result.duration);
       this.groupResults();
 
+      Handlebars.registerHelper('joinWithSpace', (array)=> array.join(' '));
       Handlebars.registerHelper("json", (context) => safeStringify(context));
       Handlebars.registerHelper(
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
-      const outputFilename = ensureHtmlExtension(this.config.filename || 'ortoni-report.html');
+      const outputFilename = ensureHtmlExtension(
+        this.config.filename || "ortoni-report.html"
+      );
       const html = this.generateHTML(filteredResults, totalDuration);
       const outputPath = path.resolve(process.cwd(), outputFilename);
       fs.writeFileSync(outputPath, html);
@@ -163,7 +166,8 @@ class OrtoniReport implements Reporter {
         const { filePath, suite, projectName } = result;
         acc[filePath] = acc[filePath] || {};
         acc[filePath][suite] = acc[filePath][suite] || {};
-        acc[filePath][suite][projectName] = acc[filePath][suite][projectName] || [];
+        acc[filePath][suite][projectName] =
+          acc[filePath][suite][projectName] || [];
         acc[filePath][suite][projectName].push({ ...result, index });
         return acc;
       }, {});
@@ -178,7 +182,6 @@ class OrtoniReport implements Reporter {
       }, {});
     }
   }
-
 
   generateHTML(filteredResults: TestResultData[], totalDuration: string) {
     try {
@@ -203,6 +206,12 @@ class OrtoniReport implements Reporter {
         ? path.resolve(this.config.logo)
         : undefined;
 
+      const allTags = new Set();
+      this.results.forEach(result => {
+        result.suiteTags.forEach(tag => allTags.add(tag));
+        result.testTags.forEach(tag => allTags.add(tag));
+      });
+
       const data = {
         logo: logo,
         totalDuration: totalDuration,
@@ -222,8 +231,9 @@ class OrtoniReport implements Reporter {
         successRate: successRate,
         lastRunDate: formatDate(new Date()),
         projects: this.projectSet,
+        allTags: Array.from(allTags),
         showProject: this.config.showProject || false,
-        title: this.config.title || "Ortoni Playwright Test Report"
+        title: this.config.title || "Ortoni Playwright Test Report",
       };
       return template(data);
     } catch (error: any) {
