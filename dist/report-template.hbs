@@ -7,6 +7,7 @@
     <title>{{title}}</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
@@ -114,17 +115,35 @@
                             <h2 class="title is-4">Tests</h2>
                         </div>
                         <div class="column">
-                            <div class="select is-pulled-right">
-                                <select id="project-filter">
-                                    <option value="all">Filter</option>
+                            <div id="project-filter" class="dropdown is-right is-hoverable is-pulled-right">
+                                <div class="dropdown-trigger">
+                                    <button class="button" aria-haspopup="true" aria-controls="select-filter">
+                                    <span>Filters</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="select-filter" role="menu">
+                                    <div class="dropdown-content">
                                     {{#each projects}}
-                                        <option value="{{this}}">{{this}}</option>
+                                        <div class="dropdown-item">
+                                            <label class="checkbox">
+                                                <input type="checkbox" value="{{this}}">{{this}}
+                                            </label>
+                                        </div>
                                     {{/each}}
+                                        <hr class="dropdown-divider" />
                                     {{#each allTags}}
-                                        <option value="{{this}}">{{this}}</option>
+                                        <div class="dropdown-item">
+                                            <label class="checkbox">
+                                                <input type="checkbox" value="{{this}}">{{this}}
+                                            </label>
+                                        </div>
                                     {{/each}}
-                                </select>
-                            </div>
+                                    </div>
+                                </div>
+                            </div>                                
                         </div>
                     </div>
                     <div class="content sidebar">
@@ -606,6 +625,10 @@
             }});
 
             function attachEventListeners() {
+                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', applyFilters);
+                });
                 const testItems = document.querySelectorAll('[data-test-id]');
                 testItems.forEach(item => {
                     item.addEventListener('click', () => {
@@ -614,7 +637,6 @@
                         displayTestDetails(test);
                     });
                 });
-
                 const filters = document.querySelectorAll('.filter');
                 filters.forEach(filter => {
                     filter.addEventListener('click', () => {
@@ -628,27 +650,29 @@
                         applyFilters();
                     });
                 });
-
-                const projectFilter = document.getElementById('project-filter');
-                projectFilter.addEventListener('change', () => {
-                    applyFilters();
-                });
+                applyFilters();
+                // const projectFilter = document.getElementById('project-filter');
+                // projectFilter.addEventListener('click', () => {
+                //     projectFilter.classList.toggle('is-active');
+                // });
             }
 
             function applyFilters() {
-                const selectedProject = document.getElementById('project-filter').value;
+                const selectedCheckboxes = document.querySelectorAll('#select-filter input[type="checkbox"]:checked');
                 const activeFilter = document.querySelector('.filter.active');
                 const selectedStatus = activeFilter ? activeFilter.getAttribute('data-status') : 'all';
+                const selectedFilters = Array.from(selectedCheckboxes).map(checkbox => checkbox.value.trim());
+                const showAll = selectedFilters.length === 0;
                 const detailsElements = document.querySelectorAll('.sidebar details');
-
                 detailsElements.forEach(details => {
                     let shouldShowDetails = false;
                     const items = details.querySelectorAll('li[data-test-id]');
                     items.forEach(item => {
-                        const testTags = item.getAttribute('data-test-tags').trim().split(' ');
+                        const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean); // Split tags and remove empty values
                         const projectName = item.getAttribute('data-project-name').trim();
                         const testStatus = item.getAttribute('data-test-status').trim();
-                        const matchesProject = (selectedProject === 'all' || projectName === selectedProject);
+                        const matchesProject = showAll || selectedFilters.includes(projectName);
+                        const matchesTag = showAll || selectedFilters.some(filter => testTags.includes(filter));
                         const matchesStatus = (selectedStatus === 'all' && testStatus !== 'skipped') ||
                             (selectedStatus !== 'all' && (
                                 testStatus.includes(selectedStatus) ||
@@ -656,8 +680,7 @@
                                 (selectedStatus === 'retry' && testStatus.includes('retry')) ||
                                 (selectedStatus === 'flaky' && testStatus.includes('flaky'))
                             ));
-                        const matchesTag = testTags.includes(selectedProject);    
-                        if (matchesProject && matchesStatus && matchesTag) {
+                        if ((matchesProject || matchesTag) && matchesStatus) {
                             item.classList.remove('is-hidden');
                             shouldShowDetails = true;
                         } else {
@@ -668,7 +691,7 @@
                     details.classList.toggle('is-hidden', !shouldShowDetails);
                 });
             }
-
+            
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
             function filterTests(search){
