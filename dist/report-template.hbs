@@ -18,8 +18,10 @@
         }
 
         .filter.active {
-            background-color: var(--bulma-background-active);
+                box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+                font-weight: bold;
         }
+
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -74,6 +76,10 @@
         }
         .logoimage{
             max-width: 100px;
+        }
+        .listselected {
+            border-image: linear-gradient(45deg, var(--bulma-primary),#FF6B6B) 1;
+            font-weight: bold;
         }
 
 </style>
@@ -632,6 +638,8 @@
                 const testItems = document.querySelectorAll('[data-test-id]');
                 testItems.forEach(item => {
                     item.addEventListener('click', () => {
+                        testItems.forEach(i => i.classList.remove('listselected'));
+                        item.classList.add('listselected');
                         const testId = item.getAttribute('data-test-id');
                         const test = testData[testId];
                         displayTestDetails(test);
