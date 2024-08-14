@@ -129,7 +129,7 @@
                                     {{#each projects}}
                                         <div class="dropdown-item">
                                             <label class="checkbox">
-                                                <input type="checkbox" value="{{this}}">{{this}}
+                                                <input type="checkbox" data-filter-type="project" value="{{this}}">{{this}}
                                             </label>
                                         </div>
                                     {{/each}}
@@ -137,7 +137,7 @@
                                     {{#each allTags}}
                                         <div class="dropdown-item">
                                             <label class="checkbox">
-                                                <input type="checkbox" value="{{this}}">{{this}}
+                                                <input type="checkbox" data-filter-type="test-tags" value="{{this}}">{{this}}
                                             </label>
                                         </div>
                                     {{/each}}
@@ -661,18 +661,25 @@
                 const selectedCheckboxes = document.querySelectorAll('#select-filter input[type="checkbox"]:checked');
                 const activeFilter = document.querySelector('.filter.active');
                 const selectedStatus = activeFilter ? activeFilter.getAttribute('data-status') : 'all';
-                const selectedFilters = Array.from(selectedCheckboxes).map(checkbox => checkbox.value.trim());
-                const showAll = selectedFilters.length === 0;
+                const selectedProjects = [];
+                const selectedTags = [];
+                selectedCheckboxes.forEach(checkbox => {
+                    if (checkbox.getAttribute('data-filter-type') === 'project') {
+                        selectedProjects.push(checkbox.value.trim());
+                    } else {
+                        selectedTags.push(checkbox.value.trim());
+                    }
+                });
                 const detailsElements = document.querySelectorAll('.sidebar details');
                 detailsElements.forEach(details => {
                     let shouldShowDetails = false;
                     const items = details.querySelectorAll('li[data-test-id]');
                     items.forEach(item => {
-                        const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean); // Split tags and remove empty values
+                        const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean);
                         const projectName = item.getAttribute('data-project-name').trim();
                         const testStatus = item.getAttribute('data-test-status').trim();
-                        const matchesProject = showAll || selectedFilters.includes(projectName);
-                        const matchesTag = showAll || selectedFilters.some(filter => testTags.includes(filter));
+                        const matchesProject = selectedProjects.length === 0 || selectedProjects.includes(projectName);
+                        const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => testTags.includes(tag));
                         const matchesStatus = (selectedStatus === 'all' && testStatus !== 'skipped') ||
                             (selectedStatus !== 'all' && (
                                 testStatus.includes(selectedStatus) ||
@@ -680,7 +687,7 @@
                                 (selectedStatus === 'retry' && testStatus.includes('retry')) ||
                                 (selectedStatus === 'flaky' && testStatus.includes('flaky'))
                             ));
-                        if ((matchesProject || matchesTag) && matchesStatus) {
+                        if (matchesProject && matchesTags && matchesStatus) {
                             item.classList.remove('is-hidden');
                             shouldShowDetails = true;
                         } else {
@@ -691,7 +698,7 @@
                     details.classList.toggle('is-hidden', !shouldShowDetails);
                 });
             }
-            
+
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
             function filterTests(search){
