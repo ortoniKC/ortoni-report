@@ -81,6 +81,12 @@
             border-image: linear-gradient(45deg, var(--bulma-primary),#FF6B6B) 1;
             font-weight: bold;
         }
+        .has-background-flaky {
+            background-color: #ffb70f !important;
+        }
+        .has-background-retry {
+            background-color: #69748c !important;
+        }
 
 </style>
 <body>
@@ -308,37 +314,52 @@
                     <div id="summary">
                         <div class="columns is-multiline">
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="all">
+                                <div class="card is-clickable has-background-primary filter" data-status="all">
                                     <header class="card-header has-text-centered">
-                                        <p class="card-header-title">All Tests</p>
+                                        <p class="card-header-title has-text-white">All Tests</p>
+                                        <button class="card-header-icon" aria-label="more options">
+                                            <span class="icon">
+                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                            </span>
+                                        </button>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-primary">{{totalCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{totalCount}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="passed">
+                                <div class="card is-clickable has-background-success filter" data-status="passed">
                                     <header class="card-header has-text-centered">
-                                        <p class="card-header-title">Passed</p>
+                                        <p class="card-header-title has-text-white">Passed</p>
+                                        <button class="card-header-icon" aria-label="more options">
+                                            <span class="icon">
+                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png" alt="test name">
+                                            </span>
+                                        </button>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-success">{{passCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{passCount}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="failed">
+                                <div class="card is-clickable has-background-danger filter" data-status="failed">
                                     <header class="card-header">
-                                        <p class="card-header-title has-text-centered">Failed</p>
+                                        <p class="card-header-title has-text-white has-text-centered">Failed</p>
+                                        <button class="card-header-icon" aria-label="more options">
+                                            <span class="icon">
+                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png" alt="test name">
+                                            </span>
+                                        </button>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-danger">{{failCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{failCount}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -346,37 +367,37 @@
                         </div>
                         <div class="columns is-multiline">
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="skipped">
+                                <div class="card is-clickable has-background-info filter" data-status="skipped">
                                     <header class="card-header has-text-centered">
-                                        <p class="card-header-title">Skipped</p>
+                                        <p class="card-header-title has-text-white">Skipped</p>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-info">{{skipCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{skipCount}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="flaky">
+                                <div class="card is-clickable has-background-warning filter" data-status="flaky">
                                     <header class="card-header has-text-centered">
-                                        <p class="card-header-title">Flaky</p>
+                                        <p class="card-header-title has-text-white">Flaky</p>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-warning">{{flakyCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{flakyCount}}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="column is-one-third">
-                                <div class="card is-clickable filter" data-status="retry">
+                                <div class="card is-clickable has-background-retry filter" data-status="retry">
                                     <header class="card-header has-text-centered">
-                                        <p class="card-header-title">Retry</p>
+                                        <p class="card-header-title has-text-white">Retry</p>
                                         </header>
                                         <div class="card-content">
                                             <div class="content">
-                                            <p class="has-text-centered has-text-info">{{retryCount}}</p>
+                                            <p class="has-text-centered has-text-white">{{retryCount}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -764,7 +785,7 @@
                     labels: ['Passed', 'Failed', 'Skipped','Flaky'],
                     datasets: [{
                         data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
-                        backgroundColor: ['#28a745', '#dc3545', '#d5d4a1', '#FFB704']
+                        backgroundColor: ['#28a745', '#dc3545', '#66d1ff', '#ffb70f']
                         }]
                     },
                 options: {
@@ -772,7 +793,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'right'
+                           display: false
                         }
                     }
                 }
