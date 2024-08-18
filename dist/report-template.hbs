@@ -109,6 +109,9 @@
                     <div class="control">
                         <input class="input" name="search" type="search" placeholder="Search by test title" />
                     </div>
+                     <div class="control has-text-info">
+                        <span id="selected-filters"></span>
+                    </div>
                 </div>
                 <div class="column is-1">
                     <div class="control">
@@ -679,7 +682,6 @@
                         applyFilters();
                     });
                 });
-                // applyFilters();
             }
 
             function applyFilters() {
@@ -722,8 +724,27 @@
                     details.open = shouldShowDetails;
                     details.classList.toggle('is-hidden', !shouldShowDetails);
                 });
+                updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
             }
+            
+            function updateSelectedFiltersDisplay(projects, tags, status) {
+                const filtersDisplay = document.getElementById('selected-filters');
+                filtersDisplay.innerHTML = '';
 
+                if (projects.length > 0) {
+                    filtersDisplay.innerHTML += `<span> Projects: ${projects.join(', ')}</span>`;
+                }
+                if (tags.length > 0) {
+                    filtersDisplay.innerHTML += `<span> Tags: ${tags.join(', ')}</span>`;
+                }
+                if (status !== 'all') {
+                    filtersDisplay.innerHTML += `<span> Status: ${status}</span>`;
+                }
+
+                if (filtersDisplay.innerHTML === '') {
+                    filtersDisplay.innerHTML = '<span>All Tests</span>';
+                }
+            }
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
             function filterTests(search){
