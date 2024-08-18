@@ -18,8 +18,8 @@
         }
 
         .filter.active {
-                box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-                font-weight: bold;
+            box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+            font-weight: bold;
         }
 
         ::-webkit-scrollbar {
@@ -32,7 +32,7 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #888;
+            background: var(--bulma-primary);
             border-radius: 4px;
         }
 
@@ -652,7 +652,7 @@
             }});
 
             function attachEventListeners() {
-                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
+                const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', applyFilters);
                 });
@@ -679,11 +679,7 @@
                         applyFilters();
                     });
                 });
-                applyFilters();
-                // const projectFilter = document.getElementById('project-filter');
-                // projectFilter.addEventListener('click', () => {
-                //     projectFilter.classList.toggle('is-active');
-                // });
+                // applyFilters();
             }
 
             function applyFilters() {
