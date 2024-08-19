@@ -20,7 +20,7 @@ export interface TestResultData {
     logs: string;
     screenshotPath?: string | null | undefined;
     filePath: string;
-    projects: Set<string>;
+    filters: Set<string>;
     tracePath?: string;
     videoPath?: string;
     base64Image:boolean | undefined;

@@ -38,7 +38,7 @@ export function formatDate(date: Date) {
     const year = date.getFullYear();
     const time = date.toLocaleTimeString();
     return `${day}-${month}-${year} ${time}`;
-};
+}
 
 export function safeStringify(obj: any, indent = 2) {
     const cache = new Set();
@@ -60,4 +60,4 @@ export function ensureHtmlExtension(filename: string) {
         return filename;
     }
     return `${filename}.html`;
-};
+}

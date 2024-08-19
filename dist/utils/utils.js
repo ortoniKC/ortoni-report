@@ -44,7 +44,6 @@ function formatDate(date) {
     return `${day}-${month}-${year} ${time}`;
 }
 exports.formatDate = formatDate;
-;
 function safeStringify(obj, indent = 2) {
     const cache = new Set();
     const json = JSON.stringify(obj, (key, value) => {
@@ -68,4 +67,3 @@ function ensureHtmlExtension(filename) {
     return `${filename}.html`;
 }
 exports.ensureHtmlExtension = ensureHtmlExtension;
-;

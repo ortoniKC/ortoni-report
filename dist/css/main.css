@@ -1,6 +1,5 @@
 @charset "UTF-8";
 /* Bulma Utilities */
-@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
 :root {
   --bulma-control-radius: var(--bulma-radius);
   --bulma-control-radius-small: var(--bulma-radius-small);
@@ -5710,7 +5709,7 @@ button.tag:active,
 }
 .select:not(.is-multiple):not(.is-loading)::after {
   inset-inline-end: 1.125em;
-  z-index: 4;
+  z-index: 0;
 }
 .select.is-rounded select {
   border-radius: var(--bulma-radius-rounded);
