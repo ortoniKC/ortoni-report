@@ -1,14 +1,10 @@
-Here's an improved version of the README file that incorporates the recent changes:
-
----
-
 # Ortoni Report (Unofficial Playwright Report) by Koushik
 
 Welcome to **Ortoni Report**, a robust HTML report generator tailored for Playwright tests. Ortoni Report introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
 
 Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](Ortoni-Report.png)
+![Ortoni Report Preview](ortonireport.png)
 
 ## Key Features
 
