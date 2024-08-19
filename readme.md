@@ -1,10 +1,14 @@
-# Playwright Report by Koushik
+Here's an improved version of the README file that incorporates the recent changes:
 
-Welcome to Ortoni Report (Playwright report - unofficial), a robust HTML report generator tailored for Playwright tests. Ortoni Report introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
+---
+
+# Ortoni Report (Unofficial Playwright Report) by Koushik
+
+Welcome to **Ortoni Report**, a robust HTML report generator tailored for Playwright tests. Ortoni Report introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
 
 Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 
-![alt text](Ortoni-Report.png)
+![Ortoni Report Preview](Ortoni-Report.png)
 
 ## Key Features
 
@@ -15,7 +19,7 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
    - Each suite includes categorized tests under respective projects, providing clear organization.
 
 3. **Comprehensive Test Details**
-   - Display test status (passed, failed, skipped), duration, errors, logs, and screenshots.
+   - Display test status (passed, failed, skipped), duration, tags, errors, logs, and screenshots.
    - Sort and filter tests by suite, project, and script for detailed insights.
 
 4. **Summary Statistics**
@@ -31,8 +35,8 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 
 7. **Customization and Themes**
    - Customize project details, author name, test types, and toggle between dark/light themes.
-   - Option to choose between Base64 images or file path for screenshots.
-   - User can set the report file name
+   - Option to choose between Base64 images or file paths for screenshots.
+   - Users can set the report file name.
 
 8. **Responsive Design**
    - Optimized layout that adapts seamlessly to different screen sizes for accessibility.
@@ -40,17 +44,28 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 9. **Integration and Configuration**
    - Easily integrate with Playwright configurations using TypeScript/JavaScript.
    - Configure reporting preferences within your Playwright setup.
-   
-10. **Add logo to the report**
-      - Add relative or absolute path of the image to the config.
 
-11. **Share report**
-      - Generat the report and zip the folder and share.   
+10. **Add Logo to the Report**
+    - Add a relative or absolute path of the image to the config.
 
+11. **Share Report**
+    - Generate the report, zip the folder, and share it.
 
-### How to Use ortoni-report
+12. **Advanced Filtering**
+    - Filter tests by project, tags, and status simultaneously, with the ability to display only those tests matching the selected criteria.
 
-### Installation
+13. **Colorful Dashboard**
+    - Enhanced the visual appeal of the dashboard with vibrant and intuitive colors.
+
+14. **Display Selected Status on UI**
+    - The selected status filter is now visible on the UI, making it easier to track the current filter settings.
+
+15. **Hide Skipped Tests by Default**
+    - Skipped tests are now hidden by default when using the "All Tests" filter, providing a cleaner and more focused view of relevant tests.
+
+### How to Use Ortoni Report
+
+#### Installation
 
 1. **Install the ortoni-report package**:
 
@@ -58,9 +73,9 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
     npm install -g ortoni-report
     ```
 
-### Generate and Bundle HTML Report
+#### Generate and Bundle HTML Report
 
-2. **Generate and bundle the report** (Optional):
+2. **Generate and bundle the report**:
 
     ```sh
     npx ortoni-report gr -f ortoni-report.html
@@ -69,7 +84,7 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
 ### Command Overview
 
 - `npx ortoni-report gr -f <filename>`: Bundle the specified report file.
-  - `-f, --filename <filename>`: Specify the filename for the generated report (default: `ortoni-report.html`).   
+  - `-f, --filename <filename>`: Specify the filename for the generated report (default: `ortoni-report.html`).
 
 ### Configurable Report Generation
 
@@ -80,13 +95,15 @@ import { defineConfig } from '@playwright/test';
 import { OrtoniReportConfig } from 'ortoni-report';
 
 const reportConfig: OrtoniReportConfig = {
-  filename:"myawesomereport.html",
-  logo: "path/logo.png",
+  base64Image: true,
+  logo: "logo.png",
+  title: "Playwight Sample Project",
+  showProject: true,
+  filename: "result",
   authorName: "LetCode Koushik",
-  base64Image: false,
-  preferredTheme: "dark",
-  projectName: "Ortoni Demo Report",
-  testType: "Smoke"
+  preferredTheme: "light",
+  projectName: "Ortoni Report Demo",
+  testType: "V2.0.2 - Build"
 }
 
 export default defineConfig({
@@ -96,30 +113,25 @@ export default defineConfig({
 ```
 
 ### Common Issue
+
 ```
 Error: Command failed:
 @parcel/namer-default: Target "main" declares an     
 output file path of "index.js" which does not match  
 the compiled bundle type "html".
 ```
-Solution:
-Remove "main" in the ```package.json``` file
+
+**Solution**: Remove `"main"` in the `package.json` file.
 
 ### Comprehensive Test Details
 
-- **Rich Test Information:** Each test includes details like title, status, duration, tags, errors, steps, logs, video, and screenshot.
-- **Color-coded Status:** Status indicators (green for passed, red for failed, yellow for skipped) for quick identification.
-
-### Handlebars Template Integration
-
-- **Customizable Reports:** HTML reports are generated using Handlebars templates, offering flexibility in customization and styling.
-- **JSON Helper:** Includes a custom Handlebars helper for managing complex data structures.
+- **Rich Test Information**: Each test includes details like title, status, duration, tags, errors, steps, logs, video, and screenshot.
+- **Color-coded Status**: Status indicators (green for passed, red for failed, yellow for skipped) for quick identification.
 
 ### Future Plans
 
-- **Enhanced Customization:** Additional options for customizing report appearance and structure.
-- **CI/CD Integration:** Improved support for CI/CD environments.
-- **Advanced Filtering:** Expanded filtering capabilities to focus on specific test subsets.
+- **Enhanced Customization**: Additional options for customizing report appearance and structure.
+- **CI/CD Integration**: Improved support for CI/CD environments.
 
 ### Change Logs
 
@@ -133,10 +145,10 @@ View the [LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.m
 
 We value your feedback and contributions! For issues, suggestions, or contributions, visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
 
-Thank you for choosing OrtoniReport. We're committed to enhancing your Playwright testing experience.
+Thank you for choosing Ortoni Report. We're committed to enhancing your Playwright testing experience.
 
 ---
 
 **LetCode with Koushik**
 
----
+--- 

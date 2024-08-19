@@ -1,5 +1,42 @@
 # Change Log:
 
+## Version 2.0.2
+
+#### 🚀 New Features
+
+- **Show or Hide Projects in Test List**
+  - You can now show or hide specific projects in the test list.
+  - ```showProject: true``` from config
+  
+- **Document Title from Config**
+  - The document title is now configurable via the configuration file, allowing you to customize it to your preference.
+
+- **Display Tags in Test Section**
+  - Tags associated with tests are now displayed within the test section, giving you a clearer overview of test categories.
+
+- **Project and Tags Added to Filter**
+  - We've added the ability to filter tests by both project and tags, enhancing the granularity of your test views.
+  
+- **Display Selected Status on UI**
+  - The selected status filter is now visible on the UI, making it easier to track the current filter settings.
+
+#### 🛠 Fixes
+
+- **Project Drop-down Z-Index on Screenshot**
+  - Resolved an issue where the project drop-down menu was being overlapped by screenshots. The z-index has been adjusted for proper layering.
+
+- **Project Filter Hide Test Steps**
+  - Fixed a bug where applying the project filter would inadvertently hide test steps. Test steps are now correctly displayed based on the filter.
+
+#### ✨ Improvements
+
+- **Hide Skipped Tests on All Tests Filter**
+  - Skipped tests are now hidden by default when using the "All Tests" filter, providing a cleaner and more focused view of relevant tests.
+
+- **Colorful Dashboard**
+  - We've enhanced the visual appeal of the dashboard with more vibrant and intuitive colors, making it easier to navigate and interpret results.
+
+
 ## Version 2.0.1
 - Fixed local and root path issue of Parcel bundler.
 - Local config issue
