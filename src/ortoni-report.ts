@@ -97,41 +97,43 @@ class OrtoniReport implements Reporter {
   }
 
   private attachFiles(result: TestResult, testResult: TestResultData) {
+    console.log(result.attachments);
     if (result.attachments) {
       const { base64Image } = this.config;
-      const screenshot = result.attachments.find(
-        (attachment) => attachment.name === "screenshot"
-      );
-      if (screenshot && screenshot.path) {
-        try {
-          const screenshotContent = fs.readFileSync(
-            screenshot.path,
-            base64Image ? "base64" : undefined
-          );
-          testResult.screenshotPath = base64Image
-            ? `data:image/png;base64,${screenshotContent}`
-            : path.resolve(screenshot.path);
-        } catch (error) {
-          console.error(
-            `OrtoniReport: Failed to read screenshot file: ${screenshot.path}`,
-            error
-          );
+      testResult.screenshots = [];
+      result.attachments.forEach((attachment) => {
+        if (attachment.contentType === "image/png") {
+          let screenshotPath = "";
+          if (attachment.path) {
+            try {
+              const screenshotContent = fs.readFileSync(
+                attachment.path,
+                base64Image ? "base64" : undefined
+              );
+              screenshotPath = base64Image
+                ? `data:image/png;base64,${screenshotContent}`
+                : path.resolve(attachment.path);
+            } catch (error) {
+              console.error(
+                `OrtoniReport: Failed to read screenshot file: ${attachment.path}`,
+                error
+              );
+            }
+          } else if (attachment.body) {
+            screenshotPath = `data:image/png;base64,${attachment.body.toString('base64')}`;
+          }
+          if (screenshotPath) {
+            testResult.screenshots?.push(screenshotPath);
+          }
         }
-      }
-      const tracePath = result.attachments.find(
-        (attachment) => attachment.name === "trace"
-      );
-      if (tracePath?.path) {
-        testResult.tracePath = path.resolve(__dirname, tracePath.path);
-      }
-      const videoPath = result.attachments.find(
-        (attachment) => attachment.name === "video"
-      );
-      if (videoPath?.path) {
-        testResult.videoPath = path.resolve(__dirname, videoPath.path);
-      }
+        if (attachment.name === "video" && attachment.path) {
+          testResult.videoPath = path.resolve(__dirname, attachment.path);
+        }
+      });
     }
   }
+
+
 
   onEnd(result: FullResult) {
     try {
@@ -141,7 +143,7 @@ class OrtoniReport implements Reporter {
       const totalDuration = msToTime(result.duration);
       this.groupResults();
 
-      Handlebars.registerHelper('joinWithSpace', (array)=> array.join(' '));
+      Handlebars.registerHelper('joinWithSpace', (array) => array.join(' '));
       Handlebars.registerHelper("json", (context) => safeStringify(context));
       Handlebars.registerHelper(
         "eq",

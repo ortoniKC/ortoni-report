@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.2">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.3">
     <title>{{title}}</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
@@ -490,7 +490,33 @@
                 backButton.style.display = 'none';
             }
             window.showSummary = showSummary;
+
             function displayTestDetails(test) {
+                let currentScreenshotIndex = 0;
+                function changeScreenshot(direction) {
+                    const screenshots = test.screenshots;
+                    currentScreenshotIndex = (currentScreenshotIndex + direction + screenshots.length) % screenshots.length;
+                    updateScreenshot();
+                }
+
+                function gotoScreenshot(index) {
+                    currentScreenshotIndex = index;
+                    updateScreenshot();
+                }
+
+                function updateScreenshot() {
+                    const screenshots = test.screenshots;
+                    document.getElementById('screenshot-main-img').src = screenshots[currentScreenshotIndex];
+                    document.getElementById('screenshot-modal-img').src = screenshots[currentScreenshotIndex];
+
+                    document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                        if (index === currentScreenshotIndex) {
+                            link.classList.add('is-current');
+                        } else {
+                            link.classList.remove('is-current');
+                        }
+                    });
+                }
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
                 const backButton = document.querySelector('button#back-to-summary');
@@ -558,20 +584,33 @@
                             `:''}
                         </div>
                         <div class="column content">
-                            ${test.screenshotPath ? `
+                        ${test.screenshots && test.screenshots.length > 0 ? `
                             <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
                                 <div class="modal-content">
                                     <p class="image">
-                                        <img src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
+                                        <img id="screenshot-modal-img" src="${test.screenshots[0]}" alt="Screenshot">
                                     </p>
                                 </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
+
                             <figure class="image box">
-                                <img onclick="openModal()" src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
-                            </figure>` : ''}
-                        </div>
+                                <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
+                            </figure>
+                            <nav class="pagination is-small is-centered ${test.screenshots.length > 1 ? '': 'is-hidden'}" role="navigation" aria-label="pagination">
+                                <a class="pagination-previous" >Previous</a>
+                                <a class="pagination-next" >Next</a>
+                                <ul class="pagination-list">
+                                    ${test.screenshots.map((_, index) => `
+                                        <li>
+                                            <a class="pagination-link ${index === 0 ? 'is-current' : ''}" aria-label="Goto screenshot ${index + 1}" >${index + 1}</a>
+                                        </li>`).join('')}
+                                </ul>
+                            </nav>
+                        ` : ''}
+                    </div>
+
                     </div>
                     <div class="content">
                         ${test.steps.length > 0 ? `
@@ -596,7 +635,11 @@
                         </div>` : ''}
                     </div>
                 `;
-
+                document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
+                document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
+                document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                    link.addEventListener('click', () => gotoScreenshot(index));
+                });
                 const stepDetailsDiv = document.getElementById('stepDetails');
                 if(stepDetailsDiv){
                     const stepsList = attachSteps(test);
@@ -606,8 +649,9 @@
                     }
                     stepDetailsDiv.appendChild(stepsList);
                 }
+                
             }
-
+           
             function attachSteps(test) {
                 const stepsList = document.createElement("ul");
                 stepsList.setAttribute("id", "steps");
@@ -644,11 +688,12 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.remove("is-active");
             }
+            
             window.openModal = openModal;
             window.openVideo = openVideo;
             window.closeVideo = closeVideo;
             window.closeModal = closeModal;
-            
+          
             document.addEventListener('keydown', (event) => {
             if (event.key === "Escape") {
                 closeModal();
