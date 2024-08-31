@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{preferredTheme}}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,88 +8,101 @@
     <title>{{title}}</title>
     <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
     <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+        rel="stylesheet">
 </head>
 <style>
-        #summary, #testDetails, button#back-to-summary {
-            transition: opacity 0.2s ease-in-out;
-        }
+    #summary,
+    #testDetails,
+    button#back-to-summary {
+        transition: opacity 0.2s ease-in-out;
+    }
 
-        .filter.active {
-            box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-            font-weight: bold;
-        }
+    .filter.active {
+        box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+        font-weight: bold;
+    }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--bulma-primary);
-            border-radius: 4px;
-        }
+    ::-webkit-scrollbar-thumb {
+        background: var(--bulma-primary);
+        border-radius: 4px;
+    }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 
-        div#testDetails {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+    div#testDetails {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
 
-        .sidebar {
-            overflow-y: auto;
-            max-height: calc(100vh - 100px);
-        }
+    .sidebar {
+        overflow-y: auto;
+        max-height: calc(100vh - 100px);
+    }
 
-        aside li {
-            cursor: pointer;
-        }
-        details summary {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        details summary::after {
-            content: '';
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(136, 145, 164)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            transform:rotate(-90deg);
-            background-size: 1em;
-            background-repeat: no-repeat;
-            background-position:right-center;
-            width: 1em;
-            height: 1em;
-            transition: transform 0.2s ease-in-out;
-        }
-        details[open] > summary::after {
-            transform: rotate(0deg);
-        }
-        .logoimage{
-            max-width: 100px;
-        }
-        .listselected {
-            border-image: linear-gradient(45deg, var(--bulma-primary),#FF6B6B) 1;
-            font-weight: bold;
-        }
-        .has-background-flaky {
-            background-color: #ffb70f !important;
-        }
-        .has-background-retry {
-            background-color: #69748c !important;
-        }
+    aside li {
+        cursor: pointer;
+    }
 
+    details summary {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details summary::after {
+        content: '';
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(136, 145, 164)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        transform: rotate(-90deg);
+        background-size: 1em;
+        background-repeat: no-repeat;
+        background-position: right-center;
+        width: 1em;
+        height: 1em;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    details[open]>summary::after {
+        transform: rotate(0deg);
+    }
+
+    .logoimage {
+        max-width: 100px;
+    }
+
+    .listselected {
+        border-image: linear-gradient(45deg, var(--bulma-primary), #FF6B6B) 1;
+        font-weight: bold;
+    }
+
+    .has-background-flaky {
+        background-color: #ffb70f !important;
+    }
+
+    .has-background-retry {
+        background-color: #69748c !important;
+    }
 </style>
+
 <body>
     <section class="section">
         <header class="container">
@@ -97,9 +111,9 @@
                     <div class="columns is-desktop is-vcentered is-multiline">
                         {{#if logo}}
                         <div class="column-1">
-                        <figure class="image logoimage">
-                            <img src="{{logo}}" />
-                        </figure>
+                            <figure class="image logoimage">
+                                <img src="{{logo}}" />
+                            </figure>
                         </div>
                         {{/if}}
                         {{#if projectName}}<div class="column"><span class="title">{{projectName}}</span></div>{{/if}}
@@ -109,7 +123,7 @@
                     <div class="control">
                         <input class="input" name="search" type="search" placeholder="Search by test title" />
                     </div>
-                     <div class="control has-text-info">
+                    <div class="control has-text-info">
                         <span id="selected-filters"></span>
                     </div>
                 </div>
@@ -133,32 +147,34 @@
                             <div id="project-filter" class="dropdown is-right is-hoverable is-pulled-right">
                                 <div class="dropdown-trigger">
                                     <button class="button" aria-haspopup="true" aria-controls="select-filter">
-                                    <span>Filters</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
+                                        <span>Filters</span>
+                                        <span class="icon is-small">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
                                     </button>
                                 </div>
                                 <div class="dropdown-menu" id="select-filter" role="menu">
                                     <div class="dropdown-content">
-                                    {{#each projects}}
+                                        {{#each projects}}
                                         <div class="dropdown-item">
                                             <label class="checkbox">
-                                                <input type="checkbox" data-filter-type="project" value="{{this}}">{{this}}
+                                                <input type="checkbox" data-filter-type="project"
+                                                    value="{{this}}">{{this}}
                                             </label>
                                         </div>
-                                    {{/each}}
+                                        {{/each}}
                                         <hr class="dropdown-divider" />
-                                    {{#each allTags}}
+                                        {{#each allTags}}
                                         <div class="dropdown-item">
                                             <label class="checkbox">
-                                                <input type="checkbox" data-filter-type="test-tags" value="{{this}}">{{this}}
+                                                <input type="checkbox" data-filter-type="test-tags"
+                                                    value="{{this}}">{{this}}
                                             </label>
                                         </div>
-                                    {{/each}}
+                                        {{/each}}
                                     </div>
                                 </div>
-                            </div>                                
+                            </div>
                         </div>
                     </div>
                     <div class="content sidebar">
@@ -168,7 +184,8 @@
                             <summary class="is-size-5 has-icon-right">
                                 <div class="icon-text">
                                     <span class="icon has-text-info">
-                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png"
+                                            alt="file name">
                                     </span>
                                     <span>{{@key}}</span>
                                 </div>
@@ -179,7 +196,8 @@
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                                <img class="image is-16x16"
+                                                    src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
                                             </span>
                                             <span>{{@key}}</span>
                                         </div>
@@ -190,41 +208,48 @@
                                             <summary class="is-capitalized is-size-6">{{@key}}</summary>
                                             <ul class="mt-4 mb-4">
                                                 {{#each this}}
-                                                <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                                    data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
+                                                <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}"
+                                                    data-suite-name="{{suite}}" data-test-duration="{{duration}}"
+                                                    data-test-tags="{{joinWithSpace testTags}}"
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
                                                     <div class="icon-text">
                                                         {{#if isRetry}}
                                                         <span class="icon has-text-info">
-                                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/retry.png"
                                                                 alt="Retry"></span>
                                                         {{/if}}
                                                         {{#if (eq status "passed")}}
                                                         <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                            alt="Pass"></span>
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/pass.png"
+                                                                alt="Pass"></span>
                                                         {{/if}}
                                                         {{#if (eq status "failed")}}
                                                         <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                            alt="Fail"></span>
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/fail.png"
+                                                                alt="Fail"></span>
                                                         {{else}}
                                                         {{#if (eq status "skipped")}}
                                                         <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                            alt="Skip"></span>
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/skip.png"
+                                                                alt="Skip"></span>
                                                         {{/if}}
                                                         {{/if}}
                                                         {{#if (eq status "timedOut")}}
                                                         <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                            alt="timedOut"></span>
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/timeout.png"
+                                                                alt="timedOut"></span>
                                                         {{/if}}
                                                         {{#if (eq status "flaky")}}
                                                         <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                            alt="flaky"></span>
+                                                            <img class="image is-16x16"
+                                                                src="node_modules/ortoni-report/dist/icon/flaky.png"
+                                                                alt="flaky"></span>
                                                         {{/if}}
                                                         <span>{{title}}</span>
                                                     </div>
@@ -245,7 +270,8 @@
                             <summary class="is-size-5 has-icon-right">
                                 <div class="icon-text">
                                     <span class="icon has-text-info">
-                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png"
+                                            alt="file name">
                                     </span>
                                     <span>{{@key}}</span>
                                 </div>
@@ -256,54 +282,62 @@
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                                <img class="image is-16x16"
+                                                    src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
                                             </span>
                                             <span>{{@key}}</span>
                                         </div>
                                     </summary>
                                     <ul class="mt-4 mb-4">
-                                    {{#each this}}
-                                    <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                        data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
-                                        data-project-name="{{projectName}}" data-test-id="{{index}}"
-                                        data-test-status="{{status}} {{retry}}">
-                                        <div class="icon-text">
-                                            {{#if isRetry}}
-                                            <span class="icon has-text-info">
-                                                <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
-                                                    alt="Retry"></span>
-                                            {{/if}}
-                                            {{#if (eq status "passed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                alt="Pass"></span>
-                                            {{/if}}
-                                            {{#if (eq status "failed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                alt="Fail"></span>
-                                            {{else}}
-                                            {{#if (eq status "skipped")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                alt="Skip"></span>
-                                            {{/if}}
-                                            {{/if}}
-                                            {{#if (eq status "timedOut")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                alt="timedOut"></span>
-                                            {{/if}}
-                                            {{#if (eq status "flaky")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                alt="flaky"></span>
-                                            {{/if}}
-                                            <span>{{title}}</span>
-                                        </div>
-                                    </li>
-                                    {{/each}} 
-                                    </ul>   
+                                        {{#each this}}
+                                        <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}"
+                                            data-suite-name="{{suite}}" data-test-duration="{{duration}}"
+                                            data-test-tags="{{joinWithSpace testTags}}"
+                                            data-project-name="{{projectName}}" data-test-id="{{index}}"
+                                            data-test-status="{{status}} {{retry}}">
+                                            <div class="icon-text">
+                                                {{#if isRetry}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/retry.png"
+                                                        alt="Retry"></span>
+                                                {{/if}}
+                                                {{#if (eq status "passed")}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/pass.png"
+                                                        alt="Pass"></span>
+                                                {{/if}}
+                                                {{#if (eq status "failed")}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/fail.png"
+                                                        alt="Fail"></span>
+                                                {{else}}
+                                                {{#if (eq status "skipped")}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/skip.png"
+                                                        alt="Skip"></span>
+                                                {{/if}}
+                                                {{/if}}
+                                                {{#if (eq status "timedOut")}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/timeout.png"
+                                                        alt="timedOut"></span>
+                                                {{/if}}
+                                                {{#if (eq status "flaky")}}
+                                                <span class="icon has-text-info">
+                                                    <img class="image is-16x16"
+                                                        src="node_modules/ortoni-report/dist/icon/flaky.png"
+                                                        alt="flaky"></span>
+                                                {{/if}}
+                                                <span>{{title}}</span>
+                                            </div>
+                                        </li>
+                                        {{/each}}
+                                    </ul>
                                 </details>
                                 {{/each}}
                             </ul>
@@ -322,12 +356,13 @@
                                         <p class="card-header-title has-text-white">All Tests</p>
                                         <button class="card-header-icon" aria-label="more options">
                                             <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                                <img aria-hidden="true" class="image is-16x16"
+                                                    src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
                                             </span>
                                         </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{totalCount}}</p>
                                         </div>
                                     </div>
@@ -339,12 +374,13 @@
                                         <p class="card-header-title has-text-white">Passed</p>
                                         <button class="card-header-icon" aria-label="more options">
                                             <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png" alt="test name">
+                                                <img aria-hidden="true" class="image is-16x16"
+                                                    src="node_modules/ortoni-report/dist/icon/pass.png" alt="test name">
                                             </span>
                                         </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{passCount}}</p>
                                         </div>
                                     </div>
@@ -356,12 +392,13 @@
                                         <p class="card-header-title has-text-white has-text-centered">Failed</p>
                                         <button class="card-header-icon" aria-label="more options">
                                             <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png" alt="test name">
+                                                <img aria-hidden="true" class="image is-16x16"
+                                                    src="node_modules/ortoni-report/dist/icon/fail.png" alt="test name">
                                             </span>
                                         </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{failCount}}</p>
                                         </div>
                                     </div>
@@ -373,9 +410,9 @@
                                 <div class="card is-clickable has-background-info filter" data-status="skipped">
                                     <header class="card-header has-text-centered">
                                         <p class="card-header-title has-text-white">Skipped</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{skipCount}}</p>
                                         </div>
                                     </div>
@@ -385,9 +422,9 @@
                                 <div class="card is-clickable has-background-warning filter" data-status="flaky">
                                     <header class="card-header has-text-centered">
                                         <p class="card-header-title has-text-white">Flaky</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{flakyCount}}</p>
                                         </div>
                                     </div>
@@ -397,9 +434,9 @@
                                 <div class="card is-clickable has-background-retry filter" data-status="retry">
                                     <header class="card-header has-text-centered">
                                         <p class="card-header-title has-text-white">Retry</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
                                             <p class="has-text-centered has-text-white">{{retryCount}}</p>
                                         </div>
                                     </div>
@@ -428,7 +465,8 @@
                     {{!-- Test details --}}
                     <div id="testDetails" style="display: none;">
                         <!-- Back button should be outside the dynamic content -->
-                        <button class="button content" id="back-to-summary"onclick="showSummary()">Back to Summary</button>
+                        <button class="button content" id="back-to-summary" onclick="showSummary()">Back to
+                            Summary</button>
                         <!-- Test Details will be displayed here -->
                     </div>
                 </section>
@@ -581,7 +619,14 @@
                                 <button onclick="closeVideo()" class="modal-close is-large" aria-label="close"></button>
                             </div>
                             <button class="button mt-4" onclick="openVideo()">Attachment: Video</button>
-                            `:''}
+                            `: ''}
+                            ${test.tracePath ? `
+                            <div class="trace-viewer">
+                                <a href="${test.tracePath}" target="_blank" class="button is-small is-link">
+                                View Trace
+                                </a>
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="column content">
                         ${test.screenshots && test.screenshots.length > 0 ? `
@@ -598,7 +643,7 @@
                             <figure class="image box">
                                 <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
                             </figure>
-                            <nav class="pagination is-small is-centered ${test.screenshots.length > 1 ? '': 'is-hidden'}" role="navigation" aria-label="pagination">
+                            <nav class="pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
                                 <a class="pagination-previous" >Previous</a>
                                 <a class="pagination-next" >Next</a>
                                 <ul class="pagination-list">
@@ -641,17 +686,17 @@
                     link.addEventListener('click', () => gotoScreenshot(index));
                 });
                 const stepDetailsDiv = document.getElementById('stepDetails');
-                if(stepDetailsDiv){
+                if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
                     const detail = document.getElementById("stepopen");
-                    if(test.errors.length > 0){
+                    if (test.errors.length > 0) {
                         detail.setAttribute("open", "");
                     }
                     stepDetailsDiv.appendChild(stepsList);
                 }
-                
+
             }
-           
+
             function attachSteps(test) {
                 const stepsList = document.createElement("ul");
                 stepsList.setAttribute("id", "steps");
@@ -676,11 +721,11 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.add("is-active");
             }
-            function openVideo(){
+            function openVideo() {
                 let modal = document.querySelector("#testVideo");
                 modal.classList.add("is-active");
             }
-            function closeVideo(){
+            function closeVideo() {
                 let modal = document.querySelector("#testVideo");
                 modal.classList.remove("is-active");
             }
@@ -688,16 +733,17 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.remove("is-active");
             }
-            
+
             window.openModal = openModal;
             window.openVideo = openVideo;
             window.closeVideo = closeVideo;
             window.closeModal = closeModal;
-          
+
             document.addEventListener('keydown', (event) => {
-            if (event.key === "Escape") {
-                closeModal();
-            }});
+                if (event.key === "Escape") {
+                    closeModal();
+                }
+            });
 
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
@@ -771,7 +817,7 @@
                 });
                 updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
             }
-            
+
             function updateSelectedFiltersDisplay(projects, tags, status) {
                 const filtersDisplay = document.getElementById('selected-filters');
                 filtersDisplay.innerHTML = '';
@@ -792,7 +838,7 @@
             }
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
-            function filterTests(search){
+            function filterTests(search) {
                 const searchTerm = search.toLowerCase();
                 const testItems = document.querySelectorAll('[data-test-id]');
 
@@ -828,12 +874,12 @@
             }
             function debounce(func, wait) {
                 let timeout;
-                return function(...args) {
+                return function (...args) {
                     clearTimeout(timeout);
                     timeout = setTimeout(() => func.apply(this, args), wait);
                 };
             }
-            
+
             const debouncedSearch = debounce((event) => {
                 filterTests(event.target.value);
             }, 300);
@@ -844,25 +890,26 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Passed', 'Failed', 'Skipped','Flaky'],
+                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
-                        backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
+                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
+            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
                         }]
                     },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                           display: false
-                        }
-                    }
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
                 }
-            });
+            }
+        }
+        });
 
-            attachEventListeners();
+        attachEventListeners();
         });
     </script>
 </body>
+
 </html>
