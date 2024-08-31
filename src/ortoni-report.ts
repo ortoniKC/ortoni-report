@@ -129,11 +129,12 @@ class OrtoniReport implements Reporter {
         if (attachment.name === "video" && attachment.path) {
           testResult.videoPath = path.resolve(__dirname, attachment.path);
         }
+        if (attachment.name === "trace" && attachment.path) {
+          testResult.tracePath = path.resolve(__dirname, attachment.path);
+        }
       });
     }
   }
-
-
 
   onEnd(result: FullResult) {
     try {
