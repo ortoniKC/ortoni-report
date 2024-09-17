@@ -97,7 +97,6 @@ class OrtoniReport implements Reporter {
   }
 
   private attachFiles(result: TestResult, testResult: TestResultData) {
-    console.log(result.attachments);
     if (result.attachments) {
       const { base64Image } = this.config;
       testResult.screenshots = [];
