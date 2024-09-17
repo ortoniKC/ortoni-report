@@ -469,7 +469,7 @@
             </div>
         </main>
     </section>
-    <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
@@ -882,29 +882,28 @@
 
             searchInput.addEventListener('input', debouncedSearch);
 
-            const ctx = document.getElementById('testChart').getContext('2d');
+            const ctx = document.getElementById('testChart');
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
                         data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
-                        }]
-                    },
-            options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
+                        backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
+                    }]
+                },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
-            }
-        }
-        });
-
-        attachEventListeners();
-        });
+                }
+            });
+            attachEventListeners();
+            });
     </script>
 </body>
 
