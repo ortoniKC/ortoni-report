@@ -155,6 +155,7 @@ class OrtoniReport implements Reporter {
       this.registerPartial("navbar");
       this.registerPartial("testStatus");
       this.registerPartial("testPanel");
+      this.registerPartial("summaryCard");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
