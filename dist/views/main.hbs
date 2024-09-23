@@ -119,14 +119,8 @@
                             {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
                             {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
                         </div>
-                        {{!-- Suite details with chart --}}
                         <div class="box">
                             {{> userInfo}}
-                            <div class="column is-half">
-                                <div class="chart-container">
-                                    <canvas id="testChart"></canvas>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     {{!-- Test details --}}
