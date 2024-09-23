@@ -142,13 +142,24 @@ class OrtoniReport implements Reporter {
       );
       const totalDuration = msToTime(result.duration);
       this.groupResults();
-
       Handlebars.registerHelper('joinWithSpace', (array) => array.join(' '));
       Handlebars.registerHelper("json", (context) => safeStringify(context));
       Handlebars.registerHelper(
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
+      Handlebars.registerPartial('project-name', fs.readFileSync(
+        path.resolve(__dirname, "views","project-name.hbs"),
+        "utf-8"
+      ));
+      Handlebars.registerPartial('test-name', fs.readFileSync(
+        path.resolve(__dirname, "views","test-name.hbs"),
+        "utf-8"
+      ));
+      Handlebars.registerPartial('test-status', fs.readFileSync(
+        path.resolve(__dirname, "views","test-status.hbs"),
+        "utf-8"
+      ));
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
@@ -200,7 +211,7 @@ class OrtoniReport implements Reporter {
         100
       ).toFixed(2);
       const templateSource = fs.readFileSync(
-        path.resolve(__dirname, "report-template.hbs"),
+        path.resolve(__dirname, "views","main.hbs"),
         "utf-8"
       );
       const template = Handlebars.compile(templateSource);
@@ -210,7 +221,7 @@ class OrtoniReport implements Reporter {
 
       const allTags = new Set();
       this.results.forEach(result => {
-        result.suiteTags.forEach(tag => allTags.add(tag));
+        // result.suiteTags.forEach(tag => allTags.add(tag));
         result.testTags.forEach(tag => allTags.add(tag));
       });
 
