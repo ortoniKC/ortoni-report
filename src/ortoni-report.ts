@@ -148,22 +148,26 @@ class OrtoniReport implements Reporter {
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
+      const cssContent = fs.readFileSync(
+        path.resolve(__dirname, "style", "main.css"),
+        "utf-8"
+      );
       Handlebars.registerPartial('project-name', fs.readFileSync(
-        path.resolve(__dirname, "views","project-name.hbs"),
+        path.resolve(__dirname, "views", "project-name.hbs"),
         "utf-8"
       ));
       Handlebars.registerPartial('test-name', fs.readFileSync(
-        path.resolve(__dirname, "views","test-name.hbs"),
+        path.resolve(__dirname, "views", "test-name.hbs"),
         "utf-8"
       ));
       Handlebars.registerPartial('test-status', fs.readFileSync(
-        path.resolve(__dirname, "views","test-status.hbs"),
+        path.resolve(__dirname, "views", "test-status.hbs"),
         "utf-8"
       ));
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
-      const html = this.generateHTML(filteredResults, totalDuration);
+      const html = this.generateHTML(filteredResults, totalDuration, cssContent);
       const outputPath = path.resolve(process.cwd(), outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
@@ -196,7 +200,7 @@ class OrtoniReport implements Reporter {
     }
   }
 
-  generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+  generateHTML(filteredResults: TestResultData[], totalDuration: string, cssContent: string) {
     try {
       const totalTests = filteredResults.length;
       const passedTests = this.results.filter(
@@ -211,7 +215,7 @@ class OrtoniReport implements Reporter {
         100
       ).toFixed(2);
       const templateSource = fs.readFileSync(
-        path.resolve(__dirname, "views","main.hbs"),
+        path.resolve(__dirname, "views", "main.hbs"),
         "utf-8"
       );
       const template = Handlebars.compile(templateSource);
@@ -248,7 +252,7 @@ class OrtoniReport implements Reporter {
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
       };
-      return template(data);
+      return template({...data, inlineCss: cssContent});
     } catch (error: any) {
       console.error("OrtoniReport: Error generating HTML:", error);
       return `<html><body><h1>Report generation failed</h1><pre>${error.stack}</pre></body></html>`;
