@@ -152,18 +152,12 @@ class OrtoniReport implements Reporter {
         path.resolve(__dirname, "style", "main.css"),
         "utf-8"
       );
-      Handlebars.registerPartial('project-name', fs.readFileSync(
-        path.resolve(__dirname, "views", "project-name.hbs"),
-        "utf-8"
-      ));
-      Handlebars.registerPartial('test-name', fs.readFileSync(
-        path.resolve(__dirname, "views", "test-name.hbs"),
-        "utf-8"
-      ));
-      Handlebars.registerPartial('test-status', fs.readFileSync(
-        path.resolve(__dirname, "views", "test-status.hbs"),
-        "utf-8"
-      ));
+      this.registerPartial("navbar");
+      this.registerPartial("projectView");
+      this.registerPartial("fileView");
+      this.registerPartial("suiteView");
+      this.registerPartial("projectTestView");
+      this.registerPartial("testView");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
@@ -174,6 +168,13 @@ class OrtoniReport implements Reporter {
     } catch (error) {
       console.error("OrtoniReport: Error generating report:", error);
     }
+  }
+
+  private registerPartial(name: string) {
+    Handlebars.registerPartial(name, fs.readFileSync(
+      path.resolve(__dirname, "views", name + ".hbs"),
+      "utf-8"
+    ));
   }
 
   private groupResults() {
@@ -252,7 +253,7 @@ class OrtoniReport implements Reporter {
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
       };
-      return template({...data, inlineCss: cssContent});
+      return template({ ...data, inlineCss: cssContent });
     } catch (error: any) {
       console.error("OrtoniReport: Error generating HTML:", error);
       return `<html><body><h1>Report generation failed</h1><pre>${error.stack}</pre></body></html>`;

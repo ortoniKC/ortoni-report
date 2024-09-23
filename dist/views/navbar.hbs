@@ -1,0 +1,35 @@
+<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item">
+            {{#if logo}}
+            <img src="{{logo}}" alt="{{projectName}}" class="logoimage">
+            {{/if}}
+            {{#if projectName}}
+            <span class="ml-2 has-text-weight-bold has-text-white">{{projectName}}</span>
+            {{/if}}
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    <div class="navbar-menu">
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="field">
+                    <p class="control">
+                        <input class="input" name="search" type="search" placeholder="Search by test">
+                    </p>
+                </div>
+            </div>
+            <div class="navbar-item">
+                <button id="toggle-theme" class="" data-theme-status="{{preferredTheme}}">
+                    <span class="icon">
+                        <i class="" id="theme-icon"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
