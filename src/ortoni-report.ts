@@ -148,6 +148,7 @@ class OrtoniReport implements Reporter {
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
+      Handlebars.registerHelper("gr",(count) => count > 0);
       const cssContent = fs.readFileSync(
         path.resolve(__dirname, "style", "main.css"),
         "utf-8"
