@@ -153,11 +153,7 @@ class OrtoniReport implements Reporter {
         "utf-8"
       );
       this.registerPartial("navbar");
-      this.registerPartial("projectView");
-      this.registerPartial("fileView");
-      this.registerPartial("suiteView");
-      this.registerPartial("projectTestView");
-      this.registerPartial("testView");
+      this.registerPartial("testStatus");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );

@@ -1,0 +1,17 @@
+<div class="icon-text">
+    {{#if isRetry}}
+    <span class="icon has-text-info">
+        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png" alt="Retry">
+    </span>
+    {{else}}
+    <span class="icon has-text-info">
+        <img class="image is-16x16" {{#if (eq status "passed" )}}src="node_modules/ortoni-report/dist/icon/pass.png"
+            alt="Pass" {{/if}} {{#if (eq status "failed" )}}src="node_modules/ortoni-report/dist/icon/fail.png"
+            alt="Fail" {{/if}} {{#if (eq status "skipped" )}}src="node_modules/ortoni-report/dist/icon/skip.png"
+            alt="Skip" {{/if}} {{#if (eq status "timedOut" )}}src="node_modules/ortoni-report/dist/icon/timeout.png"
+            alt="Timed Out" {{/if}} {{#if (eq status "flaky" )}}src="node_modules/ortoni-report/dist/icon/flaky.png"
+            alt="Flaky" {{/if}}>
+    </span>
+    {{/if}}
+    <span>{{title}}</span>
+</div>

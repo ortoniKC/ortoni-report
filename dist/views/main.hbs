@@ -127,40 +127,7 @@
                                                     data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
-                                                    <div class="icon-text">
-                                                        {{#if isRetry}}
-                                                        <span class="icon has-text-info">
-                                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
-                                                                alt="Retry"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "passed")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                            alt="Pass"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "failed")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                            alt="Fail"></span>
-                                                        {{else}}
-                                                        {{#if (eq status "skipped")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                            alt="Skip"></span>
-                                                        {{/if}}
-                                                        {{/if}}
-                                                        {{#if (eq status "timedOut")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                            alt="timedOut"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "flaky")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                            alt="flaky"></span>
-                                                        {{/if}}
-                                                        <span>{{title}}</span>
-                                                    </div>
+                                                    {{testStatus}}
                                                 </li>
                                                 {{/each}}
                                             </ul>
@@ -200,40 +167,7 @@
                                         data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                         data-project-name="{{projectName}}" data-test-id="{{index}}"
                                         data-test-status="{{status}} {{retry}}">
-                                        <div class="icon-text">
-                                            {{#if isRetry}}
-                                            <span class="icon has-text-info">
-                                                <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
-                                                    alt="Retry"></span>
-                                            {{/if}}
-                                            {{#if (eq status "passed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                alt="Pass"></span>
-                                            {{/if}}
-                                            {{#if (eq status "failed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                alt="Fail"></span>
-                                            {{else}}
-                                            {{#if (eq status "skipped")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                alt="Skip"></span>
-                                            {{/if}}
-                                            {{/if}}
-                                            {{#if (eq status "timedOut")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                alt="timedOut"></span>
-                                            {{/if}}
-                                            {{#if (eq status "flaky")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                alt="flaky"></span>
-                                            {{/if}}
-                                            <span>{{title}}</span>
-                                        </div>
+                                        {{> testStatus}}
                                     </li>
                                     {{/each}} 
                                     </ul>   
