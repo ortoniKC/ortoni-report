@@ -27,15 +27,18 @@ class OrtoniReport implements Reporter {
   private suiteName: string | undefined;
   private config: OrtoniReportConfig;
   private projectSet = new Set<string>();
-  private tagsSet = new Set<string>();
-
+  private folderPath: string;
   constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
+    this.folderPath = config.folderPath || 'playwright-report';
   }
 
   onBegin(config: FullConfig, suite: Suite) {
     this.results = [];
     this.projectRoot = config.rootDir;
+    if (!fs.existsSync(this.folderPath)) {
+      fs.mkdirSync(this.folderPath, { recursive: true });
+    }
   }
 
   onTestBegin(test: TestCase, result: TestResult) { }
@@ -148,7 +151,7 @@ class OrtoniReport implements Reporter {
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
-      Handlebars.registerHelper("gr",(count) => count > 0);
+      Handlebars.registerHelper("gr", (count) => count > 0);
       const cssContent = fs.readFileSync(
         path.resolve(__dirname, "style", "main.css"),
         "utf-8"
@@ -161,8 +164,11 @@ class OrtoniReport implements Reporter {
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
+      if (!fs.existsSync(this.folderPath)) {
+        fs.mkdirSync(this.folderPath, { recursive: true });
+      }
       const html = this.generateHTML(filteredResults, totalDuration, cssContent);
-      const outputPath = path.resolve(process.cwd(), outputFilename);
+      const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
     } catch (error) {
