@@ -1,5 +1,22 @@
 # Change Log:
 
+## Version 2.0.3
+
+#### 🚀 New Features
+- **Add screenshot attachment as pagination**: Now supports adding screenshot attachments for easier navigation and pagination.
+- **Bulma Inline CSS**: Integrated Bulma inline CSS for improved styling.
+- **Show card if the count has value**: Cards will now appear only when a valid count is present.
+- **Folder Path**: Introduced a new feature to store the result in the folder path.
+
+#### ✨ Improvements
+- **Chart JS as CDN**: Enhanced performance by switching Chart.js to be served via CDN.
+- **Theme icon, navbar & summary icons**: Refined the design of theme icons, navbar, and summary icons for a better user experience.
+- **User meta icons**: Updated and improved the appearance of user meta icons.
+- **Show selected filter on nav-end**: Filters now appear on the nav-end when selected.
+- **Filter logic**: Improved filter functionality by only displaying the filtered items, avoiding the use of the `includes` method.
+- **Logo link to page**: Clicking on the logo now navigates to the corresponding page.
+- **Minor tweaks**: Enhanced overall UI experience
+
 ## Version 2.0.2
 
 #### 🚀 New Features
