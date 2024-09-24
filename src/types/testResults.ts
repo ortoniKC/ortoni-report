@@ -19,6 +19,7 @@ export interface TestResultData {
     steps: Steps[];
     logs: string;
     screenshotPath?: string | null | undefined;
+    screenshots?:string[];
     filePath: string;
     filters: Set<string>;
     tracePath?: string;

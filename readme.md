@@ -1,10 +1,10 @@
-# Ortoni Report (Unofficial Playwright Report) by Koushik
+# Ortoni Report by Koushik (LetCode with Koushik)
 
 Welcome to **Ortoni Report**, a robust HTML report generator tailored for Playwright tests. Ortoni Report introduces powerful features to enhance test reporting, making it easier to visualize and manage test results.
 
-Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
+Experience the live report: [Ortoni Report](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](ortonireport.png)
+![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.3/ortoni-report.PNG)
 
 ## Key Features
 
@@ -45,7 +45,7 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
     - Add a relative or absolute path of the image to the config.
 
 11. **Share Report**
-    - Generate the report, zip the folder, and share it.
+    - Once report is generated it is ready to share
 
 12. **Advanced Filtering**
     - Filter tests by project, tags, and status simultaneously, with the ability to display only those tests matching the selected criteria.
@@ -69,37 +69,25 @@ Explore the live demo: [OrtoniReport Demo](https://ortoni.netlify.app/)
     npm install -g ortoni-report
     ```
 
-#### Generate and Bundle HTML Report
-
-2. **Generate and bundle the report**:
-
-    ```sh
-    npx ortoni-report gr -f ortoni-report.html
-    ```
-
-### Command Overview
-
-- `npx ortoni-report gr -f <filename>`: Bundle the specified report file.
-  - `-f, --filename <filename>`: Specify the filename for the generated report (default: `ortoni-report.html`).
-
 ### Configurable Report Generation
 
 Configure OrtoniReport in your `playwright.config.ts`:
 
 ```typescript
 import { defineConfig } from '@playwright/test';
-import { OrtoniReportConfig } from 'ortoni-report';
+import { OrtoniReportConfig } from "ortoni-report";
 
 const reportConfig: OrtoniReportConfig = {
-  base64Image: true,
-  logo: "logo.png",
-  title: "Playwight Sample Project",
-  showProject: true,
-  filename: "result",
-  authorName: "LetCode Koushik",
   preferredTheme: "light",
-  projectName: "Ortoni Report Demo",
-  testType: "V2.0.2 - Build"
+  filename: "index",
+  authorName: "Koushik (LetCode with Koushik)",
+  projectName: "Ortoni Report V2.0.3",
+  testType: "Release",
+  title: "Ortoni Report By LetCode Koushik",
+  logo: "logo.png",
+  base64Image: true,
+  folderPath: "report",
+  showProject: false
 }
 
 export default defineConfig({
@@ -107,22 +95,11 @@ export default defineConfig({
     // Other Playwright configurations
 });
 ```
-
-### Common Issue
-
-```
-Error: Command failed:
-@parcel/namer-default: Target "main" declares an     
-output file path of "index.js" which does not match  
-the compiled bundle type "html".
-```
-
-**Solution**: Remove `"main"` in the `package.json` file.
-
 ### Comprehensive Test Details
 
 - **Rich Test Information**: Each test includes details like title, status, duration, tags, errors, steps, logs, video, and screenshot.
 - **Color-coded Status**: Status indicators (green for passed, red for failed, yellow for skipped) for quick identification.
+- **Static HTML Report**: Single file can be shared easily
 
 ### Future Plans
 

@@ -56,6 +56,12 @@ export interface OrtoniReportConfig {
     * @example "index.html"
     */
     filename?: string;
+    /**
+    * The folder name.
+    * @example "playwright-report"
+    */
+    folderPath?:string;
+
 }
 
 /**

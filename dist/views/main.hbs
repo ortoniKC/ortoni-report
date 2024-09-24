@@ -1,166 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{preferredTheme}}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.2">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.3">
     <title>{{title}}</title>
-    <link rel="icon" href="node_modules/ortoni-report/dist/icon/32.png" type="image/x-icon">
-    <link rel="stylesheet" href="node_modules/ortoni-report/dist/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <style>
-        #summary, #testDetails, button#back-to-summary {
-            transition: opacity 0.2s ease-in-out;
-        }
-
-        .filter.active {
-            box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
-            font-weight: bold;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--bulma-primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        div#testDetails {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .sidebar {
-            overflow-y: auto;
-            max-height: calc(100vh - 100px);
-        }
-
-        aside li {
-            cursor: pointer;
-        }
-        details summary {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        details summary::after {
-            content: '';
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgb(136, 145, 164)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            transform:rotate(-90deg);
-            background-size: 1em;
-            background-repeat: no-repeat;
-            background-position:right-center;
-            width: 1em;
-            height: 1em;
-            transition: transform 0.2s ease-in-out;
-        }
-        details[open] > summary::after {
-            transform: rotate(0deg);
-        }
-        .logoimage{
-            max-width: 100px;
-        }
-        .listselected {
-            border-image: linear-gradient(45deg, var(--bulma-primary),#FF6B6B) 1;
-            font-weight: bold;
-        }
-        .has-background-flaky {
-            background-color: #ffb70f !important;
-        }
-        .has-background-retry {
-            background-color: #69748c !important;
-        }
-
-</style>
+    {{{inlineCss}}}
+  </style>
 <body>
-    <section class="section">
-        <header class="container">
-            <div class="columns is-vcentered">
-                <div class="column is-two-fifths">
-                    <div class="columns is-desktop is-vcentered is-multiline">
-                        {{#if logo}}
-                        <div class="column-1">
-                        <figure class="image logoimage">
-                            <img src="{{logo}}" />
-                        </figure>
-                        </div>
-                        {{/if}}
-                        {{#if projectName}}<div class="column"><span class="title">{{projectName}}</span></div>{{/if}}
-                    </div>
-                </div>
-                <div class="column">
-                    <div class="control">
-                        <input class="input" name="search" type="search" placeholder="Search by test title" />
-                    </div>
-                     <div class="control has-text-info">
-                        <span id="selected-filters"></span>
-                    </div>
-                </div>
-                <div class="column is-1">
-                    <div class="control">
-                        <button id="toggle-theme" data-theme-status="{{preferredTheme}}" class="button">Theme</button>
-                    </div>
-                </div>
-            </div>
-        </header>
-    </section>
+    {{> navbar}}
     <section class="section">
         <main class="container">
             <div class="columns">
                 <aside class="column is-two-fifths">
-                    <div class="columns is-mobile is-vcentered">
-                        <div class="column">
-                            <h2 class="title is-4">Tests</h2>
-                        </div>
-                        <div class="column">
-                            <div id="project-filter" class="dropdown is-right is-hoverable is-pulled-right">
-                                <div class="dropdown-trigger">
-                                    <button class="button" aria-haspopup="true" aria-controls="select-filter">
-                                    <span>Filters</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
-                                    </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" id="select-filter" role="menu">
-                                    <div class="dropdown-content">
-                                    {{#each projects}}
-                                        <div class="dropdown-item">
-                                            <label class="checkbox">
-                                                <input type="checkbox" data-filter-type="project" value="{{this}}">{{this}}
-                                            </label>
-                                        </div>
-                                    {{/each}}
-                                        <hr class="dropdown-divider" />
-                                    {{#each allTags}}
-                                        <div class="dropdown-item">
-                                            <label class="checkbox">
-                                                <input type="checkbox" data-filter-type="test-tags" value="{{this}}">{{this}}
-                                            </label>
-                                        </div>
-                                    {{/each}}
-                                    </div>
-                                </div>
-                            </div>                                
-                        </div>
-                    </div>
+                    {{> testPanel}}
                     <div class="content sidebar">
                         {{#if showProject}}
                         {{#each groupedResults}}
@@ -168,7 +28,7 @@
                             <summary class="is-size-5 has-icon-right">
                                 <div class="icon-text">
                                     <span class="icon has-text-info">
-                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                    <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
                                     </span>
                                     <span>{{@key}}</span>
                                 </div>
@@ -179,7 +39,7 @@
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                                <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
                                             </span>
                                             <span>{{@key}}</span>
                                         </div>
@@ -194,40 +54,7 @@
                                                     data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                                     data-project-name="{{projectName}}" data-test-id="{{index}}"
                                                     data-test-status="{{status}} {{retry}}">
-                                                    <div class="icon-text">
-                                                        {{#if isRetry}}
-                                                        <span class="icon has-text-info">
-                                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
-                                                                alt="Retry"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "passed")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                            alt="Pass"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "failed")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                            alt="Fail"></span>
-                                                        {{else}}
-                                                        {{#if (eq status "skipped")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                            alt="Skip"></span>
-                                                        {{/if}}
-                                                        {{/if}}
-                                                        {{#if (eq status "timedOut")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                            alt="timedOut"></span>
-                                                        {{/if}}
-                                                        {{#if (eq status "flaky")}}
-                                                        <span class="icon has-text-info">
-                                                        <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                            alt="flaky"></span>
-                                                        {{/if}}
-                                                        <span>{{title}}</span>
-                                                    </div>
+                                                    {{> testStatus}}
                                                 </li>
                                                 {{/each}}
                                             </ul>
@@ -245,7 +72,7 @@
                             <summary class="is-size-5 has-icon-right">
                                 <div class="icon-text">
                                     <span class="icon has-text-info">
-                                    <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/file.png" alt="file name">
+                                        <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
                                     </span>
                                     <span>{{@key}}</span>
                                 </div>
@@ -256,7 +83,7 @@
                                     <summary class="is-size-5 is-capitalized">
                                         <div class="icon-text">
                                             <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
+                                            <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
                                             </span>
                                             <span>{{@key}}</span>
                                         </div>
@@ -267,40 +94,7 @@
                                         data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
                                         data-project-name="{{projectName}}" data-test-id="{{index}}"
                                         data-test-status="{{status}} {{retry}}">
-                                        <div class="icon-text">
-                                            {{#if isRetry}}
-                                            <span class="icon has-text-info">
-                                                <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/retry.png"
-                                                    alt="Retry"></span>
-                                            {{/if}}
-                                            {{#if (eq status "passed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png"
-                                                alt="Pass"></span>
-                                            {{/if}}
-                                            {{#if (eq status "failed")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png"
-                                                alt="Fail"></span>
-                                            {{else}}
-                                            {{#if (eq status "skipped")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/skip.png"
-                                                alt="Skip"></span>
-                                            {{/if}}
-                                            {{/if}}
-                                            {{#if (eq status "timedOut")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/timeout.png"
-                                                alt="timedOut"></span>
-                                            {{/if}}
-                                            {{#if (eq status "flaky")}}
-                                            <span class="icon has-text-info">
-                                            <img class="image is-16x16" src="node_modules/ortoni-report/dist/icon/flaky.png"
-                                                alt="flaky"></span>
-                                            {{/if}}
-                                            <span>{{title}}</span>
-                                        </div>
+                                        {{> testStatus}}
                                     </li>
                                     {{/each}} 
                                     </ul>   
@@ -316,126 +110,31 @@
                     {{!-- Overall summary --}}
                     <div id="summary">
                         <div class="columns is-multiline">
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-primary filter" data-status="all">
-                                    <header class="card-header has-text-centered">
-                                        <p class="card-header-title has-text-white">All Tests</p>
-                                        <button class="card-header-icon" aria-label="more options">
-                                            <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/test.png" alt="test name">
-                                            </span>
-                                        </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{totalCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-success filter" data-status="passed">
-                                    <header class="card-header has-text-centered">
-                                        <p class="card-header-title has-text-white">Passed</p>
-                                        <button class="card-header-icon" aria-label="more options">
-                                            <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/pass.png" alt="test name">
-                                            </span>
-                                        </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{passCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-danger filter" data-status="failed">
-                                    <header class="card-header">
-                                        <p class="card-header-title has-text-white has-text-centered">Failed</p>
-                                        <button class="card-header-icon" aria-label="more options">
-                                            <span class="icon">
-                                                <img aria-hidden="true" class="image is-16x16" src="node_modules/ortoni-report/dist/icon/fail.png" alt="test name">
-                                            </span>
-                                        </button>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{failCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
+                            {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
+                            {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
                         </div>
                         <div class="columns is-multiline">
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-info filter" data-status="skipped">
-                                    <header class="card-header has-text-centered">
-                                        <p class="card-header-title has-text-white">Skipped</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{skipCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-warning filter" data-status="flaky">
-                                    <header class="card-header has-text-centered">
-                                        <p class="card-header-title has-text-white">Flaky</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{flakyCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column is-one-third">
-                                <div class="card is-clickable has-background-retry filter" data-status="retry">
-                                    <header class="card-header has-text-centered">
-                                        <p class="card-header-title has-text-white">Retry</p>
-                                        </header>
-                                        <div class="card-content">
-                                            <div class="content">
-                                            <p class="has-text-centered has-text-white">{{retryCount}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
+                            {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
+                            {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
                         </div>
-                        {{!-- Suite details with chart --}}
                         <div class="box">
-                            <header class="has-text-centered title is-4">Suite</header>
-                            <div class="columns">
-                                <div class="column is-half">
-                                    {{#if authorName}}<h4>Author: {{authorName}}</h4>{{/if}}
-                                    {{#if testType}}<h4>Test Type: {{testType}}</h4>{{/if}}
-                                    {{#if totalDuration}}<h4>Duration: {{totalDuration}}</h4>{{/if}}
-                                    <h4>Success Rate: {{successRate}} %</h4>
-                                    <h4>Last Run: {{lastRunDate}}</h4>
-                                </div>
-                                <div class="column is-half">
-                                    <div class="chart-container">
-                                        <canvas id="testChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
+                            {{> userInfo}}
                         </div>
                     </div>
                     {{!-- Test details --}}
                     <div id="testDetails" style="display: none;">
                         <!-- Back button should be outside the dynamic content -->
-                        <button class="button content" id="back-to-summary"onclick="showSummary()">Back to Summary</button>
+                        <button class="button content" id="back-to-summary" onclick="showSummary()">Back to
+                            Summary</button>
                         <!-- Test Details will be displayed here -->
                     </div>
                 </section>
             </div>
         </main>
     </section>
-    <script src="node_modules/ortoni-report/dist/utils/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
@@ -457,30 +156,35 @@
 
             const themeButton = document.getElementById("toggle-theme");
             const preferredTheme = themeButton.getAttribute("data-theme-status");
+            const themeIcon = document.getElementById("theme-icon");
             const htmlElement = document.documentElement;
-
+           
             if (preferredTheme === 'dark') {
                 htmlElement.setAttribute('data-theme', 'dark');
-                themeButton.classList.add('is-dark');
-                themeButton.textContent = 'Dark';
+                themeIcon.classList='';
+                themeIcon.classList.add("fa","fa-moon");
             } else if (preferredTheme === 'light') {
                 htmlElement.setAttribute('data-theme', 'light');
-                themeButton.classList.add('is-light');
-                themeButton.textContent = 'Light';
+                themeIcon.classList='';
+                themeIcon.classList.add("fa","fa-sun");
+            } else {
+                if(window.matchMedia('(prefers-color-scheme: light)').matches){
+                    themeIcon.classList.add("fa","fa-sun");
+                }
+                else{
+                    themeIcon.classList.add("fa","fa-moon");
+                }
             }
-
             themeButton.addEventListener('click', () => {
                 const currentTheme = htmlElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 htmlElement.setAttribute('data-theme', newTheme);
                 if (newTheme === 'dark') {
-                    themeButton.classList.remove('is-light');
-                    themeButton.classList.add('is-dark');
-                    themeButton.textContent = 'Dark';
+                    themeIcon.classList='';
+                    themeIcon.classList.add("fa","fa-moon");
                 } else {
-                    themeButton.classList.remove('is-dark');
-                    themeButton.classList.add('is-light');
-                    themeButton.textContent = 'Light';
+                    themeIcon.classList='';
+                    themeIcon.classList.add("fa","fa-sun");
                 }
             });
 
@@ -490,7 +194,33 @@
                 backButton.style.display = 'none';
             }
             window.showSummary = showSummary;
+
             function displayTestDetails(test) {
+                let currentScreenshotIndex = 0;
+                function changeScreenshot(direction) {
+                    const screenshots = test.screenshots;
+                    currentScreenshotIndex = (currentScreenshotIndex + direction + screenshots.length) % screenshots.length;
+                    updateScreenshot();
+                }
+
+                function gotoScreenshot(index) {
+                    currentScreenshotIndex = index;
+                    updateScreenshot();
+                }
+
+                function updateScreenshot() {
+                    const screenshots = test.screenshots;
+                    document.getElementById('screenshot-main-img').src = screenshots[currentScreenshotIndex];
+                    document.getElementById('screenshot-modal-img').src = screenshots[currentScreenshotIndex];
+
+                    document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                        if (index === currentScreenshotIndex) {
+                            link.classList.add('is-current');
+                        } else {
+                            link.classList.remove('is-current');
+                        }
+                    });
+                }
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
                 const backButton = document.querySelector('button#back-to-summary');
@@ -515,7 +245,10 @@
                 }
 
                 testDetails.innerHTML = `
-                    <button class="button content" id="back-to-summary" style="display: block" onclick="showSummary()">Back to Summary</button>
+                  <button class="button content" id="back-to-summary" style="display: block"
+                    onclick="showSummary()">
+                    <span class="icon"><i class="fa-solid fa-chevron-left" style="color: #63E6BE;"></i></span>
+                    <span>Back to Summary</span></button>
                     <div class="content has-text-centered">
                         <p class="title">${test.title}</p>
                         <p class="subtitle" id="filepath">${test.location}</p>
@@ -555,23 +288,43 @@
                                 <button onclick="closeVideo()" class="modal-close is-large" aria-label="close"></button>
                             </div>
                             <button class="button mt-4" onclick="openVideo()">Attachment: Video</button>
-                            `:''}
+                            `: ''}
+                            ${test.tracePath ? `
+                            <div class="trace-viewer mt-4">
+                                <a href="${test.tracePath}" target="_blank" class="button is-small is-link">
+                                View Trace
+                                </a>
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="column content">
-                            ${test.screenshotPath ? `
+                        ${test.screenshots && test.screenshots.length > 0 ? `
                             <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
                                 <div class="modal-content">
                                     <p class="image">
-                                        <img src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
+                                        <img id="screenshot-modal-img" src="${test.screenshots[0]}" alt="Screenshot">
                                     </p>
                                 </div>
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
+
                             <figure class="image box">
-                                <img onclick="openModal()" src="${test.base64Image ? test.screenshotPath : `file://${test.screenshotPath}`}" alt="Screenshot">
-                            </figure>` : ''}
-                        </div>
+                                <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
+                            </figure>
+                            <nav class="pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
+                                <a class="pagination-previous" >Previous</a>
+                                <a class="pagination-next" >Next</a>
+                                <ul class="pagination-list">
+                                    ${test.screenshots.map((_, index) => `
+                                        <li>
+                                            <a class="pagination-link ${index === 0 ? 'is-current' : ''}" aria-label="Goto screenshot ${index + 1}" >${index + 1}</a>
+                                        </li>`).join('')}
+                                </ul>
+                            </nav>
+                        ` : ''}
+                    </div>
+
                     </div>
                     <div class="content">
                         ${test.steps.length > 0 ? `
@@ -596,16 +349,21 @@
                         </div>` : ''}
                     </div>
                 `;
-
+                document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
+                document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
+                document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                    link.addEventListener('click', () => gotoScreenshot(index));
+                });
                 const stepDetailsDiv = document.getElementById('stepDetails');
-                if(stepDetailsDiv){
+                if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
                     const detail = document.getElementById("stepopen");
-                    if(test.errors.length > 0){
+                    if (test.errors.length > 0) {
                         detail.setAttribute("open", "");
                     }
                     stepDetailsDiv.appendChild(stepsList);
                 }
+
             }
 
             function attachSteps(test) {
@@ -632,11 +390,11 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.add("is-active");
             }
-            function openVideo(){
+            function openVideo() {
                 let modal = document.querySelector("#testVideo");
                 modal.classList.add("is-active");
             }
-            function closeVideo(){
+            function closeVideo() {
                 let modal = document.querySelector("#testVideo");
                 modal.classList.remove("is-active");
             }
@@ -644,15 +402,17 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.remove("is-active");
             }
+
             window.openModal = openModal;
             window.openVideo = openVideo;
             window.closeVideo = closeVideo;
             window.closeModal = closeModal;
-            
+
             document.addEventListener('keydown', (event) => {
-            if (event.key === "Escape") {
-                closeModal();
-            }});
+                if (event.key === "Escape") {
+                    closeModal();
+                }
+            });
 
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
@@ -709,7 +469,7 @@
                         const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => testTags.includes(tag));
                         const matchesStatus = (selectedStatus === 'all' && testStatus !== 'skipped') ||
                             (selectedStatus !== 'all' && (
-                                testStatus.includes(selectedStatus) ||
+                                testStatus === selectedStatus ||
                                 (selectedStatus === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
                                 (selectedStatus === 'retry' && testStatus.includes('retry')) ||
                                 (selectedStatus === 'flaky' && testStatus.includes('flaky'))
@@ -726,7 +486,7 @@
                 });
                 updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
             }
-            
+
             function updateSelectedFiltersDisplay(projects, tags, status) {
                 const filtersDisplay = document.getElementById('selected-filters');
                 filtersDisplay.innerHTML = '';
@@ -747,7 +507,7 @@
             }
             const searchInput = document.querySelector('input[name="search"]');
             const detailsElements = document.querySelectorAll('details');
-            function filterTests(search){
+            function filterTests(search) {
                 const searchTerm = search.toLowerCase();
                 const testItems = document.querySelectorAll('[data-test-id]');
 
@@ -783,41 +543,41 @@
             }
             function debounce(func, wait) {
                 let timeout;
-                return function(...args) {
+                return function (...args) {
                     clearTimeout(timeout);
                     timeout = setTimeout(() => func.apply(this, args), wait);
                 };
             }
-            
+
             const debouncedSearch = debounce((event) => {
                 filterTests(event.target.value);
             }, 300);
 
             searchInput.addEventListener('input', debouncedSearch);
 
-            const ctx = document.getElementById('testChart').getContext('2d');
+            const ctx = document.getElementById('testChart');
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Passed', 'Failed', 'Skipped','Flaky'],
+                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{flakyCount}}],
+                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
                         backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
-                        }]
-                    },
+                    }]
+                },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                           display: false
-                        }
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 }
+                }
             });
-
             attachEventListeners();
-        });
+            });
     </script>
 </body>
+
 </html>

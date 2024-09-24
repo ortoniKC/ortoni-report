@@ -27,15 +27,18 @@ class OrtoniReport implements Reporter {
   private suiteName: string | undefined;
   private config: OrtoniReportConfig;
   private projectSet = new Set<string>();
-  private tagsSet = new Set<string>();
-
+  private folderPath: string;
   constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
+    this.folderPath = config.folderPath || 'playwright-report';
   }
 
   onBegin(config: FullConfig, suite: Suite) {
     this.results = [];
     this.projectRoot = config.rootDir;
+    if (!fs.existsSync(this.folderPath)) {
+      fs.mkdirSync(this.folderPath, { recursive: true });
+    }
   }
 
   onTestBegin(test: TestCase, result: TestResult) { }
@@ -99,37 +102,39 @@ class OrtoniReport implements Reporter {
   private attachFiles(result: TestResult, testResult: TestResultData) {
     if (result.attachments) {
       const { base64Image } = this.config;
-      const screenshot = result.attachments.find(
-        (attachment) => attachment.name === "screenshot"
-      );
-      if (screenshot && screenshot.path) {
-        try {
-          const screenshotContent = fs.readFileSync(
-            screenshot.path,
-            base64Image ? "base64" : undefined
-          );
-          testResult.screenshotPath = base64Image
-            ? `data:image/png;base64,${screenshotContent}`
-            : path.resolve(screenshot.path);
-        } catch (error) {
-          console.error(
-            `OrtoniReport: Failed to read screenshot file: ${screenshot.path}`,
-            error
-          );
+      testResult.screenshots = [];
+      result.attachments.forEach((attachment) => {
+        if (attachment.contentType === "image/png") {
+          let screenshotPath = "";
+          if (attachment.path) {
+            try {
+              const screenshotContent = fs.readFileSync(
+                attachment.path,
+                base64Image ? "base64" : undefined
+              );
+              screenshotPath = base64Image
+                ? `data:image/png;base64,${screenshotContent}`
+                : path.resolve(attachment.path);
+            } catch (error) {
+              console.error(
+                `OrtoniReport: Failed to read screenshot file: ${attachment.path}`,
+                error
+              );
+            }
+          } else if (attachment.body) {
+            screenshotPath = `data:image/png;base64,${attachment.body.toString('base64')}`;
+          }
+          if (screenshotPath) {
+            testResult.screenshots?.push(screenshotPath);
+          }
         }
-      }
-      const tracePath = result.attachments.find(
-        (attachment) => attachment.name === "trace"
-      );
-      if (tracePath?.path) {
-        testResult.tracePath = path.resolve(__dirname, tracePath.path);
-      }
-      const videoPath = result.attachments.find(
-        (attachment) => attachment.name === "video"
-      );
-      if (videoPath?.path) {
-        testResult.videoPath = path.resolve(__dirname, videoPath.path);
-      }
+        if (attachment.name === "video" && attachment.path) {
+          testResult.videoPath = path.resolve(__dirname, attachment.path);
+        }
+        // if (attachment.name === "trace" && attachment.path) {
+        //   testResult.tracePath = path.resolve(__dirname, attachment.path);
+        // }
+      });
     }
   }
 
@@ -140,23 +145,42 @@ class OrtoniReport implements Reporter {
       );
       const totalDuration = msToTime(result.duration);
       this.groupResults();
-
-      Handlebars.registerHelper('joinWithSpace', (array)=> array.join(' '));
+      Handlebars.registerHelper('joinWithSpace', (array) => array.join(' '));
       Handlebars.registerHelper("json", (context) => safeStringify(context));
       Handlebars.registerHelper(
         "eq",
         (actualStatus, expectedStatus) => actualStatus === expectedStatus
       );
+      Handlebars.registerHelper("gr", (count) => count > 0);
+      const cssContent = fs.readFileSync(
+        path.resolve(__dirname, "style", "main.css"),
+        "utf-8"
+      );
+      this.registerPartial("navbar");
+      this.registerPartial("testStatus");
+      this.registerPartial("testPanel");
+      this.registerPartial("summaryCard");
+      this.registerPartial("userInfo");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
-      const html = this.generateHTML(filteredResults, totalDuration);
-      const outputPath = path.resolve(process.cwd(), outputFilename);
+      if (!fs.existsSync(this.folderPath)) {
+        fs.mkdirSync(this.folderPath, { recursive: true });
+      }
+      const html = this.generateHTML(filteredResults, totalDuration, cssContent);
+      const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
     } catch (error) {
       console.error("OrtoniReport: Error generating report:", error);
     }
+  }
+
+  private registerPartial(name: string) {
+    Handlebars.registerPartial(name, fs.readFileSync(
+      path.resolve(__dirname, "views", name + ".hbs"),
+      "utf-8"
+    ));
   }
 
   private groupResults() {
@@ -183,7 +207,7 @@ class OrtoniReport implements Reporter {
     }
   }
 
-  generateHTML(filteredResults: TestResultData[], totalDuration: string) {
+  generateHTML(filteredResults: TestResultData[], totalDuration: string, cssContent: string) {
     try {
       const totalTests = filteredResults.length;
       const passedTests = this.results.filter(
@@ -198,7 +222,7 @@ class OrtoniReport implements Reporter {
         100
       ).toFixed(2);
       const templateSource = fs.readFileSync(
-        path.resolve(__dirname, "report-template.hbs"),
+        path.resolve(__dirname, "views", "main.hbs"),
         "utf-8"
       );
       const template = Handlebars.compile(templateSource);
@@ -208,7 +232,7 @@ class OrtoniReport implements Reporter {
 
       const allTags = new Set();
       this.results.forEach(result => {
-        result.suiteTags.forEach(tag => allTags.add(tag));
+        // result.suiteTags.forEach(tag => allTags.add(tag));
         result.testTags.forEach(tag => allTags.add(tag));
       });
 
@@ -235,7 +259,7 @@ class OrtoniReport implements Reporter {
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
       };
-      return template(data);
+      return template({ ...data, inlineCss: cssContent });
     } catch (error: any) {
       console.error("OrtoniReport: Error generating HTML:", error);
       return `<html><body><h1>Report generation failed</h1><pre>${error.stack}</pre></body></html>`;
