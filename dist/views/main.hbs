@@ -469,7 +469,7 @@
                         const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => testTags.includes(tag));
                         const matchesStatus = (selectedStatus === 'all' && testStatus !== 'skipped') ||
                             (selectedStatus !== 'all' && (
-                                testStatus.includes(selectedStatus) ||
+                                testStatus === selectedStatus ||
                                 (selectedStatus === 'failed' && (testStatus === 'failed' || testStatus === 'timedOut')) ||
                                 (selectedStatus === 'retry' && testStatus.includes('retry')) ||
                                 (selectedStatus === 'flaky' && testStatus.includes('flaky'))
