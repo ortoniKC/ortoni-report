@@ -19,6 +19,7 @@ import {
   normalizeFilePath,
   safeStringify,
 } from "./utils/utils";
+import WebSocketHelper from "./utils/webSocketHelper";
 
 class OrtoniReport implements Reporter {
   private projectRoot: string = "";
@@ -28,20 +29,27 @@ class OrtoniReport implements Reporter {
   private config: OrtoniReportConfig;
   private projectSet = new Set<string>();
   private folderPath: string;
+  private wsHelper: WebSocketHelper;
   constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
     this.folderPath = config.folderPath || 'playwright-report';
+    this.wsHelper = new WebSocketHelper(config?.port || 4000);
+    this.wsHelper.setupWebSocket();
+    this.wsHelper.setupCleanup();
   }
-
+  
   onBegin(config: FullConfig, suite: Suite) {
     this.results = [];
     this.projectRoot = config.rootDir;
     if (!fs.existsSync(this.folderPath)) {
       fs.mkdirSync(this.folderPath, { recursive: true });
     }
+    this.wsHelper.broadcastUpdate(this.results);
   }
 
-  onTestBegin(test: TestCase, result: TestResult) { }
+  onTestBegin(test: TestCase, result: TestResult) { 
+    this.wsHelper.broadcastUpdate(this.results);
+  }
 
   onTestEnd(test: TestCase, result: TestResult) {
     try {
@@ -94,6 +102,7 @@ class OrtoniReport implements Reporter {
       };
       this.attachFiles(result, testResult);
       this.results.push(testResult);
+      this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
       console.error("OrtoniReport: Error processing test end:", error);
     }
@@ -171,6 +180,9 @@ class OrtoniReport implements Reporter {
       const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
+      if(this.wsHelper){
+        this.wsHelper.testComplete();
+      }
     } catch (error) {
       console.error("OrtoniReport: Error generating report:", error);
     }

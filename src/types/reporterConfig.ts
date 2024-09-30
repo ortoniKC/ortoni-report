@@ -61,6 +61,11 @@ export interface OrtoniReportConfig {
     * @example "playwright-report"
     */
     folderPath?:string;
+     /**
+     * Port to connect
+     * @example 3600
+     */
+     port?:number;
 
 }
 
