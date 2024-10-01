@@ -109,12 +109,10 @@
                 <section class="column is-three-fifths">
                     {{!-- Overall summary --}}
                     <div id="summary">
-                        <div class="columns is-multiline">
+                        <div class="columns is-multiline has-text-centered">
                             {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
                             {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
                             {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
-                        </div>
-                        <div class="columns is-multiline">
                             {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
                             {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
                             {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
@@ -136,6 +134,14 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        let testData = {{{ json results }}};
+        const socket = new WebSocket('ws://localhost:4000');
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'update') {
+              testData = data.data;
+            }
+        };
         function escapeHtml(unsafe) {
             return unsafe.replace(/[&<"']/g, function (match) {
                 const escapeMap = {
@@ -149,7 +155,6 @@
             });
         }
         document.addEventListener('DOMContentLoaded', () => {
-            const testData = {{{ json results }}};
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
@@ -554,10 +559,55 @@
             }, 300);
 
             searchInput.addEventListener('input', debouncedSearch);
-
-            const ctx = document.getElementById('testChart');
-            new Chart(ctx, {
-                type: 'doughnut',
+            const projectChart = document.getElementById('projectChart');
+            const projectData = {{{json projectResults}}};
+            const labels = projectData.map(item => item.projectName);
+            const passedData = projectData.map(item => item.passedTests);
+            const failedData = projectData.map(item => -item.failedTests);
+            const chart = new Chart(projectChart, {
+                type: 'bar',
+                data: {
+                labels: labels,
+                datasets: [
+                    {
+                    label: 'Passed',
+                    data: passedData,
+                    backgroundColor: '#28a745', 
+                    stack: 'Stack 0',
+                    borderRadius: 2,
+                    },
+                    {
+                    label: 'Failed',
+                    data: failedData,
+                    backgroundColor: '#ff6685', 
+                    stack: 'Stack 0',
+                    borderRadius: 2,
+                    }
+                ]
+                },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Projects'
+                    },
+                    tooltip: {
+                    mode: 'index',
+                    intersect: false
+                    },
+                    legend: { position: 'bottom'}
+                }
+                }
+            });
+            const resultChart = document.getElementById('testChart');
+            new Chart(resultChart, {
+                type: 'pie',
                 data: {
                     labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
@@ -569,9 +619,15 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    }
+                    title: {
+                        display: true,
+                        text: 'Result'
+                    },
+                    tooltip: {
+                    mode: 'index',
+                    intersect: true
+                    },
+                    legend: false
                 }
                 }
             });

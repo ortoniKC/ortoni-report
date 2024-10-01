@@ -37,7 +37,7 @@ class OrtoniReport implements Reporter {
     this.wsHelper.setupWebSocket();
     this.wsHelper.setupCleanup();
   }
-  
+
   onBegin(config: FullConfig, suite: Suite) {
     this.results = [];
     this.projectRoot = config.rootDir;
@@ -47,7 +47,7 @@ class OrtoniReport implements Reporter {
     this.wsHelper.broadcastUpdate(this.results);
   }
 
-  onTestBegin(test: TestCase, result: TestResult) { 
+  onTestBegin(test: TestCase, result: TestResult) {
     this.wsHelper.broadcastUpdate(this.results);
   }
 
@@ -180,7 +180,7 @@ class OrtoniReport implements Reporter {
       const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
-      if(this.wsHelper){
+      if (this.wsHelper) {
         this.wsHelper.testComplete();
       }
     } catch (error) {
@@ -244,8 +244,19 @@ class OrtoniReport implements Reporter {
 
       const allTags = new Set();
       this.results.forEach(result => {
-        // result.suiteTags.forEach(tag => allTags.add(tag));
         result.testTags.forEach(tag => allTags.add(tag));
+      });
+      const projectResults = Array.from(this.projectSet).map((projectName) => {
+        const projectTests = filteredResults.filter(r => r.projectName === projectName);
+        const passedTests = projectTests.filter(r => r.status === "passed").length;
+        const failedTests = projectTests.filter(r => r.status === "failed").length;
+
+        return {
+          projectName: projectName,
+          passedTests: passedTests,
+          failedTests: failedTests,
+          totalTests: projectTests.length
+        };
       });
 
       const data = {
@@ -270,6 +281,7 @@ class OrtoniReport implements Reporter {
         allTags: Array.from(allTags),
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
+        projectResults: projectResults
       };
       return template({ ...data, inlineCss: cssContent });
     } catch (error: any) {
