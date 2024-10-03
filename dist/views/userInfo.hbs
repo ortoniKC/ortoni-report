@@ -1,49 +1,134 @@
 <header class="has-text-centered title is-4">Suite</header>
-<div class="content">
-    {{#if authorName}}
-    <p class="is-flex is-align-items-center mb-2">
-        <span class="icon has-text-link is-small mr-2">
-            <i class="fa-solid fa-user-tie"></i>
-        </span>
-        <span class="is-size-6">{{authorName}}</span>
-    </p>
-    {{/if}}
-    {{#if testType}}
-    <p class="is-flex is-align-items-center mb-2">
-        <span class="icon has-text-primary is-small mr-2">
-            <i class="fas fa-code-branch" style="color: thistle;"></i>
-        </span>
-        <span class="is-size-6">{{testType}}</span>
-    </p>
-    {{/if}}
-    <p class="is-flex is-align-items-center mb-2">
-        <span class="icon has-text-primary is-small mr-2">
-            <i class="fas fa-stopwatch" style="color: peachpuff;"></i>
-        </span>
-        <span class="is-size-6">{{totalDuration}}</span>
-    </p>
-    <p class="is-flex is-align-items-center mb-2">
-        <span class="icon has-text-success is-small mr-2">
-            <i class="fas fa-chart-pie"></i>
-        </span>
-        <span class="is-size-6 has-text-weight-bold">{{successRate}} %</span>
-    </p>
-    <p class="is-flex is-align-items-center mb-2">
-        <span class="icon has-text-info is-small mr-2">
-            <i class="fas fa-calendar-alt"></i>
-        </span>
-        <span class="is-size-6">{{lastRunDate}}</span>
-    </p>
-</div>
+
 <div class="columns">
     <div class="column is-half">
-        <div class="chart-container">
-            <canvas id="projectChart"></canvas>
+        <div class="content">
+            {{#if authorName}}
+            <p class="is-flex is-align-items-center mb-2">
+                <span class="icon has-text-link is-small mr-2">
+                    <i class="fa-solid fa-user-tie"></i>
+                </span>
+                <span class="is-size-6">{{authorName}}</span>
+            </p>
+            {{/if}}
+            {{#if testType}}
+            <p class="is-flex is-align-items-center mb-2">
+                <span class="icon has-text-primary is-small mr-2">
+                    <i class="fas fa-code-branch" style="color: thistle;"></i>
+                </span>
+                <span class="is-size-6">{{testType}}</span>
+            </p>
+            {{/if}}
+            <p class="is-flex is-align-items-center mb-2">
+                <span class="icon has-text-primary is-small mr-2">
+                    <i class="fas fa-stopwatch" style="color: peachpuff;"></i>
+                </span>
+                <span class="is-size-6">{{totalDuration}}</span>
+            </p>
+            <p class="is-flex is-align-items-center mb-2">
+                <span class="icon has-text-success is-small mr-2">
+                    <i class="fas fa-chart-pie"></i>
+                </span>
+                <span class="is-size-6 has-text-weight-bold">{{successRate}} %</span>
+            </p>
+            <p class="is-flex is-align-items-center mb-2">
+                <span class="icon has-text-info is-small mr-2">
+                    <i class="fas fa-calendar-alt"></i>
+                </span>
+                <span class="is-size-6">{{lastRunDate}}</span>
+            </p>
         </div>
     </div>
+    
+</div>
+<div class="columns">
     <div class="column is-half">
         <div class="chart-container">
             <canvas id="testChart"></canvas>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const overallChart = document.getElementById('testChart');
+        new Chart(overallChart, {
+            type: "doughnut",
+            data: {
+                labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
+                datasets: [{
+                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
+            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
+                    }]
+                },
+            options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        filter: function (legendItem, chartData) {
+                            // Check if the value for this label is non-zero
+                            const value = chartData.datasets[0].data[legendItem.index];
+                            return value !== 0;
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Overall Result'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: true
+                }
+            }
+        }
+            });
+    </script>
+    {{#if chartConfig.projectPolarArea }}
+    <div class="column is-half">
+        <h2 class="is-4">Projects</h2>
+        <hr class="has-background-primary">
+        <div class="chart-container">
+            <canvas id="projectPolarArea"></canvas>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const projectResults = {{{ json projectResults }}};
+        const labels = projectResults.map(pr => pr.projectName);
+        const totalCount = projectResults.map(pr => pr.totalTests);
+        const backgroundColors = projectResults.map(() => {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgba(${r}, ${g}, ${b}, 0.6)`;
+        });
+
+        const polarCtx = document.getElementById('projectPolarArea');
+        const polarChart = new Chart(polarCtx, {
+            type: 'polarArea',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: totalCount,
+                    backgroundColor: backgroundColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: true
+                }
+            }
+        }); 
+    </script>
+    {{/if}}
 </div>

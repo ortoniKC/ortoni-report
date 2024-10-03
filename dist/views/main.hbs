@@ -15,7 +15,7 @@
     {{{inlineCss}}}
   </style>
 <body>
-    {{> navbar}}
+    {{> navbar }}
     <section class="section">
         <main class="container">
             <div class="columns">
@@ -132,7 +132,6 @@
             </div>
         </main>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let testData = {{{ json results }}};
         const socket = new WebSocket('ws://localhost:4000');
@@ -558,79 +557,8 @@
                 filterTests(event.target.value);
             }, 300);
 
-            searchInput.addEventListener('input', debouncedSearch);
-            const projectChart = document.getElementById('projectChart');
-            const projectData = {{{json projectResults}}};
-            const labels = projectData.map(item => item.projectName);
-            const passedData = projectData.map(item => item.passedTests);
-            const failedData = projectData.map(item => -item.failedTests);
-            const chart = new Chart(projectChart, {
-                type: 'bar',
-                data: {
-                labels: labels,
-                datasets: [
-                    {
-                    label: 'Passed',
-                    data: passedData,
-                    backgroundColor: '#28a745', 
-                    stack: 'Stack 0',
-                    borderRadius: 2,
-                    },
-                    {
-                    label: 'Failed',
-                    data: failedData,
-                    backgroundColor: '#ff6685', 
-                    stack: 'Stack 0',
-                    borderRadius: 2,
-                    }
-                ]
-                },
-                options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Projects'
-                    },
-                    tooltip: {
-                    mode: 'index',
-                    intersect: false
-                    },
-                    legend: { position: 'bottom'}
-                }
-                }
-            });
-            const resultChart = document.getElementById('testChart');
-            new Chart(resultChart, {
-                type: 'pie',
-                data: {
-                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
-                    datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-                        backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
-                    }]
-                },
-                options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Result'
-                    },
-                    tooltip: {
-                    mode: 'index',
-                    intersect: true
-                    },
-                    legend: false
-                }
-                }
-            });
+            searchInput.addEventListener('input', debouncedSearch);      
+            
             attachEventListeners();
             });
     </script>

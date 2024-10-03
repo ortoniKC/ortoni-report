@@ -250,16 +250,25 @@ class OrtoniReport implements Reporter {
         const projectTests = filteredResults.filter(r => r.projectName === projectName);
         const passedTests = projectTests.filter(r => r.status === "passed").length;
         const failedTests = projectTests.filter(r => r.status === "failed").length;
+        const skippedTests = projectTests.filter(r => r.status === "skipped").length;
+        const retryTests = projectTests.filter(r => r.status === "flaky").length;
 
         return {
           projectName: projectName,
           passedTests: passedTests,
           failedTests: failedTests,
+          skippedTests: skippedTests,
+          retryTests: retryTests,
           totalTests: projectTests.length
         };
       });
+      const chartConfig = {
+        projectBar: this.config.charts?.projectBar,
+        projectPolarArea: this.config.charts?.projectPolarArea
+      }
 
       const data = {
+        chartConfig: chartConfig,
         logo: logo,
         totalDuration: totalDuration,
         suiteName: this.suiteName,
