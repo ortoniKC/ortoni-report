@@ -3,23 +3,6 @@
  */
 export interface OrtoniReportConfig {
     /**
- * Configuration for enabling charts in the HTML report.
- */
-    charts?: {
-        /**
-         * Whether to display a stacked bar chart representing test outcomes
-         * (passed, failed) for each project.
-         * @example true
-         */
-        projectBar?: boolean;
-        /**
-         * Whether to display a polar area chart for visualizing test outcomes
-         * across different projects in a radial format.
-         * @example false
-         */
-        projectPolarArea?: boolean;
-    };
-    /**
      * The title of the HTML report.
      * @example "Ortoni Playwright Test Report"
      */

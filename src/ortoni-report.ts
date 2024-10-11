@@ -77,7 +77,7 @@ class OrtoniReport implements Reporter {
         flaky: test.outcome(),
         duration: msToTime(result.duration),
         errors: result.errors.map((e) =>
-          colors.strip(e.message || e.toString())
+          colors.strip(e.stack || e.toString())
         ),
         steps: result.steps.map((step) => {
           const stepLocation = step.location
@@ -170,6 +170,7 @@ class OrtoniReport implements Reporter {
       this.registerPartial("testPanel");
       this.registerPartial("summaryCard");
       this.registerPartial("userInfo");
+      this.registerPartial("project");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
@@ -249,10 +250,9 @@ class OrtoniReport implements Reporter {
       const projectResults = Array.from(this.projectSet).map((projectName) => {
         const projectTests = filteredResults.filter(r => r.projectName === projectName);
         const passedTests = projectTests.filter(r => r.status === "passed").length;
-        const failedTests = projectTests.filter(r => r.status === "failed").length;
-        const skippedTests = projectTests.filter(r => r.status === "skipped").length;
-        const retryTests = projectTests.filter(r => r.status === "flaky").length;
-
+        const failedTests = projectTests.filter(r => r.status === "failed").length + projectTests.filter(r => r.status === "timedOut").length;
+        const skippedTests = this.results.filter(r => r.projectName === projectName).filter(r => r.status === "skipped").length;
+        const retryTests = this.results.filter(r => r.projectName === projectName).filter(r => r.status === "flaky").length;
         return {
           projectName: projectName,
           passedTests: passedTests,
@@ -262,13 +262,14 @@ class OrtoniReport implements Reporter {
           totalTests: projectTests.length
         };
       });
-      const chartConfig = {
-        projectBar: this.config.charts?.projectBar,
-        projectPolarArea: this.config.charts?.projectPolarArea
-      }
+      const projectNames = projectResults.map(result => result.projectName);
+      const projectTotalTests = projectResults.map(result => result.totalTests);
+      const projectPassedTests = projectResults.map(result => result.passedTests);
+      const projectailedTests = projectResults.map(result => result.failedTests);
+      const projectSkippedTests = projectResults.map(result => result.skippedTests);
+      const projectRetryTests = projectResults.map(result => result.retryTests);
 
       const data = {
-        chartConfig: chartConfig,
         logo: logo,
         totalDuration: totalDuration,
         suiteName: this.suiteName,
@@ -290,7 +291,12 @@ class OrtoniReport implements Reporter {
         allTags: Array.from(allTags),
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
-        projectResults: projectResults
+        projectNames: projectNames,
+        totalTests: projectTotalTests,
+        passedTests: projectPassedTests,
+        failedTests: projectailedTests,
+        skippedTests: projectSkippedTests,
+        retryTests: projectRetryTests
       };
       return template({ ...data, inlineCss: cssContent });
     } catch (error: any) {
