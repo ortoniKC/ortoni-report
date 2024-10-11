@@ -58,18 +58,7 @@
               testData = data.data;
             }
         };
-        function escapeHtml(unsafe) {
-            return unsafe.replace(/[&<"']/g, function (match) {
-                const escapeMap = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                };
-                return escapeMap[match];
-            });
-        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
@@ -259,14 +248,14 @@
                         ${test.errors.length ? `
                         <h4 class="title is-4">Errors</h4>
                         <div class="content">
-                            <pre><code class="data-lang=js">${escapeHtml(test.errors.join('\n'))}</code></pre>
+                            <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
                         </div>` : ''}
                     </div>
                     <div>
                         ${test.logs ? `
                         <h4 class="title is-4">Logs</h4>
                         <div class="box">
-                            <pre>${escapeHtml(test.logs)}</pre>
+                            <pre>${test.logs}</pre>
                         </div>` : ''}
                     </div>
                 `;
@@ -294,7 +283,7 @@
                         const pre = document.createElement('pre');
                         const code = document.createElement('code');
                         const locationText = step.location ? `\n\nat: ${step.location}` : '';
-                        code.textContent = `${step.snippet}${locationText}`;
+                        code.innerHTML = `${step.snippet}${locationText}`;
                         code.setAttribute('data-lang', 'js');
                         pre.appendChild(code);
                         li.appendChild(pre);

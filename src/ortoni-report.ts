@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
-import colors from "colors/safe";
 import type {
   FullConfig,
   FullResult,
@@ -14,14 +13,19 @@ import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
 import {
   ensureHtmlExtension,
+  escapeHtml,
   formatDate,
   msToTime,
   normalizeFilePath,
   safeStringify,
 } from "./utils/utils";
 import WebSocketHelper from "./utils/webSocketHelper";
+import AnsiToHtml from 'ansi-to-html';
 
 class OrtoniReport implements Reporter {
+  private ansiToHtml = new AnsiToHtml({
+    fg: "var(--snippet-color)",
+  });
   private projectRoot: string = "";
   private results: TestResultData[] = [];
   private groupedResults: Record<string, any> = {};
@@ -77,7 +81,7 @@ class OrtoniReport implements Reporter {
         flaky: test.outcome(),
         duration: msToTime(result.duration),
         errors: result.errors.map((e) =>
-          colors.strip(e.stack || e.toString())
+          this.ansiToHtml.toHtml(escapeHtml(e.stack || e.toString()))
         ),
         steps: result.steps.map((step) => {
           const stepLocation = step.location
@@ -85,16 +89,16 @@ class OrtoniReport implements Reporter {
             }:${step.location.column}`
             : "";
           return {
-            snippet: colors.strip(step.error?.snippet || ""),
+            snippet: this.ansiToHtml.toHtml(escapeHtml(step.error?.snippet || "")),
             title: step.title,
             location: step.error ? stepLocation : "",
           };
         }),
-        logs: colors.strip(
-          result.stdout
+        logs: this.ansiToHtml.toHtml(
+          escapeHtml(result.stdout
             .concat(result.stderr)
             .map((log) => log)
-            .join("\n")
+            .join("\n"))
         ),
         filePath: filePath,
         filters: this.projectSet,

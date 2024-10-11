@@ -61,3 +61,18 @@ export function ensureHtmlExtension(filename: string) {
     }
     return `${filename}.html`;
 }
+export function escapeHtml(unsafe: string): string {
+    if (typeof unsafe !== 'string') {
+        return String(unsafe);
+    }
+    return unsafe.replace(/[&<"']/g, function (match: string): string {
+        const escapeMap: { [key: string]: string } = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return escapeMap[match] || match;
+    });
+}
