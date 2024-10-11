@@ -21,90 +21,7 @@
             <div class="columns">
                 <aside class="column is-two-fifths">
                     {{> testPanel}}
-                    <div class="content sidebar">
-                        {{#if showProject}}
-                        {{#each groupedResults}}
-                        <details class="box">
-                            <summary class="is-size-5 has-icon-right">
-                                <div class="icon-text">
-                                    <span class="icon has-text-info">
-                                    <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
-                                    </span>
-                                    <span>{{@key}}</span>
-                                </div>
-                            </summary>
-                            <ul class="mt-4 mb-4">
-                                {{#each this}}
-                                <details class="mt-2 mb-2">
-                                    <summary class="is-size-5 is-capitalized">
-                                        <div class="icon-text">
-                                            <span class="icon has-text-info">
-                                                <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
-                                            </span>
-                                            <span>{{@key}}</span>
-                                        </div>
-                                    </summary>
-                                    <ul class="mt-4 mb-4">
-                                        {{#each this}}
-                                        <details class="mt-2 mb-2">
-                                            <summary class="is-capitalized is-size-6">{{@key}}</summary>
-                                            <ul class="mt-4 mb-4">
-                                                {{#each this}}
-                                                <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                                    data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
-                                                    data-project-name="{{projectName}}" data-test-id="{{index}}"
-                                                    data-test-status="{{status}} {{retry}}">
-                                                    {{> testStatus}}
-                                                </li>
-                                                {{/each}}
-                                            </ul>
-                                        </details>
-                                        {{/each}}
-                                    </ul>
-                                </details>
-                                {{/each}}
-                            </ul>
-                        </details>
-                        {{/each}}
-                        {{else}}
-                        {{#each groupedResults}}
-                        <details class="box">
-                            <summary class="is-size-5 has-icon-right">
-                                <div class="icon-text">
-                                    <span class="icon has-text-info">
-                                        <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
-                                    </span>
-                                    <span>{{@key}}</span>
-                                </div>
-                            </summary>
-                            <ul class="mt-4 mb-4">
-                                {{#each this}}
-                                <details class="mt-2 mb-2">
-                                    <summary class="is-size-5 is-capitalized">
-                                        <div class="icon-text">
-                                            <span class="icon has-text-info">
-                                            <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
-                                            </span>
-                                            <span>{{@key}}</span>
-                                        </div>
-                                    </summary>
-                                    <ul class="mt-4 mb-4">
-                                    {{#each this}}
-                                    <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                        data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
-                                        data-project-name="{{projectName}}" data-test-id="{{index}}"
-                                        data-test-status="{{status}} {{retry}}">
-                                        {{> testStatus}}
-                                    </li>
-                                    {{/each}} 
-                                    </ul>   
-                                </details>
-                                {{/each}}
-                            </ul>
-                        </details>
-                        {{/each}}
-                        {{/if}}
-                    </div>
+                    {{> project}}
                 </aside>
                 <section class="column is-three-fifths">
                     {{!-- Overall summary --}}
@@ -332,7 +249,7 @@
                     </div>
                     <div class="content">
                         ${test.steps.length > 0 ? `
-                        <details id="stepopen">
+                        <details id="stepopen" open>
                             <summary><h4 class="title is-4">Steps</h4></summary>
                             <span id="stepDetails" class="content"></span>
                         </details>
@@ -362,12 +279,8 @@
                 if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
                     const detail = document.getElementById("stepopen");
-                    if (test.errors.length > 0) {
-                        detail.setAttribute("open", "");
-                    }
                     stepDetailsDiv.appendChild(stepsList);
                 }
-
             }
 
             function attachSteps(test) {
