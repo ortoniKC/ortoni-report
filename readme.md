@@ -4,7 +4,7 @@ Welcome to **Ortoni Report**, a robust HTML report generator tailored for Playwr
 
 Experience the live report: [Ortoni Report](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.3/ortoni-report.PNG)
+![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.4/Ortoni-report.png)
 
 ## Key Features
 
