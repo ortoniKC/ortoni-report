@@ -120,6 +120,10 @@ We value your feedback and contributions! For issues, suggestions, or contributi
 
 Thank you for choosing Ortoni Report. We're committed to enhancing your Playwright testing experience.
 
+### Support
+UPI: ortoni@axl (Koushik Chatterjee)
+
+
 ---
 
 **LetCode with Koushik**
