@@ -6,14 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.4">
     <title>{{title}}</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png" type="image/x-icon">
+    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
+        type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <style>
     {{{inlineCss}}}
-  </style>
+</style>
+
 <body>
     {{> navbar }}
     <section class="section">
@@ -50,16 +52,8 @@
         </main>
     </section>
     <script>
-        let testData = {{{ json results }}};
-        {{!-- const socket = new WebSocket('ws://localhost:4000');
-        socket.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data.type === 'update') {
-              testData = data.data;
-            }
-        }; --}}
-        
         document.addEventListener('DOMContentLoaded', () => {
+            let testData = {{{ json results }}};
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
@@ -68,21 +62,21 @@
             const preferredTheme = themeButton.getAttribute("data-theme-status");
             const themeIcon = document.getElementById("theme-icon");
             const htmlElement = document.documentElement;
-           
+
             if (preferredTheme === 'dark') {
                 htmlElement.setAttribute('data-theme', 'dark');
-                themeIcon.classList='';
-                themeIcon.classList.add("fa","fa-moon");
+                themeIcon.classList = '';
+                themeIcon.classList.add("fa", "fa-moon");
             } else if (preferredTheme === 'light') {
                 htmlElement.setAttribute('data-theme', 'light');
-                themeIcon.classList='';
-                themeIcon.classList.add("fa","fa-sun");
+                themeIcon.classList = '';
+                themeIcon.classList.add("fa", "fa-sun");
             } else {
-                if(window.matchMedia('(prefers-color-scheme: light)').matches){
-                    themeIcon.classList.add("fa","fa-sun");
+                if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    themeIcon.classList.add("fa", "fa-sun");
                 }
-                else{
-                    themeIcon.classList.add("fa","fa-moon");
+                else {
+                    themeIcon.classList.add("fa", "fa-moon");
                 }
             }
             themeButton.addEventListener('click', () => {
@@ -90,11 +84,11 @@
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 htmlElement.setAttribute('data-theme', newTheme);
                 if (newTheme === 'dark') {
-                    themeIcon.classList='';
-                    themeIcon.classList.add("fa","fa-moon");
+                    themeIcon.classList = '';
+                    themeIcon.classList.add("fa", "fa-moon");
                 } else {
-                    themeIcon.classList='';
-                    themeIcon.classList.add("fa","fa-sun");
+                    themeIcon.classList = '';
+                    themeIcon.classList.add("fa", "fa-sun");
                 }
             });
 
@@ -238,11 +232,13 @@
                     ${test.annotations && test.annotations.length ? `
                         <article class="message">
                             <div class="message-body">
-                                ${test.annotations.map(annotation => `
+                                ${test.annotations
+                                .filter(annotation => annotation !== null && annotation !== undefined)
+                                .map(annotation => `
                                     <div>
-                                        ${annotation.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
+                                        ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation?.type}</span>` : ''}
                                         <br>
-                                        ${annotation.description ? `<strong class="has-text-link">Description: </strong><span>${annotation.description}</span>` : ''}
+                                        ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation?.description}</span>` : ''}
                                     </div>
                                     <br>
                                 `).join('')}
@@ -272,11 +268,13 @@
                         </div>` : ''}
                     </div>
                 `;
-                document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
-                document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
-                document.querySelectorAll('.pagination-link').forEach((link, index) => {
-                    link.addEventListener('click', () => gotoScreenshot(index));
-                });
+                if(test.screenshots.length > 0){
+                    document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
+                    document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
+                    document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                        link.addEventListener('click', () => gotoScreenshot(index));
+                    });
+                }
                 const stepDetailsDiv = document.getElementById('stepDetails');
                 if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
@@ -472,10 +470,10 @@
                 filterTests(event.target.value);
             }, 300);
 
-            searchInput.addEventListener('input', debouncedSearch);      
-            
+            searchInput.addEventListener('input', debouncedSearch);
+
             attachEventListeners();
-            });
+        });
     </script>
 </body>
 
