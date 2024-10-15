@@ -56,8 +56,6 @@ class OrtoniReport implements Reporter {
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    console.log(test.tags);
-    console.log(test.annotations);
     try {
       const status = test.outcome() === "flaky" ? "flaky" : result.status;
       const projectName = test.titlePath()[1];
@@ -65,14 +63,11 @@ class OrtoniReport implements Reporter {
       const location = test.location;
       const filePath = normalizeFilePath(test.titlePath()[2]);
       const tagPattern = /@[\w]+/g;
-      // const testTags = test.title.match(tagPattern) || [];
       const title = test.title.replace(tagPattern, "").trim();
-      const suiteTags = test.titlePath()[3].match(tagPattern) || [];
       const suite = test.titlePath()[3].replace(tagPattern, "").trim();
 
       const testResult: TestResultData = {
         annotations: test.annotations,
-        suiteTags: suiteTags,
         testTags: test.tags,
         location: `${filePath}:${location.line}:${location.column}`,
         retry: result.retry > 0 ? "retry" : "",

@@ -7,7 +7,6 @@ interface Steps {
 }
 export interface TestResultData {
     annotations: TestCase["annotations"],
-    suiteTags:string[],
     testTags:string[],
     location:string,
     retry: string,
