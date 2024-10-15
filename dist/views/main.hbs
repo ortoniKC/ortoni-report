@@ -233,9 +233,22 @@
                                 </ul>
                             </nav>
                         ` : ''}
+                        </div>
                     </div>
-
-                    </div>
+                    ${test.annotations && test.annotations.length ? `
+                        <article class="message">
+                            <div class="message-body">
+                                ${test.annotations.map(annotation => `
+                                    <div>
+                                        ${annotation.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
+                                        <br>
+                                        ${annotation.description ? `<strong class="has-text-link">Description: </strong><span>${annotation.description}</span>` : ''}
+                                    </div>
+                                    <br>
+                                `).join('')}
+                            </div>
+                        </article>
+                    ` : ``}
                     <div class="content">
                         ${test.steps.length > 0 ? `
                         <details id="stepopen" open>

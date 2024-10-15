@@ -1,9 +1,12 @@
+import { TestCase } from "@playwright/test/reporter";
+
 interface Steps {
     snippet: string | undefined,
     title: string,
     location:string
 }
 export interface TestResultData {
+    annotations: TestCase["annotations"],
     suiteTags:string[],
     testTags:string[],
     location:string,
