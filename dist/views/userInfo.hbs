@@ -3,7 +3,7 @@
 <div class="columns is-multiline">
     <div class="column is-half">
         <div class="field">
-            <label class="label">Success Rate</label>
+            <label class="label" name="Success Rate">Success Rate</label>
             <p class="is-flex is-align-items-center">
                 <span class="icon has-text-success mr-2">
                     <i class="fas fa-chart-pie"></i>
@@ -12,7 +12,7 @@
             </p>
         </div>
         <div class="field">
-            <label class="label">Last Run</label>
+            <label class="label" name="Last Run">Last Run</label>
             <p class="is-flex is-align-items-center">
                 <span class="icon has-text-info mr-2">
                     <i class="fas fa-calendar-alt"></i>
@@ -21,7 +21,7 @@
             </p>
         </div>
         <div class="field">
-            <label class="label">Duration</label>
+            <label class="label" name="Duration">Duration</label>
             <p class="is-flex is-align-items-center">
                 <span class="icon has-text-warning mr-2">
                     <i class="fas fa-stopwatch"></i>
@@ -35,7 +35,7 @@
             <div class="content">
                 {{#if authorName}}
                 <div class="field"></div>
-                <label class="label">Tester</label>
+                <label class="label" name="Tester">Tester</label>
                 <p class="is-flex is-align-items-center">
                     <span class="icon has-text-info mr-2">
                         <i class="fas fa-user-tie"></i>
@@ -46,7 +46,7 @@
             {{/if}}
             {{#if testType}}
             <div class="field">
-                <label class="label">Test Type</label>
+                <label class="label" name="test Type">Test Type</label>
                 <p class="is-flex is-align-items-center">
                     <span class="icon has-text-primary mr-2">
                         <i class="fas fa-code-branch"></i>
