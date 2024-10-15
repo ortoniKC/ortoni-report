@@ -1,5 +1,22 @@
 # Change Log:
 
+## Version 2.0.4
+
+### 🚀 New Features
+- **Tags & Annotations**: Added support for tags and annotations, allowing for more detailed reporting and metadata.
+- **Project charts & summary UI**: Enhanced the user interface of project charts and the summary section for better presentation and usability.
+
+### ✨ Improvements
+
+- **Snippets color**: Improved the color scheme of code snippets for better readability.
+
+### 🛠 Fixes
+- **Console warning**: Resolved a console warning issue, improving overall stability.
+
+### Documentation
+- **Removed colors package**: Updated documentation to reflect the removal of the `colors` package.
+
+
 ## Version 2.0.3
 
 #### 🚀 New Features
