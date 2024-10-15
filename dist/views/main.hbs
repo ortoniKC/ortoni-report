@@ -51,13 +51,13 @@
     </section>
     <script>
         let testData = {{{ json results }}};
-        const socket = new WebSocket('ws://localhost:4000');
+        {{!-- const socket = new WebSocket('ws://localhost:4000');
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
             if (data.type === 'update') {
               testData = data.data;
             }
-        };
+        }; --}}
         
         document.addEventListener('DOMContentLoaded', () => {
             const testDetails = document.getElementById('testDetails');
@@ -155,7 +155,7 @@
                 }
 
                 testDetails.innerHTML = `
-                  <button class="button content" id="back-to-summary" style="display: block"
+                  <button class="button is-info is-light mb-4" id="back-to-summary" style="display: block"
                     onclick="showSummary()">
                     <span class="icon"><i class="fa-solid fa-chevron-left" style="color: #63E6BE;"></i></span>
                     <span>Back to Summary</span></button>
