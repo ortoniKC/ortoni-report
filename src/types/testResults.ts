@@ -1,10 +1,12 @@
+import { TestCase } from "@playwright/test/reporter";
+
 interface Steps {
     snippet: string | undefined,
     title: string,
     location:string
 }
 export interface TestResultData {
-    suiteTags:string[],
+    annotations: any,
     testTags:string[],
     location:string,
     retry: string,

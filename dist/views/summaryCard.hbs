@@ -1,14 +1,8 @@
 {{#if (gr statusCount) }}
-<div class="column is-one-third">
-    <div class="card is-clickable has-background-{{bg}} filter" data-status="{{status}}">
-        <header class="card-header has-text-centered">
-            <p class="card-header-title has-text-white">{{statusHeader}}</p>
-        </header>
-        <div class="card-content">
-            <div class="content">
-                <p class="has-text-centered has-text-white">{{statusCount}}</p>
-            </div>
-        </div>
+<div class="column is-one-sixth">
+    <div class="box has-background-{{bg}} filter" data-status="{{status}}">
+        <p class="has-text-white is-size-6">{{statusHeader}}</p>
+        <p class="has-text-white is-size-4">{{statusCount}}</p>
     </div>
 </div>
 {{/if}}

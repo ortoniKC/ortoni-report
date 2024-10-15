@@ -4,7 +4,7 @@ Welcome to **Ortoni Report**, a robust HTML report generator tailored for Playwr
 
 Experience the live report: [Ortoni Report](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.3/ortoni-report.PNG)
+![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.4/Ortoni-report.png)
 
 ## Key Features
 
@@ -119,6 +119,10 @@ View the [LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.m
 We value your feedback and contributions! For issues, suggestions, or contributions, visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
 
 Thank you for choosing Ortoni Report. We're committed to enhancing your Playwright testing experience.
+
+### Support
+UPI: ortoni@axl (Koushik Chatterjee)
+
 
 ---
 

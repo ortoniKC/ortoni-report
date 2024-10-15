@@ -17,7 +17,7 @@
                     {{#each projects}}
                     <div class="dropdown-item">
                         <label class="checkbox is-capitalized">
-                            <input type="checkbox" data-filter-type="project" value="{{this}}"> {{this}}
+                            <input name="{{this}}" type="checkbox" data-filter-type="project" value="{{this}}"> {{this}}
                         </label>
                     </div>
                     {{/each}}
@@ -25,7 +25,7 @@
                     {{#each allTags}}
                     <div class="dropdown-item">
                         <label class="checkbox">
-                            <input type="checkbox" data-filter-type="test-tags" value="{{this}}"> {{this}}
+                            <input name="{{this}}" type="checkbox" data-filter-type="test-tags" value="{{this}}"> {{this}}
                         </label>
                     </div>
                     {{/each}}

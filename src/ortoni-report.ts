@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
-import colors from "colors/safe";
 import type {
   FullConfig,
   FullResult,
@@ -14,13 +13,19 @@ import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
 import {
   ensureHtmlExtension,
+  escapeHtml,
   formatDate,
   msToTime,
   normalizeFilePath,
   safeStringify,
 } from "./utils/utils";
+// import WebSocketHelper from "./utils/webSocketHelper";
+import AnsiToHtml from 'ansi-to-html';
 
 class OrtoniReport implements Reporter {
+  private ansiToHtml = new AnsiToHtml({
+    fg: "var(--snippet-color)",
+  });
   private projectRoot: string = "";
   private results: TestResultData[] = [];
   private groupedResults: Record<string, any> = {};
@@ -28,9 +33,13 @@ class OrtoniReport implements Reporter {
   private config: OrtoniReportConfig;
   private projectSet = new Set<string>();
   private folderPath: string;
+  // private wsHelper: WebSocketHelper;
   constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
     this.folderPath = config.folderPath || 'playwright-report';
+    // this.wsHelper = new WebSocketHelper(config?.port || 4000);
+    // this.wsHelper.setupWebSocket();
+    // this.wsHelper.setupCleanup();
   }
 
   onBegin(config: FullConfig, suite: Suite) {
@@ -39,9 +48,12 @@ class OrtoniReport implements Reporter {
     if (!fs.existsSync(this.folderPath)) {
       fs.mkdirSync(this.folderPath, { recursive: true });
     }
+    // this.wsHelper.broadcastUpdate(this.results);
   }
 
-  onTestBegin(test: TestCase, result: TestResult) { }
+  onTestBegin(test: TestCase, result: TestResult) {
+    // this.wsHelper.broadcastUpdate(this.results);
+  }
 
   onTestEnd(test: TestCase, result: TestResult) {
     try {
@@ -51,14 +63,12 @@ class OrtoniReport implements Reporter {
       const location = test.location;
       const filePath = normalizeFilePath(test.titlePath()[2]);
       const tagPattern = /@[\w]+/g;
-      const testTags = test.title.match(tagPattern) || [];
       const title = test.title.replace(tagPattern, "").trim();
-      const suiteTags = test.titlePath()[3].match(tagPattern) || [];
       const suite = test.titlePath()[3].replace(tagPattern, "").trim();
 
       const testResult: TestResultData = {
-        suiteTags: suiteTags,
-        testTags: testTags,
+        annotations: test.annotations,
+        testTags: test.tags,
         location: `${filePath}:${location.line}:${location.column}`,
         retry: result.retry > 0 ? "retry" : "",
         isRetry: result.retry,
@@ -69,7 +79,7 @@ class OrtoniReport implements Reporter {
         flaky: test.outcome(),
         duration: msToTime(result.duration),
         errors: result.errors.map((e) =>
-          colors.strip(e.message || e.toString())
+          this.ansiToHtml.toHtml(escapeHtml(e.stack || e.toString()))
         ),
         steps: result.steps.map((step) => {
           const stepLocation = step.location
@@ -77,16 +87,16 @@ class OrtoniReport implements Reporter {
             }:${step.location.column}`
             : "";
           return {
-            snippet: colors.strip(step.error?.snippet || ""),
+            snippet: this.ansiToHtml.toHtml(escapeHtml(step.error?.snippet || "")),
             title: step.title,
             location: step.error ? stepLocation : "",
           };
         }),
-        logs: colors.strip(
-          result.stdout
+        logs: this.ansiToHtml.toHtml(
+          escapeHtml(result.stdout
             .concat(result.stderr)
             .map((log) => log)
-            .join("\n")
+            .join("\n"))
         ),
         filePath: filePath,
         filters: this.projectSet,
@@ -94,6 +104,7 @@ class OrtoniReport implements Reporter {
       };
       this.attachFiles(result, testResult);
       this.results.push(testResult);
+      // this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
       console.error("OrtoniReport: Error processing test end:", error);
     }
@@ -161,6 +172,7 @@ class OrtoniReport implements Reporter {
       this.registerPartial("testPanel");
       this.registerPartial("summaryCard");
       this.registerPartial("userInfo");
+      this.registerPartial("project");
       const outputFilename = ensureHtmlExtension(
         this.config.filename || "ortoni-report.html"
       );
@@ -171,6 +183,9 @@ class OrtoniReport implements Reporter {
       const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
+      // if (this.wsHelper) {
+      //   this.wsHelper.testComplete();
+      // }
     } catch (error) {
       console.error("OrtoniReport: Error generating report:", error);
     }
@@ -232,9 +247,29 @@ class OrtoniReport implements Reporter {
 
       const allTags = new Set();
       this.results.forEach(result => {
-        // result.suiteTags.forEach(tag => allTags.add(tag));
         result.testTags.forEach(tag => allTags.add(tag));
       });
+      const projectResults = Array.from(this.projectSet).map((projectName) => {
+        const projectTests = filteredResults.filter(r => r.projectName === projectName);
+        const passedTests = projectTests.filter(r => r.status === "passed").length;
+        const failedTests = projectTests.filter(r => r.status === "failed").length + projectTests.filter(r => r.status === "timedOut").length;
+        const skippedTests = this.results.filter(r => r.projectName === projectName).filter(r => r.status === "skipped").length;
+        const retryTests = this.results.filter(r => r.projectName === projectName).filter(r => r.status === "flaky").length;
+        return {
+          projectName: projectName,
+          passedTests: passedTests,
+          failedTests: failedTests,
+          skippedTests: skippedTests,
+          retryTests: retryTests,
+          totalTests: projectTests.length
+        };
+      });
+      const projectNames = projectResults.map(result => result.projectName);
+      const projectTotalTests = projectResults.map(result => result.totalTests);
+      const projectPassedTests = projectResults.map(result => result.passedTests);
+      const projectailedTests = projectResults.map(result => result.failedTests);
+      const projectSkippedTests = projectResults.map(result => result.skippedTests);
+      const projectRetryTests = projectResults.map(result => result.retryTests);
 
       const data = {
         logo: logo,
@@ -258,6 +293,12 @@ class OrtoniReport implements Reporter {
         allTags: Array.from(allTags),
         showProject: this.config.showProject || false,
         title: this.config.title || "Ortoni Playwright Test Report",
+        projectNames: projectNames,
+        totalTests: projectTotalTests,
+        passedTests: projectPassedTests,
+        failedTests: projectailedTests,
+        skippedTests: projectSkippedTests,
+        retryTests: projectRetryTests
       };
       return template({ ...data, inlineCss: cssContent });
     } catch (error: any) {

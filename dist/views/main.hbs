@@ -4,117 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.3">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.4">
     <title>{{title}}</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png" type="image/x-icon">
+    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
+        type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <style>
     {{{inlineCss}}}
-  </style>
+</style>
+
 <body>
-    {{> navbar}}
+    {{> navbar }}
     <section class="section">
         <main class="container">
             <div class="columns">
                 <aside class="column is-two-fifths">
                     {{> testPanel}}
-                    <div class="content sidebar">
-                        {{#if showProject}}
-                        {{#each groupedResults}}
-                        <details class="box">
-                            <summary class="is-size-5 has-icon-right">
-                                <div class="icon-text">
-                                    <span class="icon has-text-info">
-                                    <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
-                                    </span>
-                                    <span>{{@key}}</span>
-                                </div>
-                            </summary>
-                            <ul class="mt-4 mb-4">
-                                {{#each this}}
-                                <details class="mt-2 mb-2">
-                                    <summary class="is-size-5 is-capitalized">
-                                        <div class="icon-text">
-                                            <span class="icon has-text-info">
-                                                <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
-                                            </span>
-                                            <span>{{@key}}</span>
-                                        </div>
-                                    </summary>
-                                    <ul class="mt-4 mb-4">
-                                        {{#each this}}
-                                        <details class="mt-2 mb-2">
-                                            <summary class="is-capitalized is-size-6">{{@key}}</summary>
-                                            <ul class="mt-4 mb-4">
-                                                {{#each this}}
-                                                <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                                    data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
-                                                    data-project-name="{{projectName}}" data-test-id="{{index}}"
-                                                    data-test-status="{{status}} {{retry}}">
-                                                    {{> testStatus}}
-                                                </li>
-                                                {{/each}}
-                                            </ul>
-                                        </details>
-                                        {{/each}}
-                                    </ul>
-                                </details>
-                                {{/each}}
-                            </ul>
-                        </details>
-                        {{/each}}
-                        {{else}}
-                        {{#each groupedResults}}
-                        <details class="box">
-                            <summary class="is-size-5 has-icon-right">
-                                <div class="icon-text">
-                                    <span class="icon has-text-info">
-                                        <svg class="image is-16x16" height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg"><g data-name="Layer 2"><path d="M11.612 30.945a3.986 3.986 0 01-2.829-1.17l-5.209-5.208a4.006 4.006 0 010-5.657l3.955-3.954a1 1 0 011.414 1.414l-3.955 3.954a2.003 2.003 0 000 2.829l5.21 5.208a2.004 2.004 0 002.828 0l7.235-7.234a2.003 2.003 0 000-2.828l-4.63-4.63a1 1 0 011.414-1.414l4.63 4.63a4.006 4.006 0 010 5.657l-7.235 7.233a3.988 3.988 0 01-2.828 1.17z" fill="#232323"/><path d="M15.662 20.038a.997.997 0 01-.707-.293l-4.63-4.63a4.006 4.006 0 010-5.656l7.235-7.234a4.004 4.004 0 015.657 0l5.209 5.208a4.006 4.006 0 010 5.657l-3.955 3.954a1 1 0 01-1.414-1.414l3.955-3.954a2.003 2.003 0 000-2.829l-5.21-5.208a2.002 2.002 0 00-2.828 0l-7.235 7.234a2.003 2.003 0 000 2.828l4.63 4.63a1 1 0 01-.707 1.707z" fill="#7fbde7"/></g></svg>
-                                    </span>
-                                    <span>{{@key}}</span>
-                                </div>
-                            </summary>
-                            <ul class="mt-4 mb-4">
-                                {{#each this}}
-                                <details class="mt-2 mb-2">
-                                    <summary class="is-size-5 is-capitalized">
-                                        <div class="icon-text">
-                                            <span class="icon has-text-info">
-                                            <svg class="image is-16x16"xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M181.344 42.656v394.671C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V42.656H181.344z" fill="#e6e9ed"/><path d="M352 32c0 17.672-14.312 32-32 32H192c-17.656 0-32-14.328-32-32s14.344-32 32-32h128c17.688 0 32 14.328 32 32z" fill="#ccd1d9"/><path d="M181.344 192v245.327C181.344 478.562 214.781 512 256 512c41.25 0 74.672-33.438 74.672-74.673V192H181.344z" fill="#a0d468"/><g fill="#434a54"><path d="M245.344 266.655c0-5.89-4.781-10.655-10.672-10.655h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.673zM234.672 319.999h-53.328v21.328h53.328c5.891 0 10.672-4.781 10.672-10.671s-4.782-10.657-10.672-10.657zM245.344 202.656c0-5.891-4.781-10.656-10.672-10.656h-53.328v21.328h53.328c5.89 0 10.672-4.781 10.672-10.672z"/></g></svg>
-                                            </span>
-                                            <span>{{@key}}</span>
-                                        </div>
-                                    </summary>
-                                    <ul class="mt-4 mb-4">
-                                    {{#each this}}
-                                    <li class="media {{#if (eq status 'skipped')}}is-hidden{{/if}}" data-suite-name="{{suite}}"
-                                        data-test-duration="{{duration}}" data-test-tags="{{joinWithSpace testTags}}" 
-                                        data-project-name="{{projectName}}" data-test-id="{{index}}"
-                                        data-test-status="{{status}} {{retry}}">
-                                        {{> testStatus}}
-                                    </li>
-                                    {{/each}} 
-                                    </ul>   
-                                </details>
-                                {{/each}}
-                            </ul>
-                        </details>
-                        {{/each}}
-                        {{/if}}
-                    </div>
+                    {{> project}}
                 </aside>
                 <section class="column is-three-fifths">
                     {{!-- Overall summary --}}
                     <div id="summary">
-                        <div class="columns is-multiline">
+                        <div class="columns is-multiline has-text-centered">
                             {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
                             {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
                             {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
-                        </div>
-                        <div class="columns is-multiline">
                             {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
                             {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
                             {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
@@ -134,22 +51,9 @@
             </div>
         </main>
     </section>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function escapeHtml(unsafe) {
-            return unsafe.replace(/[&<"']/g, function (match) {
-                const escapeMap = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                };
-                return escapeMap[match];
-            });
-        }
         document.addEventListener('DOMContentLoaded', () => {
-            const testData = {{{ json results }}};
+            let testData = {{{ json results }}};
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
@@ -158,21 +62,21 @@
             const preferredTheme = themeButton.getAttribute("data-theme-status");
             const themeIcon = document.getElementById("theme-icon");
             const htmlElement = document.documentElement;
-           
+
             if (preferredTheme === 'dark') {
                 htmlElement.setAttribute('data-theme', 'dark');
-                themeIcon.classList='';
-                themeIcon.classList.add("fa","fa-moon");
+                themeIcon.classList = '';
+                themeIcon.classList.add("fa", "fa-moon");
             } else if (preferredTheme === 'light') {
                 htmlElement.setAttribute('data-theme', 'light');
-                themeIcon.classList='';
-                themeIcon.classList.add("fa","fa-sun");
+                themeIcon.classList = '';
+                themeIcon.classList.add("fa", "fa-sun");
             } else {
-                if(window.matchMedia('(prefers-color-scheme: light)').matches){
-                    themeIcon.classList.add("fa","fa-sun");
+                if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    themeIcon.classList.add("fa", "fa-sun");
                 }
-                else{
-                    themeIcon.classList.add("fa","fa-moon");
+                else {
+                    themeIcon.classList.add("fa", "fa-moon");
                 }
             }
             themeButton.addEventListener('click', () => {
@@ -180,11 +84,11 @@
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 htmlElement.setAttribute('data-theme', newTheme);
                 if (newTheme === 'dark') {
-                    themeIcon.classList='';
-                    themeIcon.classList.add("fa","fa-moon");
+                    themeIcon.classList = '';
+                    themeIcon.classList.add("fa", "fa-moon");
                 } else {
-                    themeIcon.classList='';
-                    themeIcon.classList.add("fa","fa-sun");
+                    themeIcon.classList = '';
+                    themeIcon.classList.add("fa", "fa-sun");
                 }
             });
 
@@ -245,7 +149,7 @@
                 }
 
                 testDetails.innerHTML = `
-                  <button class="button content" id="back-to-summary" style="display: block"
+                  <button class="button is-info is-light mb-4" id="back-to-summary" style="display: block"
                     onclick="showSummary()">
                     <span class="icon"><i class="fa-solid fa-chevron-left" style="color: #63E6BE;"></i></span>
                     <span>Back to Summary</span></button>
@@ -323,12 +227,27 @@
                                 </ul>
                             </nav>
                         ` : ''}
+                        </div>
                     </div>
-
-                    </div>
+                    ${test.annotations && test.annotations.length ? `
+                        <article class="message">
+                            <div class="message-body">
+                                ${test.annotations
+                                .filter(annotation => annotation !== null && annotation !== undefined)
+                                .map(annotation => `
+                                    <div>
+                                        ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation?.type}</span>` : ''}
+                                        <br>
+                                        ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation?.description}</span>` : ''}
+                                    </div>
+                                    <br>
+                                `).join('')}
+                            </div>
+                        </article>
+                    ` : ``}
                     <div class="content">
                         ${test.steps.length > 0 ? `
-                        <details id="stepopen">
+                        <details id="stepopen" open>
                             <summary><h4 class="title is-4">Steps</h4></summary>
                             <span id="stepDetails" class="content"></span>
                         </details>
@@ -338,32 +257,30 @@
                         ${test.errors.length ? `
                         <h4 class="title is-4">Errors</h4>
                         <div class="content">
-                            <pre><code class="data-lang=js">${escapeHtml(test.errors.join('\n'))}</code></pre>
+                            <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
                         </div>` : ''}
                     </div>
                     <div>
                         ${test.logs ? `
                         <h4 class="title is-4">Logs</h4>
                         <div class="box">
-                            <pre>${escapeHtml(test.logs)}</pre>
+                            <pre>${test.logs}</pre>
                         </div>` : ''}
                     </div>
                 `;
-                document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
-                document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
-                document.querySelectorAll('.pagination-link').forEach((link, index) => {
-                    link.addEventListener('click', () => gotoScreenshot(index));
-                });
+                if(test.screenshots.length > 0){
+                    document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
+                    document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
+                    document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                        link.addEventListener('click', () => gotoScreenshot(index));
+                    });
+                }
                 const stepDetailsDiv = document.getElementById('stepDetails');
                 if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
                     const detail = document.getElementById("stepopen");
-                    if (test.errors.length > 0) {
-                        detail.setAttribute("open", "");
-                    }
                     stepDetailsDiv.appendChild(stepsList);
                 }
-
             }
 
             function attachSteps(test) {
@@ -377,7 +294,7 @@
                         const pre = document.createElement('pre');
                         const code = document.createElement('code');
                         const locationText = step.location ? `\n\nat: ${step.location}` : '';
-                        code.textContent = `${step.snippet}${locationText}`;
+                        code.innerHTML = `${step.snippet}${locationText}`;
                         code.setAttribute('data-lang', 'js');
                         pre.appendChild(code);
                         li.appendChild(pre);
@@ -555,28 +472,8 @@
 
             searchInput.addEventListener('input', debouncedSearch);
 
-            const ctx = document.getElementById('testChart');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
-                    datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-                        backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
-                    }]
-                },
-                options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-                }
-            });
             attachEventListeners();
-            });
+        });
     </script>
 </body>
 
