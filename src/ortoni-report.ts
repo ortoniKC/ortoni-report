@@ -22,7 +22,8 @@ import {
 // import WebSocketHelper from "./utils/webSocketHelper";
 import AnsiToHtml from 'ansi-to-html';
 import { startReportServer } from "./utils/expressServer";
-import AttachFiles from "./utils/attachFiles";
+import { attachFiles } from "./utils/attachFiles";
+import { groupResults } from "./utils/groupProjects";
 
 class OrtoniReport implements Reporter {
   private ansiToHtml = new AnsiToHtml({
@@ -36,8 +37,7 @@ class OrtoniReport implements Reporter {
   private projectSet = new Set<string>();
   private folderPath: string;
   // private wsHelper: WebSocketHelper;
-  constructor(config: OrtoniReportConfig = {}, private attachFiles: AttachFiles) {
-    this.attachFiles = new AttachFiles();
+  constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
     this.folderPath = config.folderPath || 'playwright-report';
     // this.wsHelper = new WebSocketHelper(config?.port || 4000);
@@ -105,7 +105,7 @@ class OrtoniReport implements Reporter {
         filters: this.projectSet,
         base64Image: this.config.base64Image,
       };
-      this.attachFiles.attachFiles(result, testResult, this.config);
+      attachFiles(result, testResult, this.config);
       this.results.push(testResult);
       // this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
@@ -119,7 +119,7 @@ class OrtoniReport implements Reporter {
         (r) => r.status !== "skipped" && !r.isRetry
       );
       const totalDuration = msToTime(result.duration);
-      this.groupResults();
+      this.groupedResults = groupResults(this.config, this.results);
       Handlebars.registerHelper('joinWithSpace', (array) => array.join(' '));
       Handlebars.registerHelper("json", (context) => safeStringify(context));
       Handlebars.registerHelper(
@@ -173,30 +173,6 @@ class OrtoniReport implements Reporter {
       path.resolve(__dirname, "views", name + ".hbs"),
       "utf-8"
     ));
-  }
-
-  private groupResults() {
-    if (this.config.showProject) {
-      // Group by filePath, suite, and projectName
-      this.groupedResults = this.results.reduce((acc: any, result, index) => {
-        const { filePath, suite, projectName } = result;
-        acc[filePath] = acc[filePath] || {};
-        acc[filePath][suite] = acc[filePath][suite] || {};
-        acc[filePath][suite][projectName] =
-          acc[filePath][suite][projectName] || [];
-        acc[filePath][suite][projectName].push({ ...result, index });
-        return acc;
-      }, {});
-    } else {
-      // Group by filePath and suite, ignoring projectName
-      this.groupedResults = this.results.reduce((acc: any, result, index) => {
-        const { filePath, suite } = result;
-        acc[filePath] = acc[filePath] || {};
-        acc[filePath][suite] = acc[filePath][suite] || [];
-        acc[filePath][suite].push({ ...result, index });
-        return acc;
-      }, {});
-    }
   }
 
   generateHTML(filteredResults: TestResultData[], totalDuration: string, cssContent: string) {
