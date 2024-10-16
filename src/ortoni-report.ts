@@ -21,6 +21,8 @@ import {
 } from "./utils/utils";
 // import WebSocketHelper from "./utils/webSocketHelper";
 import AnsiToHtml from 'ansi-to-html';
+import { startReportServer } from "./utils/expressServer";
+import AttachFiles from "./utils/attachFiles";
 
 class OrtoniReport implements Reporter {
   private ansiToHtml = new AnsiToHtml({
@@ -34,7 +36,8 @@ class OrtoniReport implements Reporter {
   private projectSet = new Set<string>();
   private folderPath: string;
   // private wsHelper: WebSocketHelper;
-  constructor(config: OrtoniReportConfig = {}) {
+  constructor(config: OrtoniReportConfig = {}, private attachFiles: AttachFiles) {
+    this.attachFiles = new AttachFiles();
     this.config = config;
     this.folderPath = config.folderPath || 'playwright-report';
     // this.wsHelper = new WebSocketHelper(config?.port || 4000);
@@ -102,50 +105,11 @@ class OrtoniReport implements Reporter {
         filters: this.projectSet,
         base64Image: this.config.base64Image,
       };
-      this.attachFiles(result, testResult);
+      this.attachFiles.attachFiles(result, testResult, this.config);
       this.results.push(testResult);
       // this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
       console.error("OrtoniReport: Error processing test end:", error);
-    }
-  }
-
-  private attachFiles(result: TestResult, testResult: TestResultData) {
-    if (result.attachments) {
-      const { base64Image } = this.config;
-      testResult.screenshots = [];
-      result.attachments.forEach((attachment) => {
-        if (attachment.contentType === "image/png") {
-          let screenshotPath = "";
-          if (attachment.path) {
-            try {
-              const screenshotContent = fs.readFileSync(
-                attachment.path,
-                base64Image ? "base64" : undefined
-              );
-              screenshotPath = base64Image
-                ? `data:image/png;base64,${screenshotContent}`
-                : path.resolve(attachment.path);
-            } catch (error) {
-              console.error(
-                `OrtoniReport: Failed to read screenshot file: ${attachment.path}`,
-                error
-              );
-            }
-          } else if (attachment.body) {
-            screenshotPath = `data:image/png;base64,${attachment.body.toString('base64')}`;
-          }
-          if (screenshotPath) {
-            testResult.screenshots?.push(screenshotPath);
-          }
-        }
-        if (attachment.name === "video" && attachment.path) {
-          testResult.videoPath = path.resolve(__dirname, attachment.path);
-        }
-        // if (attachment.name === "trace" && attachment.path) {
-        //   testResult.tracePath = path.resolve(__dirname, attachment.path);
-        // }
-      });
     }
   }
 
@@ -183,11 +147,24 @@ class OrtoniReport implements Reporter {
       const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
       fs.writeFileSync(outputPath, html);
       console.log(`Ortoni HTML report generated at ${outputPath}`);
+      startReportServer(this.folderPath, outputFilename);
       // if (this.wsHelper) {
       //   this.wsHelper.testComplete();
       // }
     } catch (error) {
       console.error("OrtoniReport: Error generating report:", error);
+    }
+  }
+  async onExit() {
+    try {
+      const outputFilename = ensureHtmlExtension(
+        this.config.filename || "ortoni-report.html"
+      );
+      startReportServer(this.folderPath, outputFilename);
+      console.log('OrtoniReport: Server is running. Press Ctrl+C to stop.');
+      await new Promise(resolve => { });
+    } catch (error) {
+      console.error("OrtoniReport: Error in onExit:", error);
     }
   }
 
