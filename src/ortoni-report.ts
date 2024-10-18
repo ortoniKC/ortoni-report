@@ -31,30 +31,38 @@ class OrtoniReport implements Reporter {
   });
   private projectRoot: string = "";
   private results: TestResultData[] = [];
+  private overAllStatus: "failed" | "passed" | "interrupted" | "timedout" | undefined;
   private groupedResults: Record<string, any> = {};
   private suiteName: string | undefined;
   private config: OrtoniReportConfig;
   private projectSet = new Set<string>();
   private folderPath: string;
+  private outputPath: string | undefined;
+  private outputFilename: string;
   // private wsHelper: WebSocketHelper;
   constructor(config: OrtoniReportConfig = {}) {
     this.config = config;
     this.folderPath = config.folderPath || 'playwright-report';
+    this.outputFilename = ensureHtmlExtension(
+      this.config.filename || "ortoni-report.html"
+    );
     // this.wsHelper = new WebSocketHelper(config?.port || 4000);
     // this.wsHelper.setupWebSocket();
     // this.wsHelper.setupCleanup();
   }
 
-  onBegin(config: FullConfig, suite: Suite) {
+  onBegin(config: FullConfig, _suite: Suite) {
     this.results = [];
     this.projectRoot = config.rootDir;
     if (!fs.existsSync(this.folderPath)) {
       fs.mkdirSync(this.folderPath, { recursive: true });
+    }else{
+      fs.rmSync(this.folderPath, { recursive: true, force: true });
     }
     // this.wsHelper.broadcastUpdate(this.results);
   }
 
-  onTestBegin(test: TestCase, result: TestResult) {
+  onTestBegin(_test: TestCase, _result: TestResult) {
     // this.wsHelper.broadcastUpdate(this.results);
   }
 
@@ -105,7 +113,7 @@ class OrtoniReport implements Reporter {
         filters: this.projectSet,
         base64Image: this.config.base64Image,
       };
-      attachFiles(result, testResult, this.config);
+      attachFiles(test.id, result, testResult, this.config);
       this.results.push(testResult);
       // this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
@@ -115,6 +123,7 @@ class OrtoniReport implements Reporter {
 
   onEnd(result: FullResult) {
     try {
+      this.overAllStatus = result.status;
       const filteredResults: TestResultData[] = this.results.filter(
         (r) => r.status !== "skipped" && !r.isRetry
       );
@@ -137,32 +146,34 @@ class OrtoniReport implements Reporter {
       this.registerPartial("summaryCard");
       this.registerPartial("userInfo");
       this.registerPartial("project");
-      const outputFilename = ensureHtmlExtension(
-        this.config.filename || "ortoni-report.html"
-      );
+
       if (!fs.existsSync(this.folderPath)) {
         fs.mkdirSync(this.folderPath, { recursive: true });
       }
       const html = this.generateHTML(filteredResults, totalDuration, cssContent);
-      const outputPath = path.join(process.cwd(), this.folderPath, outputFilename);
-      fs.writeFileSync(outputPath, html);
-      console.log(`Ortoni HTML report generated at ${outputPath}`);
-      startReportServer(this.folderPath, outputFilename);
+      this.outputPath = path.join(process.cwd(), this.folderPath, this.outputFilename);
+      fs.writeFileSync(this.outputPath, html);
       // if (this.wsHelper) {
       //   this.wsHelper.testComplete();
       // }
     } catch (error) {
+      this.outputPath = undefined;
       console.error("OrtoniReport: Error generating report:", error);
     }
   }
   async onExit() {
     try {
-      const outputFilename = ensureHtmlExtension(
-        this.config.filename || "ortoni-report.html"
-      );
-      startReportServer(this.folderPath, outputFilename);
-      console.log('OrtoniReport: Server is running. Press Ctrl+C to stop.');
-      await new Promise(resolve => { });
+      if (this.outputPath) {
+        console.log(`Ortoni HTML report generated at ${this.outputPath}`);
+      }
+
+      const openOption = this.config.open || "always";
+      const hasFailures = this.overAllStatus === "failed";
+      if (openOption === "always" || (openOption === "on-failure" && hasFailures)) {
+        startReportServer(this.folderPath, this.outputFilename, this.config.port, openOption);
+        console.log('OrtoniReport: Server is running. Press Ctrl+C to stop.');
+      }
+      await new Promise(_resolve => { });
     } catch (error) {
       console.error("OrtoniReport: Error in onExit:", error);
     }

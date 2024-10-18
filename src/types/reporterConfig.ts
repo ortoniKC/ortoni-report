@@ -3,6 +3,12 @@
  */
 export interface OrtoniReportConfig {
     /**
+     * Open the report in local host (Trace viewer is accessible only in localhost)
+     * @example "always"| "never"| "on-failure";
+     */
+
+    open?:"always"| "never"| "on-failure";
+    /**
      * The title of the HTML report.
      * @example "Ortoni Playwright Test Report"
      */
