@@ -4,63 +4,72 @@ import fs from "fs";
 import { TestResultData } from "../types/testResults";
 import { OrtoniReportConfig } from "../ortoni-report";
 
-export function attachFiles(result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
+export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
     const folderPath = config.folderPath || 'playwright-report';
-    const attachmentsFolder = path.join(folderPath, 'ortoni-data', 'attachments');
+    const attachmentsFolder = path.join(folderPath, 'ortoni-data', 'attachments', subFolder);
 
     if (!fs.existsSync(attachmentsFolder)) {
         fs.mkdirSync(attachmentsFolder, { recursive: true });
     }
 
-    if (result.attachments) {
-        const { base64Image } = config;
-        testResult.screenshots = [];
+    if (!result.attachments) return;
 
-        result.attachments.forEach((attachment) => {
-            if (attachment.contentType === "image/png") {
-                let screenshotPath = "";
-                if (attachment.path) {
-                    try {
-                        const screenshotContent = fs.readFileSync(
-                            attachment.path,
-                            base64Image ? "base64" : undefined
-                        );
-                        const attachmentFileName = path.basename(attachment.path);
-                        screenshotPath = base64Image
-                            ? `data:image/png;base64,${screenshotContent}`
-                            : path.join('ortoni-data', 'attachments', attachmentFileName); // Adjust path for report folder
+    const { base64Image } = config;
+    testResult.screenshots = [];
 
-                        if (!base64Image) {
-                            // Copy the screenshot file to the new attachments folder
-                            fs.copyFileSync(attachment.path, path.join(attachmentsFolder, attachmentFileName));
-                        }
-                    } catch (error) {
-                        console.error(
-                            `OrtoniReport: Failed to read screenshot file: ${attachment.path}`,
-                            error
-                        );
-                    }
-                } else if (attachment.body) {
-                    screenshotPath = `data:image/png;base64,${attachment.body.toString('base64')}`;
-                }
-                if (screenshotPath) {
-                    testResult.screenshots?.push(screenshotPath);
-                }
+    result.attachments.forEach((attachment) => {
+        const { contentType, name, path: attachmentPath, body } = attachment;
+        if (!attachmentPath && !body) return;
+
+        const fileName = attachmentPath ? path.basename(attachmentPath) : `${name}.${getFileExtension(contentType)}`;
+        const relativePath = path.join('ortoni-data', 'attachments', subFolder, fileName);
+        const fullPath = path.join(attachmentsFolder, fileName);
+
+        if (contentType === "image/png") {
+            handleImage(attachmentPath, body, base64Image, fullPath, relativePath, testResult);
+        } else if (name === "video") {
+            handleAttachment(attachmentPath, fullPath, relativePath, 'videoPath', testResult);
+        } else if (name === "trace") {
+            handleAttachment(attachmentPath, fullPath, relativePath, 'tracePath', testResult);
+        }
+    });
+}
+
+function handleImage(attachmentPath: string | undefined, body: Buffer | undefined, base64Image: boolean | undefined, fullPath: string, relativePath: string, testResult: TestResultData) {
+    let screenshotPath = "";
+    if (attachmentPath) {
+        try {
+            const screenshotContent = fs.readFileSync(attachmentPath, base64Image ? "base64" : undefined);
+            screenshotPath = base64Image
+                ? `data:image/png;base64,${screenshotContent}`
+                : relativePath;
+
+            if (!base64Image) {
+                fs.copyFileSync(attachmentPath, fullPath);
             }
-
-            if (attachment.name === "video" && attachment.path) {
-                const videoFileName = path.basename(attachment.path);
-                const videoPath = path.join('ortoni-data', 'attachments', videoFileName); // Adjust path for report folder
-                fs.copyFileSync(attachment.path, path.join(attachmentsFolder, videoFileName));
-                testResult.videoPath = videoPath;
-            }
-
-            if (attachment.name === "trace" && attachment.path) {
-                const traceFileName = path.basename(attachment.path);
-                const tracePath = path.join('ortoni-data', 'attachments', traceFileName);
-                fs.copyFileSync(attachment.path, path.join(attachmentsFolder, traceFileName));
-                testResult.tracePath = tracePath;
-            }
-        });
+        } catch (error) {
+            console.error(`OrtoniReport: Failed to read screenshot file: ${attachmentPath}`, error);
+        }
+    } else if (body) {
+        screenshotPath = `data:image/png;base64,${body.toString('base64')}`;
     }
+    if (screenshotPath) {
+        testResult.screenshots?.push(screenshotPath);
+    }
+}
+
+function handleAttachment(attachmentPath: string | undefined, fullPath: string, relativePath: string, resultKey: 'videoPath' | 'tracePath', testResult: TestResultData) {
+    if (attachmentPath) {
+        fs.copyFileSync(attachmentPath, fullPath);
+        testResult[resultKey] = relativePath;
+    }
+}
+
+function getFileExtension(contentType: string): string {
+    const extensions: { [key: string]: string } = {
+        "image/png": "png",
+        "video/webm": "webm",
+        "application/zip": "zip"
+    };
+    return extensions[contentType] || "unknown";
 }
