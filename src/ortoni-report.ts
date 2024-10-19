@@ -6,14 +6,14 @@ import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
 import { ensureHtmlExtension, msToTime } from "./utils/utils";
-import WebSocketHelper from "./utils/webSocketHelper";
+// import WebSocketHelper from "./helpers/webSockeManager";
 
 export default class OrtoniReport implements Reporter {
   private testResultProcessor: TestResultProcessor;
   private htmlGenerator: HTMLGenerator;
   private fileManager: FileManager;
   private serverManager: ServerManager;
-  private wsHelper: WebSocketHelper;
+  // private wsHelper: WebSocketHelper;
   private results: TestResultData[] = [];
   private projectSet = new Set<string>();
   private overAllStatus: "failed" | "passed" | "interrupted" | "timedout" | undefined;
@@ -24,9 +24,9 @@ export default class OrtoniReport implements Reporter {
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
     this.folderPath = ortoniConfig.folderPath || 'playwright-report';
     this.outputFilename = ensureHtmlExtension(ortoniConfig.filename || "ortoni-report.html");
-    this.wsHelper = new WebSocketHelper(ortoniConfig?.port || 4000);
-    this.wsHelper.setupWebSocket();
-    this.wsHelper.setupCleanup();
+    // this.wsHelper = new WebSocketHelper(4000);
+    // this.wsHelper.setupWebSocket();
+    // this.wsHelper.setupCleanup();
     this.htmlGenerator = new HTMLGenerator(ortoniConfig);
     this.fileManager = new FileManager(this.folderPath);
     this.serverManager = new ServerManager(ortoniConfig);
@@ -37,18 +37,18 @@ export default class OrtoniReport implements Reporter {
     this.results = [];
     this.testResultProcessor = new TestResultProcessor(config.rootDir);
     this.fileManager.ensureReportDirectory();
-    this.wsHelper.broadcastUpdate(this.results);
+    // this.wsHelper.broadcastUpdate(this.results);
   }
 
   onTestBegin(_test: TestCase, _result: TestResult) {
-    this.wsHelper.broadcastUpdate(this.results);
+    // this.wsHelper.broadcastUpdate(this.results);
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
     try {
       const testResult = this.testResultProcessor.processTestResult(test, result, this.projectSet, this.ortoniConfig);
       this.results.push(testResult);
-      this.wsHelper.broadcastUpdate(this.results);
+      // this.wsHelper.broadcastUpdate(this.results);
     } catch (error) {
       console.error("OrtoniReport: Error processing test end:", error);
     }
@@ -63,7 +63,7 @@ export default class OrtoniReport implements Reporter {
 
       const html = this.htmlGenerator.generateHTML(filteredResults, totalDuration, cssContent, this.results, this.projectSet);
       this.outputPath = this.fileManager.writeReportFile(this.outputFilename, html);
-      this.wsHelper.testComplete();
+      // this.wsHelper.testComplete();
     } catch (error) {
       this.outputPath = undefined;
       console.error("OrtoniReport: Error generating report:", error);
@@ -72,6 +72,8 @@ export default class OrtoniReport implements Reporter {
 
   async onExit() {
     try {
+      this.fileManager.copyTraceViewerAssets();
+
       if (this.outputPath) {
         console.log(`Ortoni HTML report generated at ${this.outputPath}`);
       }
