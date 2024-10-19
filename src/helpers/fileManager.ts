@@ -23,4 +23,25 @@ export class FileManager {
   readCssContent(): string {
     return fs.readFileSync(path.resolve(__dirname, "style", "main.css"), "utf-8");
   }
+  
+  copyTraceViewerAssets() {
+    const traceViewerFolder = path.join(require.resolve('playwright-core'), '..', 'lib', 'vite', 'traceViewer');
+    const traceViewerTargetFolder = path.join(this.folderPath, 'trace');
+    const traceViewerAssetsTargetFolder = path.join(traceViewerTargetFolder, 'assets');
+
+    fs.mkdirSync(traceViewerAssetsTargetFolder, { recursive: true });
+
+    // Copy main trace viewer files
+    for (const file of fs.readdirSync(traceViewerFolder)) {
+      if (file.endsWith('.map') || file.includes('watch') || file.includes('assets')) continue;
+      fs.copyFileSync(path.join(traceViewerFolder, file), path.join(traceViewerTargetFolder, file));
+    }
+
+    // Copy assets
+    const assetsFolder = path.join(traceViewerFolder, 'assets');
+    for (const file of fs.readdirSync(assetsFolder)) {
+      if (file.endsWith('.map') || file.includes('xtermModule')) continue;
+      fs.copyFileSync(path.join(assetsFolder, file), path.join(traceViewerAssetsTargetFolder, file));
+    }
+  }
 }

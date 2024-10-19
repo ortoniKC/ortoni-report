@@ -5,13 +5,13 @@ import { spawn } from "child_process";
 export function startReportServer(
   reportFolder: string,
   reportFilename: string,
-  port = 8080,
+  port = 2004,
   open: string | undefined,
 ) {
   const app = express();
   app.use(express.static(reportFolder));
 
-  app.get('/', (req, res) => {
+  app.get('/', (_req, res) => {
     try {
       res.sendFile(path.resolve(reportFolder, reportFilename));
     } catch (error) {
@@ -36,7 +36,6 @@ export function startReportServer(
     server.on('error', (error: { code: string }) => {
       if (error.code === 'EADDRINUSE') {
         console.error(`Ortoni-Report: Port ${port} is already in use. Trying a different port...`);
-        startReportServer(reportFolder, reportFilename, port + 1, open);
       } else {
         console.error("Ortoni-Report: Server error:", error);
       }
