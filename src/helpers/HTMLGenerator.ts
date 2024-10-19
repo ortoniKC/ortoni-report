@@ -35,7 +35,7 @@ export class HTMLGenerator {
     const projectResults = this.calculateProjectResults(filteredResults, results, projectSet);
 
     return {
-      logo: this.ortoniConfig.logo ? path.resolve(this.ortoniConfig.logo) : undefined,
+      logo: this.ortoniConfig.logo || undefined,
       totalDuration: totalDuration,
       results: results,
       retryCount: results.filter((r) => r.isRetry).length,

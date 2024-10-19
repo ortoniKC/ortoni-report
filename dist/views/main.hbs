@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.4">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.5">
     <title>{{title}}</title>
     <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
         type="image/x-icon">
@@ -136,15 +136,21 @@
                     });
                 }
                 let statusClass = '';
+                let statusIcon = '';
                 let statusText = test.status.toUpperCase();
+
                 if (test.status.startsWith('passed')) {
                     statusClass = 'success';
+                    statusIcon = 'check-circle';
                 } else if (test.status === 'flaky') {
                     statusClass = 'warning';
+                    statusIcon = 'exclamation-triangle';
                 } else if (test.status === 'failed') {
                     statusClass = 'danger';
+                    statusIcon = 'times-circle';
                 } else {
                     statusClass = 'info';
+                    statusIcon = 'question-circle';
                 }
                 testDetails.innerHTML = `
                     <div class="sticky-header">
@@ -165,7 +171,7 @@
                                 <div class="column is-half">
                                 <div class="is-flex is-align-items-center">
                                     <span class="icon status-icon has-text-${statusClass}">
-                                    <i class="fa fa-${test.status === 'passed' ? 'check-circle' : 'times-circle'}"></i>
+                                        <i class="fa fa-${statusIcon}"></i>
                                     </span>
                                     <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
                                 </div>
