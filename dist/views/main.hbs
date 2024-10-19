@@ -135,6 +135,17 @@
                         }
                     });
                 }
+                let statusClass = '';
+                let statusText = test.status.toUpperCase();
+                if (test.status.startsWith('passed')) {
+                    statusClass = 'success';
+                } else if (test.status === 'flaky') {
+                    statusClass = 'warning';
+                } else if (test.status === 'failed') {
+                    statusClass = 'danger';
+                } else {
+                    statusClass = 'info';
+                }
                 testDetails.innerHTML = `
                     <div class="sticky-header">
                         <div class="card mb-3">
@@ -153,10 +164,10 @@
                             <div class="columns is-mobile">
                                 <div class="column is-half">
                                 <div class="is-flex is-align-items-center">
-                                    <span class="icon status-icon has-text-${test.status === 'passed' ? 'success' : 'danger'}">
+                                    <span class="icon status-icon has-text-${statusClass}">
                                     <i class="fa fa-${test.status === 'passed' ? 'check-circle' : 'times-circle'}"></i>
                                     </span>
-                                    <span class="has-text-weight-bold is-uppercase has-text-${test.status === 'passed' ? 'success' : 'danger'}">${test.status}</span>
+                                    <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
                                 </div>
                                 </div>
                             </div>
@@ -188,7 +199,8 @@
                     </div>
 
                     <div class="content-wrapper">
-                        <div class="card mb-5">
+                        ${test.status != "skipped" ?
+                        `<div class="card mb-5">
                         <div class="card-content">
                             <div class="columns is-multiline">
                             ${test.screenshots && test.screenshots.length > 0 ? `
@@ -236,7 +248,7 @@
                             </a>
                             ` : ''}
                         </div>
-                        </div>
+                        </div>` : ''}
                         ${test.annotations && test.annotations.length ? `
                         <div class="card mb-5">
                         <header class="card-header">
