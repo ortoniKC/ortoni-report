@@ -22,7 +22,7 @@ export function startReportServer(
 
   try {
     const server = app.listen(port, () => {
-      console.log(`Server is running at http://localhost:${port}`);
+      console.log(`Server is running at http://localhost:${port} \nPress Ctrl+C to stop.`);
 
       if (open === "always" || open === "on-failure") {
         try {

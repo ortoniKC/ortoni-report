@@ -9,7 +9,6 @@ export class ServerManager {
     const hasFailures = overAllStatus === "failed";
     if (openOption === "always" || (openOption === "on-failure" && hasFailures)) {
       startReportServer(folderPath, outputFilename, this.ortoniConfig.port, openOption);
-      console.log('OrtoniReport: Server is running. Press Ctrl+C to stop.');
     }
   }
 }
