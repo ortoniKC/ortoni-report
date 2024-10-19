@@ -25,7 +25,6 @@ export function msToTime(duration: number): string {
 
     return result;
 }
-
 export function normalizeFilePath(filePath: string): string {
     // Normalize the path to handle different separators
     const normalizedPath = path.normalize(filePath);
@@ -39,7 +38,6 @@ export function formatDate(date: Date) {
     const time = date.toLocaleTimeString();
     return `${day}-${month}-${year} ${time}`;
 }
-
 export function safeStringify(obj: any, indent = 2) {
     const cache = new Set();
     const json = JSON.stringify(obj, (key, value) => {

@@ -1,4 +1,4 @@
-import { OrtoniReportConfig } from "../ortoni-report";
+import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export function groupResults(config: OrtoniReportConfig, results: any[]) {
     if (config.showProject) {

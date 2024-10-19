@@ -2,7 +2,7 @@ import { TestResult } from "@playwright/test/reporter";
 import path from "path";
 import fs from "fs";
 import { TestResultData } from "../types/testResults";
-import { OrtoniReportConfig } from "../ortoni-report";
+import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
     const folderPath = config.folderPath || 'playwright-report';
