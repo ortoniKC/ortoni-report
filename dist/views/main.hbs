@@ -242,10 +242,14 @@
                             ` : ''}
                             </div>
                             ${test.tracePath ? `
-                            <a href="trace/index.html?trace=http://localhost:${test.port}/${test.tracePath}" target="_blank" class="button is-link is-fullwidth mt-3">
-                            <span class="icon"><i class="fa fa-file-text-o"></i></span>
-                            <span>View Trace</span>
-                            </a>
+                            <div class="columns is-centered">
+                                <div class="column is-3">
+                                    <a href="trace/index.html?trace=http://localhost:${test.port}/${test.tracePath}" target="_blank" class="button is-link is-fullwidth mt-3">
+                                    <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
+                                    <span class="has-text-white pl-2">View Trace</span>
+                                    </a>
+                                </div>
+                            </div>
                             ` : ''}
                         </div>
                         </div>` : ''}
@@ -256,6 +260,12 @@
                         </header>
                         <div class="card-content">
                             <div class="content">
+                            ${test.testTags.length > 0 ? `
+                            <div class="control mb-4">
+                                <div class="tags is-rounded"> 
+                                    ${test.testTags.map(tag => `<span class="tag is-primary is-medium">${tag}</span>`).join('')}
+                                </div>
+                            </div>` : ""}
                             ${test.annotations
                                 .filter(annotation => annotation !== null && annotation !== undefined)
                                 .map(annotation => `
