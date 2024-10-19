@@ -2,7 +2,6 @@ import express from "express";
 import path from "path";
 import { spawn } from "child_process";
 
-
 export function startReportServer(
   reportFolder: string,
   reportFilename: string,
@@ -13,38 +12,55 @@ export function startReportServer(
   app.use(express.static(reportFolder));
 
   app.get('/', (req, res) => {
-    res.sendFile(path.resolve(reportFolder, reportFilename));
-  });
-
-  const server = app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-
-    if (open === "always" || (open === "on-failure")) {
-      openBrowser(`http://localhost:${port}`);
+    try {
+      res.sendFile(path.resolve(reportFolder, reportFilename));
+    } catch (error) {
+      console.error("Ortoni-Report: Error sending report file:", error);
+      res.status(500).send("Error loading report");
     }
   });
 
-  server.on('error', (error: { code: string }) => {
-    if (error.code === 'EADDRINUSE') {
-      console.error(`Port ${port} is already in use. Trying a different port...`);
-      startReportServer(reportFolder, reportFilename, port + 1, open);
-    } else {
-      console.error("Server error:", error);
-    }
-  });
+  try {
+    const server = app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+
+      if (open === "always" || open === "on-failure") {
+        try {
+          openBrowser(`http://localhost:${port}`);
+        } catch (error) {
+          console.error("Ortoni-Report: Error opening browser:", error);
+        }
+      }
+    });
+
+    server.on('error', (error: { code: string }) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Ortoni-Report: Port ${port} is already in use. Trying a different port...`);
+        startReportServer(reportFolder, reportFilename, port + 1, open);
+      } else {
+        console.error("Ortoni-Report: Server error:", error);
+      }
+    });
+  } catch (error) {
+    console.error("Ortoni-Report: Error starting the server:", error);
+  }
 }
 
 function openBrowser(url: string) {
   const platform = process.platform;
   let command: string;
-  if (platform === "win32") {
-    command = "cmd";
-    spawn(command, ['/c', 'start', url]);
-  } else if (platform === "darwin") {
-    command = "open";
-    spawn(command, [url]);
-  } else {
-    command = "xdg-open";
-    spawn(command, [url]);
+  try {
+    if (platform === "win32") {
+      command = "cmd";
+      spawn(command, ['/c', 'start', url]);
+    } else if (platform === "darwin") {
+      command = "open";
+      spawn(command, [url]);
+    } else {
+      command = "xdg-open";
+      spawn(command, [url]);
+    }
+  } catch (error) {
+    console.error("Ortoni-Report: Error opening the browser:", error);
   }
 }
