@@ -90,6 +90,7 @@ export class HTMLGenerator {
     Handlebars.registerHelper("json", (context) => safeStringify(context));
     Handlebars.registerHelper("eq", (actualStatus, expectedStatus) => actualStatus === expectedStatus);
     Handlebars.registerHelper("gr", (count) => count > 0);
+    Handlebars.registerHelper('or', function (a, b) { return a || b });
   }
 
   private registerPartials() {
