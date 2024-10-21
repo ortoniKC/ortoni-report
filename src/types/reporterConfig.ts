@@ -64,7 +64,7 @@ export interface OrtoniReportConfig {
     filename?: string;
     /**
     * The folder name.
-    * @example "playwright-report"
+    * @example "ortoni-report"
     */
     folderPath?: string;
     /**

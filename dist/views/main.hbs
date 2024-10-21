@@ -259,7 +259,7 @@
                             ` : ''}
                         </div>
                         </div>` : ''}
-                        ${test.annotations && test.annotations.length ? `
+                        ${test.annotations.length || test.testTags.length > 0 ? `
                         <div class="card mb-5">
                         <header class="card-header">
                             <p class="card-header-title">Additional Information</p>
@@ -326,7 +326,7 @@
                             <div class="modal-background"></div>
                             <div class="modal-content">
                             <div class="box">
-                                <video controls style="width: 100%;" autoplay>
+                                <video controls style="width: 100%;">
                                 <source src="${test.videoPath}" type="video/webm">
                                 Your browser does not support the video tag.
                                 </video>

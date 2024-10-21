@@ -5,7 +5,7 @@ import { TestResultData } from "../types/testResults";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
-    const folderPath = config.folderPath || 'playwright-report';
+    const folderPath = config.folderPath ||  'ortoni-report';
     const attachmentsFolder = path.join(folderPath, 'ortoni-data', 'attachments', subFolder);
 
     if (!fs.existsSync(attachmentsFolder)) {

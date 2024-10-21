@@ -22,7 +22,7 @@ export default class OrtoniReport implements Reporter {
   private outputPath: string | undefined;
 
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
-    this.folderPath = ortoniConfig.folderPath || 'playwright-report';
+    this.folderPath = ortoniConfig.folderPath || 'ortoni-report';
     this.outputFilename = ensureHtmlExtension(ortoniConfig.filename || "ortoni-report.html");
     // this.wsHelper = new WebSocketHelper(4000);
     // this.wsHelper.setupWebSocket();
