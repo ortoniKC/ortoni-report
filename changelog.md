@@ -1,5 +1,16 @@
 # Change Log:
 
+## v2.0.5
+
+### 🚀 New Features
+- **Open report in localhost**: Introduced the ability to open the report on localhost with configurable options:
+  - `open?: "always" | "never" | "on-failure"`.
+- **Open Trace viewer within the same browser**: Added functionality to view the Playwright trace within the same browser tab, enhancing the user experience.
+
+### ✨ Improvements
+- **Perfect Test content UI**: Enhanced the UI of the test content for a more polished and user-friendly interface.
+- **Refactored code with multiple classes and utilities**: Codebase has been refactored for better organization, incorporating multiple classes and utilities to improve maintainability and scalability.
+
 ## Version 2.0.4
 
 ### 🚀 New Features
