@@ -30,11 +30,11 @@
             </p>
         </div>
     </div>
+    {{#if (or authorName testType)}}
     <div class="column is-half">
         <div class="content">
-            <div class="content">
-                {{#if authorName}}
-                <div class="field"></div>
+            {{#if authorName}}
+            <div class="field">
                 <label class="label" for="Tester">Tester</label>
                 <p class="is-flex is-align-items-center">
                     <span class="icon has-text-info mr-2">
@@ -44,9 +44,10 @@
                 </p>
             </div>
             {{/if}}
+
             {{#if testType}}
             <div class="field">
-                <label class="label" for="test Type">Test Type</label>
+                <label class="label" for="testType">Test Type</label>
                 <p class="is-flex is-align-items-center">
                     <span class="icon has-text-primary mr-2">
                         <i class="fas fa-code-branch"></i>
@@ -57,6 +58,7 @@
             {{/if}}
         </div>
     </div>
+    {{/if}}
 </div>
 <div class="columns">
     <div class="column is-half">
@@ -91,9 +93,8 @@
                 labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                 datasets: [{
                     data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']
-                            }]
-                },
+            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']}]
+            },
             options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -109,7 +110,7 @@
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(tooltipItem) {
+                        label: function (tooltipItem) {
                             const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
                             const value = tooltipItem.raw;
                             const percentage = ((value / total) * 100).toFixed(2);
@@ -187,7 +188,7 @@
                     {
                         label: 'Flaky',
                         data: retryTests,
-                        backgroundColor:  '#ffb70f',
+                        backgroundColor: '#ffb70f',
                     }
                 ]
             },

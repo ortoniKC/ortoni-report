@@ -1,6 +1,6 @@
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
-import { safeStringify } from './utils';
+import { safeStringify } from '../utils/utils';
 
 class WebSocketHelper {
     private wss: WebSocketServer | null = null;

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{preferredTheme}}">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.4">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.5">
     <title>{{title}}</title>
     <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
         type="image/x-icon">
@@ -15,7 +14,6 @@
 <style>
     {{{inlineCss}}}
 </style>
-
 <body>
     {{> navbar }}
     <section class="section">
@@ -26,7 +24,6 @@
                     {{> project}}
                 </aside>
                 <section class="column is-three-fifths">
-                    {{!-- Overall summary --}}
                     <div id="summary">
                         <div class="columns is-multiline has-text-centered">
                             {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
@@ -40,13 +37,7 @@
                             {{> userInfo}}
                         </div>
                     </div>
-                    {{!-- Test details --}}
-                    <div id="testDetails" style="display: none;">
-                        <!-- Back button should be outside the dynamic content -->
-                        <button class="button content" id="back-to-summary" onclick="showSummary()">Back to
-                            Summary</button>
-                        <!-- Test Details will be displayed here -->
-                    </div>
+                    <div id="testDetails" style="display: none;"></div>
                 </section>
             </div>
         </main>
@@ -95,11 +86,18 @@
             function showSummary() {
                 summary.style.display = 'block';
                 testDetails.style.display = 'none';
-                backButton.style.display = 'none';
             }
             window.showSummary = showSummary;
 
             function displayTestDetails(test) {
+                const summary = document.getElementById('summary');
+                const testDetails = document.getElementById('testDetails');
+                summary.style.display = 'none';
+                testDetails.style.opacity = '0';
+                testDetails.style.display = 'block';
+                setTimeout(() => {
+                    testDetails.style.opacity = '1';
+                }, 50);
                 let currentScreenshotIndex = 0;
                 function changeScreenshot(direction) {
                     const screenshots = test.screenshots;
@@ -125,85 +123,83 @@
                         }
                     });
                 }
-                const summary = document.getElementById('summary');
-                const testDetails = document.getElementById('testDetails');
-                const backButton = document.querySelector('button#back-to-summary');
-                summary.style.display = 'none';
-                testDetails.style.opacity = '0';
-                testDetails.style.display = 'block';
-                setTimeout(() => {
-                    testDetails.style.opacity = '1';
-                    backButton.style.opacity = '1';
-                }, 50);
-
                 let statusClass = '';
+                let statusIcon = '';
                 let statusText = test.status.toUpperCase();
-                if (test.status.startsWith('passed')) {
-                    statusClass = 'tag is-success';
-                } else if (test.status === 'flaky') {
-                    statusClass = 'tag is-warning';
-                } else if (test.status === 'failed') {
-                    statusClass = 'tag is-danger';
-                } else {
-                    statusClass = 'tag is-info';
-                }
 
+                if (test.status.startsWith('passed')) {
+                    statusClass = 'success';
+                    statusIcon = 'check-circle';
+                } else if (test.status === 'flaky') {
+                    statusClass = 'warning';
+                    statusIcon = 'exclamation-triangle';
+                } else if (test.status === 'failed') {
+                    statusClass = 'danger';
+                    statusIcon = 'times-circle';
+                } else {
+                    statusClass = 'info';
+                    statusIcon = 'question-circle';
+                }
                 testDetails.innerHTML = `
-                  <button class="button is-info is-light mb-4" id="back-to-summary" style="display: block"
-                    onclick="showSummary()">
-                    <span class="icon"><i class="fa-solid fa-chevron-left" style="color: #63E6BE;"></i></span>
-                    <span>Back to Summary</span></button>
-                    <div class="content has-text-centered">
-                        <p class="title">${test.title}</p>
-                        <p class="subtitle" id="filepath">${test.location}</p>
-                    </div>
-                    <div class="columns">
-                        <div class="column content">
-                            <h4 class="title is-4">Status</h4>
-                            <p class="${statusClass}">${statusText}</p>
-                            ${test.duration.length > 0 ? `
-                            <h4 class="title is-4">Duration</h4>
-                            <p class="${statusClass}">${test.duration}</p>` : ""}
-                            ${test.projectName.length > 0 ? `
-                            <div class="control">
-                                <div class="tags has-addons">
-                                <span class="tag is-dark">Project</span>
-                                <span class="tag is-info is-capitalized">${test.projectName}</span>
-                                </div>
-                            </div>`: ""}
-                            ${test.testTags.length > 0 ? `
-                            <div class="control mt-4">
-                                <div class="tags has-addons">
-                                <span class="tag is-dark">Test Tags</span>
-                                <span class="tag is-info">${test.testTags.join(" ")}</span>
-                                </div>
-                            </div>`: ""}
-                            ${test.videoPath ? `
-                            <div id="testVideo" class="modal">
-                                <div class="modal-background"></div>
-                                    <div class="modal-content">
-                                        <figure>
-                                            <video controls>
-                                                <source src="file://${test.videoPath}" type="video/webm">
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        </figure>
-                                    </div>
-                                <button onclick="closeVideo()" class="modal-close is-large" aria-label="close"></button>
+                    <div class="sticky-header">
+                        <div class="card mb-3">
+                         <button class="button is-info is-light mb-3" id="back-to-summary" onclick="showSummary()">
+                            <span class="icon"><i class="fa fa-chevron-left" style="color: #63E6BE;"></i></span>
+                            <span>Back to Summary</span>
+                        </button>
+                        <div class="card-content">
+                            <div class="content has-text-centered">
+                            <h1 class="title is-2">${test.title}</h1>
+                            <p class="subtitle is-5" id="filepath">${test.location}</p>
                             </div>
-                            <button class="button mt-4" onclick="openVideo()">Attachment: Video</button>
-                            `: ''}
-                            ${test.tracePath ? `
-                            <div class="trace-viewer mt-4">
-                                <a href="${test.tracePath}" target="_blank" class="button is-small is-link">
-                                View Trace
-                                </a>
+                        </div>
+                        <footer class="card-footer">
+                            <div class="card-footer-item">
+                            <div class="columns is-mobile">
+                                <div class="column is-half">
+                                <div class="is-flex is-align-items-center">
+                                    <span class="icon status-icon has-text-${statusClass}">
+                                        <i class="fa fa-${statusIcon}"></i>
+                                    </span>
+                                    <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                            ${test.duration ? `
+                            <div class="card-footer-item">
+                            <div class="column is-half">
+                                <div class="is-flex is-align-items-center">
+                                <span class="icon status-icon has-text-info">
+                                    <i class="fa fa-clock"></i>
+                                </span>
+                                <span class="has-text-info has-text-weight-semibold">${test.duration}</span>
+                                </div>
+                            </div>
                             </div>
                             ` : ''}
+                            ${test.projectName ? `
+                            <div class="card-footer-item">
+                            <div class="is-flex is-align-items-center">
+                                <span class="icon status-icon has-text-info">
+                                <i class="fa fa-window-maximize" style="color: #B197FC;"></i>
+                                </span>
+                                <span class="" style="color: #B197FC;"> ${test.projectName}</span>
+                            </div>
+                            </div>
+                            ` : ''}
+                        </footer>
                         </div>
-                        <div class="column content">
-                        ${test.screenshots && test.screenshots.length > 0 ? `
-                            <div id="testImage" class="modal">
+                    </div>
+
+                    <div class="content-wrapper">
+                        ${test.status != "skipped" ?
+                        `<div class="card mb-5">
+                        <div class="card-content">
+                            <div class="columns is-multiline">
+                            ${test.screenshots && test.screenshots.length > 0 ? `
+                            <div class="column is-half">
+                                <div id="testImage" class="modal">
                                 <div class="modal-background"></div>
                                 <div class="modal-content">
                                     <p class="image">
@@ -213,10 +209,10 @@
                                 <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                             </div>
 
-                            <figure class="image box">
+                            <figure class="image">
                                 <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
                             </figure>
-                            <nav class="pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
+                            <nav class="mt-4 pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
                                 <a class="pagination-previous" >Previous</a>
                                 <a class="pagination-next" >Next</a>
                                 <ul class="pagination-list">
@@ -226,55 +222,115 @@
                                         </li>`).join('')}
                                 </ul>
                             </nav>
-                        ` : ''}
+                            </div>
+                            ` : ''}
+                            ${test.videoPath ? `
+                            <div class="column is-half">
+                                <div class="video-preview" onclick="openVideo()">
+                                <video controls width="100%" height="auto" preload="metadata">
+                                    <source src="${test.videoPath}" type="video/webm">
+                                    Your browser does not support the video tag.
+                                </video>
+                                </div>
+                            </div>
+                            ` : ''}
+                            </div>
+                            ${test.tracePath ? `
+                            <div class="columns is-centered">
+                                <div class="column is-3">
+                                    <a href="trace/index.html?trace=http://localhost:${test.port}/${test.tracePath}" target="_blank" class="button is-link is-fullwidth mt-3">
+                                    <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
+                                    <span class="has-text-white pl-2">View Trace</span>
+                                    </a>
+                                </div>
+                            </div>
+                            ` : ''}
                         </div>
-                    </div>
-                    ${test.annotations && test.annotations.length ? `
-                        <article class="message">
-                            <div class="message-body">
-                                ${test.annotations
+                        </div>` : ''}
+                        ${test.annotations.length || test.testTags.length > 0 ? `
+                        <div class="card mb-5">
+                        <header class="card-header">
+                            <p class="card-header-title">Additional Information</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                            ${test.testTags.length > 0 ? `
+                            <div class="control mb-4">
+                                <div class="tags is-rounded"> 
+                                    ${test.testTags.map(tag => `<span class="tag is-primary is-medium">${tag}</span>`).join('')}
+                                </div>
+                            </div>` : ""}
+                            ${test.annotations
                                 .filter(annotation => annotation !== null && annotation !== undefined)
                                 .map(annotation => `
-                                    <div>
-                                        ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation?.type}</span>` : ''}
-                                        <br>
-                                        ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation?.description}</span>` : ''}
-                                    </div>
+                                <div class="mb-4">
+                                    ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
                                     <br>
+                                    ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation.description}</span>` : ''}
+                                </div>
                                 `).join('')}
                             </div>
-                        </article>
-                    ` : ``}
-                    <div class="content">
+                        </div>
+                        </div>
+                        ` : ''}
                         ${test.steps.length > 0 ? `
-                        <details id="stepopen" open>
-                            <summary><h4 class="title is-4">Steps</h4></summary>
-                            <span id="stepDetails" class="content"></span>
-                        </details>
-                        `: ``}
-                    </div class="content">
-                    <div>
+                        <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Steps</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                             <span id="stepDetails" class="content"></span>
+                            </div>
+                        </div>
+                        </div>
+                        ` : ''}
                         ${test.errors.length ? `
-                        <h4 class="title is-4">Errors</h4>
-                        <div class="content">
+                        <div class="card mt-5">
+                        <header class="card-header">
+                            <p class="card-header-title">Errors</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
                             <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
-                        </div>` : ''}
-                    </div>
-                    <div>
+                            </div>
+                        </div>
+                        </div>
+                        ` : ''}
                         ${test.logs ? `
-                        <h4 class="title is-4">Logs</h4>
-                        <div class="box">
+                        <div class="card mt-5">
+                        <header class="card-header">
+                            <p class="card-header-title">Logs</p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
                             <pre>${test.logs}</pre>
-                        </div>` : ''}
-                    </div>
-                `;
-                if(test.screenshots.length > 0){
+                            </div>
+                        </div>
+                        </div>
+                        ` : ''}
+                        ${test.videoPath ? `
+                        <div id="testVideo" class="modal">
+                            <div class="modal-background"></div>
+                            <div class="modal-content">
+                            <div class="box">
+                                <video controls style="width: 100%;">
+                                <source src="${test.videoPath}" type="video/webm">
+                                Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            </div>
+                            <button class="modal-close is-large" aria-label="close" onclick="closeVideo()"></button>
+                        </div>
+                        ` : ''}
+                    </div>`
+                if (test.screenshots.length > 0) {
                     document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
                     document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
                     document.querySelectorAll('.pagination-link').forEach((link, index) => {
                         link.addEventListener('click', () => gotoScreenshot(index));
                     });
-                }
+                }              
                 const stepDetailsDiv = document.getElementById('stepDetails');
                 if (stepDetailsDiv) {
                     const stepsList = attachSteps(test);
@@ -282,7 +338,6 @@
                     stepDetailsDiv.appendChild(stepsList);
                 }
             }
-
             function attachSteps(test) {
                 const stepsList = document.createElement("ul");
                 stepsList.setAttribute("id", "steps");

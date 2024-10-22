@@ -1,14 +1,13 @@
-import { TestCase } from "@playwright/test/reporter";
-
 interface Steps {
     snippet: string | undefined,
     title: string,
-    location:string
+    location: string
 }
 export interface TestResultData {
+    port: number | undefined,
     annotations: any,
-    testTags:string[],
-    location:string,
+    testTags: string[],
+    location: string,
     retry: string,
     isRetry: number;
     projectName: any;
@@ -21,10 +20,10 @@ export interface TestResultData {
     steps: Steps[];
     logs: string;
     screenshotPath?: string | null | undefined;
-    screenshots?:string[];
+    screenshots?: string[];
     filePath: string;
     filters: Set<string>;
     tracePath?: string;
     videoPath?: string;
-    base64Image:boolean | undefined;
+    base64Image: boolean | undefined;
 }
