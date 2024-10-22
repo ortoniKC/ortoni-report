@@ -4,7 +4,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
 ### Live Demo: [Ortoni Report](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.4/Ortoni-report.png)
+![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.5/assets/images/Ortoni-report.png)
 
 ---
 
