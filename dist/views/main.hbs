@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.5">
+    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.6">
     <title>{{title}}</title>
     <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
         type="image/x-icon">
@@ -237,12 +237,15 @@
                             </div>
                             ${test.tracePath ? `
                             <div class="columns is-centered">
-                                <div class="column is-3">
-                                    <a href="trace/index.html?trace=http://localhost:${test.port}/${test.tracePath}" target="_blank" class="button is-link is-fullwidth mt-3">
-                                    <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
-                                    <span class="has-text-white pl-2">View Trace</span>
-                                    </a>
-                                </div>
+                               <div class="column is-3">
+                                    <button
+                                        data-trace="${test.tracePath}"
+                                        onclick="openTraceViewer(this)"
+                                        class="button is-link is-fullwidth mt-3">
+                                        <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
+                                        <span class="has-text-white pl-2">View Trace</span>
+                                    </button>
+                                    </div>
                             </div>
                             ` : ''}
                         </div>
@@ -385,6 +388,16 @@
                     closeModal();
                 }
             });
+            function openTraceViewer(button) {
+                const tracePath = button.getAttribute("data-trace");
+                try {
+                    if (tracePath) {
+                    const baseUrl = window.location.origin;
+                    const traceViewerUrl = `${baseUrl}/trace/index.html?trace=${baseUrl}/${tracePath}`;
+                    window.open(traceViewerUrl, "_blank");
+                    } 
+                } catch (error) { }
+            }
 
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
