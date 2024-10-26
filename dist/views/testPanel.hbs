@@ -1,6 +1,8 @@
 <div class="columns is-mobile is-vcentered">
-    <div class="column">
-        <h2 class="title is-4">Tests</h2>
+    <div class="field">
+        <p class="control">
+            <input class="input" name="search" type="search" placeholder="Search by test">
+        </p>
     </div>
     <div class="column">
         <div id="project-filter" class="dropdown is-right is-hoverable is-pulled-right">
@@ -25,7 +27,8 @@
                     {{#each allTags}}
                     <div class="dropdown-item">
                         <label class="checkbox">
-                            <input name="{{this}}" type="checkbox" data-filter-type="test-tags" value="{{this}}"> {{this}}
+                            <input name="{{this}}" type="checkbox" data-filter-type="test-tags" value="{{this}}">
+                            {{this}}
                         </label>
                     </div>
                     {{/each}}
