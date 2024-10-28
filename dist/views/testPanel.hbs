@@ -1,33 +1,38 @@
-<div class="columns is-mobile is-vcentered">
-    <div class="field">
-        <p class="control">
-            <input class="input" name="search" type="search" placeholder="Search by test">
-        </p>
+<div class="columns is-mobile is-vcentered is-gapless">
+    <div class="column is-8">
+        <div class="field">
+            <p class="control">
+                <input class="input" name="search" type="search" placeholder="Search by test" />
+            </p>
+        </div>
     </div>
     <div class="column">
         <div id="project-filter" class="dropdown is-right is-hoverable is-pulled-right">
             <div class="dropdown-trigger">
-                <button class="button" aria-haspopup="true" aria-controls="select-filter">
+                <button class="button is-primary" aria-haspopup="true" aria-controls="select-filter">
                     <span>Filters</span>
                     <span class="icon is-small">
-                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        <i class="fa-solid fa-filter" aria-hidden="true"></i>
                     </span>
                 </button>
             </div>
             <div class="dropdown-menu" id="select-filter" role="menu">
                 <div class="dropdown-content">
+                    <p class="dropdown-item has-text-weight-semibold has-text-primary">Projects</p>
                     {{#each projects}}
                     <div class="dropdown-item">
                         <label class="checkbox is-capitalized">
-                            <input name="{{this}}" type="checkbox" data-filter-type="project" value="{{this}}"> {{this}}
+                            <input name="{{this}}" type="checkbox" data-filter-type="project" value="{{this}}" />
+                            {{this}}
                         </label>
                     </div>
                     {{/each}}
                     <hr class="dropdown-divider" />
+                    <p class="dropdown-item has-text-weight-semibold has-text-primary">Tags</p>
                     {{#each allTags}}
                     <div class="dropdown-item">
                         <label class="checkbox">
-                            <input name="{{this}}" type="checkbox" data-filter-type="test-tags" value="{{this}}">
+                            <input name="{{this}}" type="checkbox" data-filter-type="test-tags" value="{{this}}" />
                             {{this}}
                         </label>
                     </div>
@@ -36,4 +41,11 @@
             </div>
         </div>
     </div>
+</div>
+<div class="block">
+    <span id="selected-filters">
+        <span class="icon">
+            <i class="fa fa-info"></i>
+        </span>
+    </span>
 </div>
