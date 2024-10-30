@@ -1,5 +1,19 @@
 # Change Log:
 
+
+## v2.0.6
+
+#### 🐛 Fixes
+- **Trace Path in Pipeline**: Resolved issue with incorrect trace file path in CI/CD pipeline, ensuring trace paths are properly resolved.
+
+#### 👌 Improvements
+- **Search Functionality**:
+  - **Removed from Navbar**: Search functionality has been removed from the navbar to enhance navigation simplicity.
+  - **Added to Test Panel**: Search functionality has been relocated to the test panel for more intuitive test filtering.
+
+- **UI Enhancements**:
+  - Updated the overall UI with gradient color status indicators, making test status visuals more vibrant and user-friendly.
+
 ## v2.0.5
 
 ### 🚀 New Features
