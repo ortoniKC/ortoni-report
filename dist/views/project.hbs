@@ -1,11 +1,11 @@
-{{!-- --flaky-gradient: linear-gradient(135deg, #ffd65a 0%, #ffb70f 100%);
---retry-gradient: linear-gradient(135deg, #c0cad9 0%, #94a3b8 100%);
---skip-gradient: linear-gradient(135deg, #99e1ff 0%, #66d1ff 100%); --}}
 <style>
     :root {
         --primary-gradient: linear-gradient(135deg, #3a6b6e 0%, #274754 100%);
+        --flaky-gradient: linear-gradient(135deg, #ffb70f 0%, #ffd65a 100%);
+        --retry-gradient: linear-gradient(135deg, #94a3b8 0%, #c0cad9 100%);
+        --skip-gradient: linear-gradient(135deg, #66d1ff 0%, #99e1ff 100%);
         --success-gradient: linear-gradient(135deg, #34d399 0%, #059669 100%);
-        --error-gradient: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+        --error-gradient: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
         --glass-bg: rgba(255, 255, 255, 0.7);
         --glass-border: rgba(255, 255, 255, 0.1);
         --shadow-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
@@ -39,14 +39,12 @@
     .test-suite {
         margin: 0.35rem;
         border-radius: 6px;
-        border: 1px solid var(--glass-border);
     }
 
     .test-suite summary {
         padding: 0.35rem 0.5rem;
-        background: transparent;
         color: inherit;
-        border-radius: 6px;
+        background: transparent;
         transition: background-color 0.2s ease;
     }
 
@@ -59,6 +57,7 @@
         padding: 0.35rem 0.5rem;
         color: inherit;
         background: transparent;
+        transition: background-color 0.2s ease;
     }
 
     .test-item {
@@ -71,13 +70,30 @@
         flex-wrap: wrap;
     }
 
+    .test-item span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 35ch;
+    }
+
     .status-passed {
         background: var(--success-gradient);
         color: white;
     }
 
+    .status-skipped {
+        background: var(--skip-gradient);
+        color: white;
+    }
+
     .status-failed {
         background: var(--error-gradient);
+        color: white;
+    }
+
+    .status-flaky {
+        background: var(--flaky-gradient);
         color: white;
     }
 
@@ -133,7 +149,7 @@
         <div class="test-content">
             {{#each this}}
             <details class="test-suite">
-                <summary class="is-size-5 is-capitalized">
+                <summary class="is-size-6 is-capitalized">
                     <span class="icon is-small">
                         <svg class="image is-16x16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                             <path
@@ -166,12 +182,7 @@
                         <span class="is-size-6">{{@key}}</span>
                     </summary>
                     {{#each this}}
-                    <div class="test-item {{#if (eq status 'passed')}}status-passed{{else if (eq status 'failed')}}status-failed{{else if (eq status 'flaky')}}status-flaky {{else if (eq status 'retry')}}status-retry{{/if}} {{#if (eq status 'skipped' )}}status-skipped is-hidden{{/if}}"
-                        data-suite-name="{{suite}}" data-test-tags="{{joinWithSpace testTags}}"
-                        data-project-name="{{projectName}}" data-test-id="{{index}}"
-                        data-test-status="{{status}} {{retry}}" data-test-duration="{{duration}}">
-                        {{> testStatus}}
-                    </div>
+                    {{> testStatus}}
                     {{/each}}
                 </details>
                 {{/each}}
@@ -218,12 +229,7 @@
                     <span class="is-size-6">{{@key}}</span>
                 </summary>
                 {{#each this}}
-                <div class="test-item {{#if (eq status 'passed')}}status-passed{{else if (eq status 'failed')}}status-failed{{else}}status-skipped{{/if}} {{#if (eq status 'skipped' )}}is-hidden{{/if}}"
-                    data-suite-name="{{suite}}" data-test-duration="{{duration}}"
-                    data-test-tags="{{joinWithSpace testTags}}" data-project-name="{{projectName}}"
-                    data-test-id="{{index}}" data-test-status="{{status}} {{retry}}">
-                    {{> testStatus}}
-                </div>
+                {{> testStatus}}
                 {{/each}}
             </details>
             {{/each}}

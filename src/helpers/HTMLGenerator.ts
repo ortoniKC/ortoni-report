@@ -89,12 +89,13 @@ export class HTMLGenerator {
     Handlebars.registerHelper('joinWithSpace', (array) => array.join(' '));
     Handlebars.registerHelper("json", (context) => safeStringify(context));
     Handlebars.registerHelper("eq", (actualStatus, expectedStatus) => actualStatus === expectedStatus);
+    Handlebars.registerHelper("includes", (actualStatus: string, expectedStatus: string) => actualStatus.includes(expectedStatus));
     Handlebars.registerHelper("gr", (count) => count > 0);
     Handlebars.registerHelper('or', function (a, b) { return a || b });
   }
 
   private registerPartials() {
-    ['navbar', 'testStatus', 'testPanel', 'summaryCard', 'userInfo', 'project'].forEach(partialName => {
+    ['navbar', 'testPanel', 'summaryCard', 'userInfo', 'project', 'testStatus', 'testIcons',].forEach(partialName => {
       Handlebars.registerPartial(partialName, fs.readFileSync(
         path.resolve(__dirname, "views", `${partialName}.hbs`),
         "utf-8"
