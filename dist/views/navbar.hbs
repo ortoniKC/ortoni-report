@@ -1,4 +1,4 @@
-<nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+<nav class="navbar is-primary is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item">
             {{#if logo}}
@@ -16,16 +16,6 @@
     </div>
     <div class="navbar-menu">
         <div class="navbar-end">
-            <div class="navbar-item">
-                <span id="selected-filters"></span>
-            </div>
-            <div class="navbar-item">
-                <div class="field">
-                    <p class="control">
-                        <input class="input" name="search" type="search" placeholder="Search by test">
-                    </p>
-                </div>
-            </div>
             <div class="navbar-item">
                 <button id="toggle-theme" class="" data-theme-status="{{preferredTheme}}">
                     <span class="icon">

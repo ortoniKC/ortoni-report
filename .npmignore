@@ -8,3 +8,4 @@ ortoni-report.html
 playwright.config.ts
 tsconfig.json
 tsup.config.ts
+assets
