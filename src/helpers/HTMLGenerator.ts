@@ -1,28 +1,30 @@
 import path from "path";
 import { TestResultData } from "../types/testResults";
 import { groupResults } from "../utils/groupProjects";
-import { formatDate, safeStringify } from "../utils/utils";
+import { formatDate, formatDateLocal, formatDateUTC, safeStringify } from "../utils/utils";
 import fs from "fs";
 import Handlebars from "handlebars";
 import { OrtoniReportConfig } from "../types/reporterConfig";
+import { DatabaseManager } from "./databaseManager";
 
 export class HTMLGenerator {
   private ortoniConfig: OrtoniReportConfig;
-
-  constructor(ortoniConfig: OrtoniReportConfig) {
+  private dbManager: DatabaseManager;
+  constructor(ortoniConfig: OrtoniReportConfig, dbManager: DatabaseManager) {
     this.ortoniConfig = ortoniConfig;
     this.registerHandlebarsHelpers();
     this.registerPartials();
+    this.dbManager = dbManager;
   }
 
-  generateHTML(filteredResults: TestResultData[], totalDuration: string, cssContent: string, results: TestResultData[], projectSet: Set<string>) {
-    const data = this.prepareReportData(filteredResults, totalDuration, results, projectSet);
+  async generateHTML(filteredResults: TestResultData[], totalDuration: string, cssContent: string, results: TestResultData[], projectSet: Set<string>) {
+    const data = await this.prepareReportData(filteredResults, totalDuration, results, projectSet);
     const templateSource = fs.readFileSync(path.resolve(__dirname, "views", "main.hbs"), "utf-8");
     const template = Handlebars.compile(templateSource);
     return template({ ...data, inlineCss: cssContent });
   }
 
-  private prepareReportData(filteredResults: TestResultData[], totalDuration: string, results: TestResultData[], projectSet: Set<string>) {
+  private async prepareReportData(filteredResults: TestResultData[], totalDuration: string, results: TestResultData[], projectSet: Set<string>) {
     const totalTests = filteredResults.length;
     const passedTests = results.filter((r) => r.status === "passed").length;
     const flakyTests = results.filter((r) => r.flaky === "flaky").length;
@@ -33,8 +35,17 @@ export class HTMLGenerator {
     results.forEach(result => result.testTags.forEach(tag => allTags.add(tag)));
 
     const projectResults = this.calculateProjectResults(filteredResults, results, projectSet);
-
+    const utcRunDate = formatDateUTC(new Date());
+    const localRunDate = formatDateLocal(utcRunDate);
+    const testHistories = await Promise.all(results.map(async (result) => {
+      const testId = `${result.filePath}:${result.title}`;
+      const history = await this.dbManager.getTestHistory(testId);
+      return { testId, history };
+    }));
     return {
+      utcRunDate: utcRunDate,
+      localRunDate: localRunDate,
+      testHistories: testHistories,
       logo: this.ortoniConfig.logo || undefined,
       totalDuration: totalDuration,
       results: results,
@@ -92,6 +103,10 @@ export class HTMLGenerator {
     Handlebars.registerHelper("includes", (actualStatus: string, expectedStatus: string) => actualStatus.includes(expectedStatus));
     Handlebars.registerHelper("gr", (count) => count > 0);
     Handlebars.registerHelper('or', function (a, b) { return a || b });
+    Handlebars.registerHelper('concat', function (...args) {
+      args.pop();
+      return args.join('');
+    });
   }
 
   private registerPartials() {

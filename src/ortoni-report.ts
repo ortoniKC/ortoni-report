@@ -6,6 +6,8 @@ import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
 import { ensureHtmlExtension, msToTime } from "./utils/utils";
+import { DatabaseManager } from "./helpers/databaseManager";
+import path from "path";
 // import WebSocketHelper from "./helpers/webSockeManager";
 
 export default class OrtoniReport implements Reporter {
@@ -20,6 +22,7 @@ export default class OrtoniReport implements Reporter {
   private folderPath: string;
   private outputFilename: string;
   private outputPath: string | undefined;
+  private dbManager: DatabaseManager;
 
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
     this.folderPath = ortoniConfig.folderPath || 'ortoni-report';
@@ -27,16 +30,18 @@ export default class OrtoniReport implements Reporter {
     // this.wsHelper = new WebSocketHelper(4000);
     // this.wsHelper.setupWebSocket();
     // this.wsHelper.setupCleanup();
-    this.htmlGenerator = new HTMLGenerator(ortoniConfig);
+    this.dbManager = new DatabaseManager();
+    this.htmlGenerator = new HTMLGenerator(ortoniConfig, this.dbManager);
     this.fileManager = new FileManager(this.folderPath);
     this.serverManager = new ServerManager(ortoniConfig);
     this.testResultProcessor = new TestResultProcessor("");
   }
 
-  onBegin(config: FullConfig, _suite: Suite) {
+  async onBegin(config: FullConfig, _suite: Suite) {
     this.results = [];
     this.testResultProcessor = new TestResultProcessor(config.rootDir);
     this.fileManager.ensureReportDirectory();
+    await this.dbManager.initialize(path.join(this.folderPath, 'test_history.sqlite'));
     // this.wsHelper.broadcastUpdate(this.results);
   }
 
@@ -54,14 +59,16 @@ export default class OrtoniReport implements Reporter {
     }
   }
 
-  onEnd(result: FullResult) {
+  async onEnd(result: FullResult) {
     try {
       this.overAllStatus = result.status;
       const filteredResults = this.results.filter((r) => r.status !== "skipped" && !r.isRetry);
       const totalDuration = msToTime(result.duration);
       const cssContent = this.fileManager.readCssContent();
+      const runId = await this.dbManager.saveTestRun(this.results, totalDuration);
+      await this.dbManager.saveTestResults(runId, this.results);
 
-      const html = this.htmlGenerator.generateHTML(filteredResults, totalDuration, cssContent, this.results, this.projectSet);
+      const html = await this.htmlGenerator.generateHTML(filteredResults, totalDuration, cssContent, this.results, this.projectSet);
       this.outputPath = this.fileManager.writeReportFile(this.outputFilename, html);
       // this.wsHelper.testComplete();
     } catch (error) {
@@ -77,6 +84,7 @@ export default class OrtoniReport implements Reporter {
       if (this.outputPath) {
         console.log(`Ortoni HTML report generated at ${this.outputPath}`);
       }
+      await this.dbManager.close();
 
       this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
       await new Promise(_resolve => { });
