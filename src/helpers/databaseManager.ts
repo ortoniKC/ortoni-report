@@ -22,12 +22,7 @@ export class DatabaseManager {
     await this.db.exec(`
       CREATE TABLE IF NOT EXISTS test_runs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        run_date TEXT,
-        total_tests INTEGER,
-        passed_tests INTEGER,
-        failed_tests INTEGER,
-        skipped_tests INTEGER,
-        duration TEXT
+        run_date TEXT
       );
 
       CREATE TABLE IF NOT EXISTS test_results (
@@ -36,26 +31,19 @@ export class DatabaseManager {
         test_id TEXT,
         status TEXT,
         duration TEXT,
-        retry_count INTEGER,
         error_message TEXT,
         FOREIGN KEY (run_id) REFERENCES test_runs (id)
       );
     `);
   }
 
-  async saveTestRun(results: TestResultData[], totalDuration: string): Promise<number> {
+  async saveTestRun(): Promise<number> {
     if (!this.db) throw new Error('Database not initialized');
-
-    const totalTests = results.length;
-    const passedTests = results.filter(r => r.status === 'passed').length;
-    const failedTests = results.filter(r => r.status === 'failed' || r.status === 'timedOut').length;
-    const skippedTests = results.filter(r => r.status === 'skipped').length;
     const runDate = formatDateUTC(new Date());
-
     const { lastID } = await this.db.run(`
-      INSERT INTO test_runs (run_date, total_tests, passed_tests, failed_tests, skipped_tests, duration)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `, [runDate, totalTests, passedTests, failedTests, skippedTests, totalDuration]);
+      INSERT INTO test_runs (run_date)
+      VALUES (?)
+    `, [runDate]);
 
     return lastID!;
   }
@@ -64,8 +52,8 @@ export class DatabaseManager {
     if (!this.db) throw new Error('Database not initialized');
 
     const stmt = await this.db.prepare(`
-      INSERT INTO test_results (run_id, test_id, status, duration, retry_count, error_message)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO test_results (run_id, test_id, status, duration, error_message)
+      VALUES (?, ?, ?, ?, ?)
     `);
 
     for (const result of results) {
@@ -74,11 +62,9 @@ export class DatabaseManager {
         `${result.filePath}:${result.title}`,
         result.status,
         result.duration,
-        result.isRetry ? 1 : 0,
         result.errors.join('\n')
       ]);
     }
-
     await stmt.finalize();
   }
 
@@ -86,7 +72,7 @@ export class DatabaseManager {
     if (!this.db) throw new Error('Database not initialized');
 
     const results = await this.db.all(`
-      SELECT tr.status, tr.duration, tr.retry_count, trun.run_date
+      SELECT tr.status, tr.duration, tr.error_message, trun.run_date
       FROM test_results tr
       JOIN test_runs trun ON tr.run_id = trun.id
       WHERE tr.test_id = ?

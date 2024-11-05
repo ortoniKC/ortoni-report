@@ -65,7 +65,7 @@ export default class OrtoniReport implements Reporter {
       const filteredResults = this.results.filter((r) => r.status !== "skipped" && !r.isRetry);
       const totalDuration = msToTime(result.duration);
       const cssContent = this.fileManager.readCssContent();
-      const runId = await this.dbManager.saveTestRun(this.results, totalDuration);
+      const runId = await this.dbManager.saveTestRun();
       await this.dbManager.saveTestResults(runId, this.results);
 
       const html = await this.htmlGenerator.generateHTML(filteredResults, totalDuration, cssContent, this.results, this.projectSet);
@@ -80,12 +80,10 @@ export default class OrtoniReport implements Reporter {
   async onExit() {
     try {
       this.fileManager.copyTraceViewerAssets();
-
       if (this.outputPath) {
         console.log(`Ortoni HTML report generated at ${this.outputPath}`);
       }
       await this.dbManager.close();
-
       this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
       await new Promise(_resolve => { });
     } catch (error) {

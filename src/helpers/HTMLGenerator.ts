@@ -40,7 +40,10 @@ export class HTMLGenerator {
     const testHistories = await Promise.all(results.map(async (result) => {
       const testId = `${result.filePath}:${result.title}`;
       const history = await this.dbManager.getTestHistory(testId);
-      return { testId, history };
+      return {
+        testId: testId,
+        history: history
+      };
     }));
     return {
       utcRunDate: utcRunDate,
@@ -110,7 +113,7 @@ export class HTMLGenerator {
   }
 
   private registerPartials() {
-    ['navbar', 'testPanel', 'summaryCard', 'userInfo', 'project', 'testStatus', 'testIcons',].forEach(partialName => {
+    ['head','navbar', 'testPanel', 'summaryCard', 'userInfo', 'project', 'testStatus', 'testIcons',].forEach(partialName => {
       Handlebars.registerPartial(partialName, fs.readFileSync(
         path.resolve(__dirname, "views", `${partialName}.hbs`),
         "utf-8"
