@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="{{preferredTheme}}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Playwright HTML report by LetCode Koushik - V2.0.7">
-    <title>{{title}}</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/favicon.png"
-        type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+{{> head}}
 <style>
     {{{inlineCss}}}
 </style>
@@ -37,34 +27,6 @@
                             {{> userInfo}}
                         </div>
                     </div>
-                    {{!-- In your test details section --}}
-                    <div class="test-history">
-                    <h4>Test History</h4>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Duration</th>
-                            <th>Retry Count</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {{#each testHistories}}
-                            {{#each this.history}}
-                                <tr>
-                                <td>{{this.testId}}</td>
-                                <td>{{this.run_date}}</td>
-                                <td>{{this.status}}</td>
-                                <td>{{this.duration}}</td>
-                                <td>{{this.retry_count}}</td>
-                                </tr>
-                            {{/each}}
-                        {{/each}}
-                        </tbody>
-                    </table>
-                    </div>
-
                     <div id="testDetails" style="display: none;"></div>
                 </section>
             </div>
