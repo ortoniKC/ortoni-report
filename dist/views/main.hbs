@@ -79,7 +79,7 @@
             }
             window.showSummary = showSummary;
 
-            function displayTestDetails(test, history) {
+            function displayTestDetails(test) {
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
                 summary.style.display = 'none';
@@ -130,19 +130,7 @@
                     statusClass = 'info';
                     statusIcon = 'question-circle';
                 }
-                let historyContent = '';
-                if (history && history.length > 0) {
-                    historyContent = history.map(h => `
-                        <li>
-                            <strong>Run Date:</strong> ${h.run_date} -
-                            <strong>Status:</strong> ${h.status}
-                        </li>
-                    `).join('');
-                } else {
-                    historyContent = '<li>No history available</li>';
-                }
                 testDetails.innerHTML = `
-                    <ul>${historyContent}</ul>
                     <div class="sticky-header">
                         <div class="card mb-3">
                          <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
@@ -236,8 +224,19 @@
                             </div>
                             ` : ''}
                             </div>
-                            ${test.tracePath ? `
-                            <div class="columns is-centered">
+                            <div class="columns">
+                                <div class="column is-3">
+                                    <button
+                                        onclick="openHistory()"
+                                        class="button is-link is-fullwidth mt-3">
+                                        <span class="icon"><i class="fa-solid fa-timeline" style="color: #FFD43B;"></i></span>
+                                        <span class="has-text-white pl-2">Open history</span>
+                                    </button>
+                                <div id="historyModal" class="modal">
+                                <div class="modal-background"></div>
+                                </div>
+                                </div>
+                                ${test.tracePath ? `
                                <div class="column is-3">
                                     <button
                                         data-trace="${test.tracePath}"
@@ -246,9 +245,9 @@
                                         <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
                                         <span class="has-text-white pl-2">View Trace</span>
                                     </button>
-                                    </div>
-                            </div>
+                                </div>
                             ` : ''}
+                            </div>
                         </div>
                         </div>` : ''}
                         ${test.annotations.length || test.testTags.length > 0 ? `
@@ -387,7 +386,8 @@
             window.closeVideo = closeVideo;
             window.closeModal = closeModal;
             window.openTraceViewer = openTraceViewer;
-
+            window.openHistory = openHistory;
+            window.closeHistoryModal = closeHistoryModal;
             document.addEventListener('keydown', (event) => {
                 if (event.key === "Escape") {
                     closeModal();
@@ -403,7 +403,44 @@
                     } 
                 } catch (error) { }
             }
+            
+            function openHistory() {
+                const historyElement = document.getElementById("historyModal");
+                historyElement.classList.add('is-active');
 
+                let historyContent = '';
+                if (testHistoriesMap && testHistoriesMap.length > 0) {
+                    historyContent = testHistoriesMap.map(h => `
+                        <div class="box">
+                            <p class="has-text-weight-bold"><strong>Status:</strong> ${h.status}</p>
+                            <p><strong>Duration:</strong> ${h.duration}</p>
+                            <p><strong>Run Date:</strong> ${h.run_date}</p>
+                            ${h.error_message ? `<p><strong>Error Message:</strong> ${h.error_message}</p>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    historyContent = '<p class="title">No history available</p>';
+                }
+
+                historyElement.innerHTML = `
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Test History</p>
+                            <button class="button is-link" onclick="closeHistoryModal()">Close</button>
+                        </header>
+                        <section class="modal-card-body">
+                            ${historyContent}
+                        </section>
+                    </div>
+                `;
+            }
+
+            function closeHistoryModal() {
+                const historyElement = document.getElementById("historyModal");
+                historyElement.classList.remove('is-active');
+            }
+            let testHistoriesMap = {};
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
@@ -419,7 +456,8 @@
                         const test = testData[testId];
                         const historyEntry = testHistory.find(entry => entry.testId === testHistoryId);
                         const history = historyEntry ? historyEntry.history : null;
-                        displayTestDetails(test, history);
+                        testHistoriesMap = history;
+                        displayTestDetails(test);
                     });
                 });
                 const filters = document.querySelectorAll('.filter');
