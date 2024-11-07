@@ -85,8 +85,8 @@ export function formatDateLocal(isoString: string): string {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
+        // second: '2-digit',
+        hour12: true,
         timeZoneName: 'short'
     };
     return new Intl.DateTimeFormat(undefined, options).format(date);

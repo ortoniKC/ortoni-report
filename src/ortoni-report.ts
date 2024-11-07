@@ -41,7 +41,7 @@ export default class OrtoniReport implements Reporter {
     this.results = [];
     this.testResultProcessor = new TestResultProcessor(config.rootDir);
     this.fileManager.ensureReportDirectory();
-    await this.dbManager.initialize(path.join(this.folderPath, 'test_history.sqlite'));
+    await this.dbManager.initialize(path.join(this.folderPath,'ortoni-data-history.sqlite'));
     // this.wsHelper.broadcastUpdate(this.results);
   }
 
@@ -57,6 +57,12 @@ export default class OrtoniReport implements Reporter {
     } catch (error) {
       console.error("OrtoniReport: Error processing test end:", error);
     }
+  }
+  // onStdErr(chunk: string | Buffer, test: void | TestCase, result: void | TestResult): void {
+    
+  // }
+  printsToStdio(): boolean {
+    return true;
   }
 
   async onEnd(result: FullResult) {
