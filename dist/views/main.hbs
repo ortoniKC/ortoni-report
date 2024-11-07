@@ -380,7 +380,11 @@
                 let modal = document.querySelector("#testImage");
                 modal.classList.remove("is-active");
             }
-
+            function closeErrorModal(modalId) {
+                let modal = document.getElementById(modalId);
+                modal.classList.remove("is-active");
+            }
+            window.closeErrorModal = closeErrorModal;
             window.openModal = openModal;
             window.openVideo = openVideo;
             window.closeVideo = closeVideo;
@@ -412,12 +416,18 @@
 
                 let historyContent = '';
                 if (testHistoriesMap && testHistoriesMap.length > 0) {
-                    historyContent = testHistoriesMap.map(h => `
+                    historyContent = testHistoriesMap.map((h, index) => `
                         <tr>
                             <td>${h.run_date}</td>
                             <td>${h.status}</td>
                             <td>${h.duration}</td>
-                           ${h.error_message ? `<td><a class="button is-link" onclick="showHistoryErrorMessage()">Show error</a></td>` : 'No Error'}
+                           ${h.error_message ? `<td><div class="modal" id="${index}">
+                           <div class="modal-background"></div>
+                    <div class="modal-content">
+                    <pre><code>${h.error_message}</code></pre>
+                    </div>
+                    <button class="button is-primary" onclick="closeErrorModal(${index})">Close</button>
+                    </div><a class="button is-link" onclick="showHistoryErrorMessage(${index})">Show error</a></td>` : 'No Error'}
                         </tr>
                     `).join('');
                 } else {
@@ -455,7 +465,12 @@
                 historyElement.classList.remove('is-active');
             }
             let testHistoriesMap = {};
-            function showHistoryErrorMessage(){}
+            function showHistoryErrorMessage(modalId){
+                const modalElement = document.getElementById(modalId);
+                if (modalElement) {
+                    modalElement.classList.add('is-active');
+                }
+            }
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
