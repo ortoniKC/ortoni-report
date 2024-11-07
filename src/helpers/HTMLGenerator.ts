@@ -45,9 +45,6 @@ export class HTMLGenerator {
         history: history
       };
     }));
-    testHistories.map(h=>{
-      console.log(h.history)
-    })
     return {
       utcRunDate: utcRunDate,
       localRunDate: localRunDate,
