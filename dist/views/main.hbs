@@ -2,9 +2,8 @@
 <html lang="en" data-theme="{{preferredTheme}}">
 {{> head}}
 <style>
-    {{{ inlineCss }}}
+    {{{inlineCss}}}
 </style>
-
 <body>
     {{> navbar }}
     <section class="section mt-6">
@@ -36,526 +35,527 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const testData = {{{ json results }}};
-        const testHistory = {{{ json testHistories }}};
-        let testHistoriesMap = {};
-        const elements = {
-            testDetails: document.getElementById('testDetails'),
-            summary: document.getElementById('summary'),
-            themeButton: document.getElementById("toggle-theme"),
-            themeIcon: document.getElementById("theme-icon"),
-            htmlElement: document.documentElement,
-            searchInput: document.querySelector('input[name="search"]'),
-            detailsElements: document.querySelectorAll('details'),
-            filtersDisplay: document.getElementById('selected-filters')
-        };
+            const testHistory = {{{ json testHistories }}};
+            let testHistoriesMap = {};
+            let testHistoryTitle = '';
 
-        const themeManager = {
-            init() {
-                const preferredTheme = elements.themeButton.getAttribute("data-theme-status");
-                this.setTheme(preferredTheme);
-                elements.themeButton.addEventListener('click', () => this.toggleTheme());
-            },
-            setTheme(theme) {
-                elements.htmlElement.setAttribute('data-theme', theme);
-                elements.themeIcon.className = `fa fa-${theme === 'dark' ? 'moon' : 'sun'}`;
-            },
-            toggleTheme() {
-                const currentTheme = elements.htmlElement.getAttribute('data-theme');
-                this.setTheme(currentTheme === 'light' ? 'dark' : 'light');
-            }
-        };
+            const elements = {
+                testDetails: document.getElementById('testDetails'),
+                summary: document.getElementById('summary'),
+                themeButton: document.getElementById("toggle-theme"),
+                themeIcon: document.getElementById("theme-icon"),
+                htmlElement: document.documentElement,
+                searchInput: document.querySelector('input[name="search"]'),
+                detailsElements: document.querySelectorAll('details'),
+                filtersDisplay: document.getElementById('selected-filters')
+            };
 
-        const testDetailsManager = {
-            show(test) {
-                elements.summary.style.display = 'none';
-                elements.testDetails.style.opacity = '0';
-                elements.testDetails.style.display = 'block';
-                setTimeout(() => {
-                    elements.testDetails.style.opacity = '1';
-                }, 50);
-                this.render(test);
-            },
-            hide() {
-                elements.summary.style.display = 'block';
-                elements.testDetails.style.display = 'none';
-            },
-            render(test) {
-                let currentScreenshotIndex = 0;
-                const statusClass = this.getStatusClass(test.status);
-                const statusIcon = this.getStatusIcon(test.status);
+            const themeManager = {
+                init() {
+                    const preferredTheme = elements.themeButton.getAttribute("data-theme-status");
+                    this.setTheme(preferredTheme);
+                    elements.themeButton.addEventListener('click', () => this.toggleTheme());
+                },
+                setTheme(theme) {
+                    elements.htmlElement.setAttribute('data-theme', theme);
+                    elements.themeIcon.className = `fa fa-${theme === 'dark' ? 'moon' : 'sun'}`;
+                },
+                toggleTheme() {
+                    const currentTheme = elements.htmlElement.getAttribute('data-theme');
+                    this.setTheme(currentTheme === 'light' ? 'dark' : 'light');
+                }
+            };
 
-                elements.testDetails.innerHTML = `
-                            <div class="sticky-header">
-                                <div class="card mb-3">
-                                    <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
-                                        <span class="icon"><i class="fa fa-chevron-left" style="color: #63E6BE;"></i></span>
-                                        <span>Back to Summary</span>
-                                    </button>
-                                    <div class="card-content">
-                                        <div class="content has-text-centered">
-                                            <h1 class="title is-2">${test.title}</h1>
-                                            <p class="subtitle is-5" id="filepath">${test.location}</p>
-                                        </div>
+            const testDetailsManager = {
+                show(test) {
+                    elements.summary.style.display = 'none';
+                    elements.testDetails.style.opacity = '0';
+                    elements.testDetails.style.display = 'block';
+                    setTimeout(() => {
+                        elements.testDetails.style.opacity = '1';
+                    }, 50);
+                    this.render(test);
+                },
+                hide() {
+                    elements.summary.style.display = 'block';
+                    elements.testDetails.style.display = 'none';
+                },
+                render(test) {
+                    let currentScreenshotIndex = 0;
+                    const statusClass = this.getStatusClass(test.status);
+                    const statusIcon = this.getStatusIcon(test.status);
+
+                    elements.testDetails.innerHTML = `
+                        <div class="sticky-header">
+                            <div class="card mb-3">
+                                <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
+                                    <span class="icon"><i class="fa fa-chevron-left" style="color: #63E6BE;"></i></span>
+                                    <span>Back to Summary</span>
+                                </button>
+                                <div class="card-content">
+                                    <div class="content has-text-centered">
+                                        <h1 class="title is-2">${test.title}</h1>
+                                        <p class="subtitle is-5" id="filepath">${test.location}</p>
                                     </div>
-                                    <footer class="card-footer">
-                                        <div class="card-footer-item">
-                                            <div class="columns is-mobile">
-                                                <div class="column is-half">
-                                                    <div class="is-flex is-align-items-center">
-                                                        <span class="icon status-icon has-text-${statusClass}">
-                                                            <i class="fa fa-${statusIcon}"></i>
-                                                        </span>
-                                                        <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        ${test.duration ? `
-                                        <div class="card-footer-item">
+                                </div>
+                                <footer class="card-footer">
+                                    <div class="card-footer-item">
+                                        <div class="columns is-mobile">
                                             <div class="column is-half">
                                                 <div class="is-flex is-align-items-center">
-                                                    <span class="icon status-icon has-text-info">
-                                                        <i class="fa fa-clock"></i>
+                                                    <span class="icon status-icon has-text-${statusClass}">
+                                                        <i class="fa fa-${statusIcon}"></i>
                                                     </span>
-                                                    <span class="has-text-info has-text-weight-semibold">${test.duration}</span>
+                                                    <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        ` : ''}
-                                        ${test.projectName ? `
-                                        <div class="card-footer-item">
+                                    </div>
+                                    ${test.duration ? `
+                                    <div class="card-footer-item">
+                                        <div class="column is-half">
                                             <div class="is-flex is-align-items-center">
                                                 <span class="icon status-icon has-text-info">
-                                                    <i class="fa fa-window-maximize" style="color: #B197FC;"></i>
+                                                    <i class="fa fa-clock"></i>
                                                 </span>
-                                                <span class="" style="color: #B197FC;"> ${test.projectName}</span>
+                                                <span class="has-text-info has-text-weight-semibold">${test.duration}</span>
                                             </div>
                                         </div>
-                                        ` : ''}
-                                    </footer>
-                                </div>
-                            </div>
-                            <div class="content-wrapper">
-                                ${this.renderTestContent(test)}
-                            </div>
-                        `;
-
-                this.attachScreenshotListeners(test);
-                this.attachSteps(test);
-            },
-            getStatusClass(status) {
-                if (status.startsWith('passed')) return 'success';
-                if (status === 'flaky') return 'warning';
-                if (status === 'failed') return 'danger';
-                return 'info';
-            },
-            getStatusIcon(status) {
-                if (status.startsWith('passed')) return 'check-circle';
-                if (status === 'flaky') return 'exclamation-triangle';
-                if (status === 'failed') return 'times-circle';
-                return 'question-circle';
-            },
-            renderTestContent(test) {
-                let content = '';
-                if (test.status !== "skipped") {
-                    content += this.renderScreenshotsAndVideo(test);
-                    content += this.renderButtons(test);
-                }
-                content += this.renderAdditionalInfo(test);
-                content += this.renderSteps(test);
-                content += this.renderErrors(test);
-                content += this.renderLogs(test);
-                return content;
-            },
-            renderScreenshotsAndVideo(test) {
-                let content = '<div class="card mb-5"><div class="card-content"><div class="columns is-multiline">';
-                if (test.screenshots && test.screenshots.length > 0) {
-                    content += `
-                                <div class="column is-half">
-                                    <div id="testImage" class="modal">
-                                        <div class="modal-background"></div>
-                                        <div class="modal-content">
-                                            <p class="image">
-                                                <img id="screenshot-modal-img" src="${test.screenshots[0]}" alt="Screenshot">
-                                            </p>
+                                    </div>
+                                    ` : ''}
+                                    ${test.projectName ? `
+                                    <div class="card-footer-item">
+                                        <div class="is-flex is-align-items-center">
+                                            <span class="icon status-icon has-text-info">
+                                                <i class="fa fa-window-maximize" style="color: #B197FC;"></i>
+                                            </span>
+                                            <span class="" style="color: #B197FC;"> ${test.projectName}</span>
                                         </div>
-                                        <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
                                     </div>
-                                    <figure class="image">
-                                        <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
-                                    </figure>
-                                    <nav class="mt-4 pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
-                                        <a class="pagination-previous">Previous</a>
-                                        <a class="pagination-next">Next</a>
-                                        <ul class="pagination-list">
-                                            ${test.screenshots.map((_, index) => `
-                                                <li>
-                                                    <a class="pagination-link ${index === 0 ? 'is-current' : ''}" aria-label="Goto screenshot ${index + 1}">${index + 1}</a>
-                                                </li>`).join('')}
-                                        </ul>
-                                    </nav>
-                                </div>
-                            `;
-                }
-                if (test.videoPath) {
-                    content += `
-                                <div class="column is-half">
-                                    <div class="video-preview">
-                                        <video controls width="100%" height="auto" preload="metadata">
-                                            <source src="${test.videoPath}" type="video/webm">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </div>
-                                </div>
-                            `;
-                }
-                content += '</div></div></div>';
-                return content;
-            },
-            renderButtons(test) {
-                return `
-                            <div class="columns">
-                                <div class="column">
-                                    <button
-                                        onclick="openHistory()"
-                                        class="button is-primary is-fullwidth mt-3">
-                                        <span class="icon"><i class="fa-solid fa-timeline" style="color: #FFD43B;"></i></span>
-                                        <span class="has-text-white pl-2">Open history</span>
-                                    </button>
-                                    <div id="historyModal" class="modal">
-                                        <div class="modal-background"></div>
-                                    </div>
-                                </div>
-                                ${test.tracePath ? `
-                                <div class="column">
-                                    <button
-                                        data-trace="${test.tracePath}"
-                                        onclick="openTraceViewer(this)"
-                                        class="button is-primary is-fullwidth mt-3">
-                                        <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
-                                        <span class="has-text-white pl-2">View Trace</span>
-                                    </button>
-                                </div>
-                                ` : ''}
+                                    ` : ''}
+                                </footer>
                             </div>
-                        `;
-            },
-            renderAdditionalInfo(test) {
-                if (!(test.annotations.length || test.testTags.length > 0)) return '';
-                return `
-                            <div class="card mb-5">
-                                <header class="card-header">
-                                    <p class="card-header-title">Additional Information</p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-                                        ${test.testTags.length > 0 ? `
-                                        <div class="control mb-4">
-                                            <div class="tags is-rounded"> 
-                                                ${test.testTags.map(tag => `<span class="tag is-primary is-medium">${tag}</span>`).join('')}
-                                            </div>
-                                        </div>` : ""}
-                                        ${test.annotations
-                        .filter(annotation => annotation !== null && annotation !== undefined)
-                        .map(annotation => `
-                                            <div class="mb-4">
-                                                ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
-                                                <br>
-                                                ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation.description}</span>` : ''}
-                                            </div>
-                                            `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            },
-            renderSteps(test) {
-                if (test.steps.length === 0) return '';
-                return `
-                            <div class="card">
-                                <header class="card-header">
-                                    <p class="card-header-title">Steps</p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-                                        <span id="stepDetails" class="content"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            },
-            renderErrors(test) {
-                if (!test.errors.length) return '';
-                return `
-                            <div class="card mt-5">
-                                <header class="card-header">
-                                    <p class="card-header-title">Errors</p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-                                        <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            },
-            renderLogs(test) {
-                if (!test.logs) return '';
-                return `
-                            <div class="card mt-5">
-                                <header class="card-header">
-                                    <p class="card-header-title">Logs</p>
-                                </header>
-                                <div class="card-content">
-                                    <div class="content">
-                                        <pre>${test.logs}</pre>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            },
-            attachScreenshotListeners(test) {
-                if (test.screenshots && test.screenshots.length > 0) {
-                    let currentScreenshotIndex = 0;
-                    const changeScreenshot = (direction) => {
-                        currentScreenshotIndex = (currentScreenshotIndex + direction + test.screenshots.length) % test.screenshots.length;
-                        this.updateScreenshot(test.screenshots, currentScreenshotIndex);
-                    };
-                    const gotoScreenshot = (index) => {
-                        currentScreenshotIndex = index;
-                        this.updateScreenshot(test.screenshots, currentScreenshotIndex);
-                    };
-                    document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
-                    document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
-                    document.querySelectorAll('.pagination-link').forEach((link, index) => {
-                        link.addEventListener('click', () => gotoScreenshot(index));
-                    });
-                }
-            },
-            updateScreenshot(screenshots, index) {
-                document.getElementById('screenshot-main-img').src = screenshots[index];
-                document.getElementById('screenshot-modal-img').src = screenshots[index];
-                document.querySelectorAll('.pagination-link').forEach((link, i) => {
-                    link.classList.toggle('is-current', i === index);
-                });
-            },
-            attachSteps(test) {
-                const stepDetailsDiv = document.getElementById('stepDetails');
-                if (stepDetailsDiv) {
-                    const stepsList = document.createElement("ul");
-                    stepsList.setAttribute("id", "steps");
-                    test.steps.forEach(step => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<strong class="${step.snippet ? 'has-text-danger' : ''}">${step.title}</strong>`;
-                        if (step.snippet) {
-                            const pre = document.createElement('pre');
-                            const code = document.createElement('code');
-                            const locationText = step.location ? `\n\nat: ${step.location}` : '';
-                            code.innerHTML = `${step.snippet}${locationText}`;
-                            code.setAttribute('data-lang', 'js');
-                            pre.appendChild(code);
-                            li.appendChild(pre);
-                        }
-                        stepsList.appendChild(li);
-                    });
-                    stepDetailsDiv.appendChild(stepsList);
-                }
-            },
-            attachEventListeners() {
-                const testItems = document.querySelectorAll('[data-test-id]');
-                testItems.forEach(item => {
-                    item.addEventListener('click', () => {
-                        testItems.forEach(i => i.classList.remove('listselected'));
-                        item.classList.add('listselected');
-                        const testId = item.getAttribute('data-test-id');
-                        const testHistoryId = item.getAttribute('data-test-history-id');
-                        const test = testData[testId];
-                        const historyEntry = testHistory.find(entry => entry.testId === testHistoryId);
-                        testHistoriesMap = historyEntry ? historyEntry.history : null;
-                        this.show(test);
-                    });
-                });
-            }
-        };
-
-        const filterManager = {
-            init() {
-                this.attachEventListeners();
-            },
-            attachEventListeners() {
-                const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', () => this.applyFilters());
-                });
-
-                const filters = document.querySelectorAll('.filter');
-                filters.forEach(filter => {
-                    filter.addEventListener('click', () => {
-                        filters.forEach(f => f.classList.remove('active'));
-                        filter.classList.add('active');
-                        this.applyFilters();
-                    });
-                });
-            },
-            applyFilters() {
-                const selectedProjects = this.getSelectedValues('project');
-                const selectedTags = this.getSelectedValues('tag');
-                const selectedStatus = document.querySelector('.filter.active')?.getAttribute('data-status') || 'all';
-
-                elements.detailsElements.forEach(details => {
-                    const items = details.querySelectorAll('div[data-test-id]');
-                    let shouldShowDetails = false;
-
-                    items.forEach(item => {
-                        const isVisible = this.shouldShowItem(item, selectedProjects, selectedTags, selectedStatus);
-                        item.classList.toggle('is-hidden', !isVisible);
-                        shouldShowDetails = shouldShowDetails || isVisible;
-                    });
-
-                    details.open = shouldShowDetails;
-                    details.classList.toggle('is-hidden', !shouldShowDetails);
-                });
-
-                this.updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
-            },
-            getSelectedValues(type) {
-                return Array.from(document.querySelectorAll(`#select-filter input[type="checkbox"][data-filter-type="${type}"]:checked`))
-                    .map(checkbox => checkbox.value.trim());
-            },
-            shouldShowItem(item, projects, tags, status) {
-                const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean);
-                const projectName = item.getAttribute('data-project-name').trim();
-                const testStatus = item.getAttribute('data-test-status').trim();
-
-                const matchesProject = projects.length === 0 || projects.includes(projectName);
-                const matchesTags = tags.length === 0 || tags.every(tag => testTags.includes(tag));
-                const matchesStatus = this.matchesStatus(testStatus, status);
-
-                return matchesProject && matchesTags && matchesStatus;
-            },
-            matchesStatus(testStatus, selectedStatus) {
-                if (selectedStatus === 'all') return testStatus !== 'skipped';
-                if (selectedStatus === 'failed') return testStatus === 'failed' || testStatus === 'timedOut';
-                if (selectedStatus === 'retry') return testStatus.includes('retry');
-                if (selectedStatus === 'flaky') return testStatus.includes('flaky');
-                return testStatus === selectedStatus;
-            },
-            updateSelectedFiltersDisplay(projects, tags, status) {
-                let displayText = [];
-                if (projects.length > 0) displayText.push(`Projects: ${projects.join(', ')}`);
-                if (tags.length > 0) displayText.push(`Tags: ${tags.join(', ')}`);
-                if (status !== 'all') displayText.push(`Status: ${status}`);
-                elements.filtersDisplay.innerHTML = displayText.length > 0 ? displayText.join(' | ') : 'All Tests';
-            }
-        };
-
-        const searchManager = {
-            init() {
-                elements.searchInput.addEventListener('input', this.debounce(this.filterTests, 300));
-            },
-            filterTests(event) {
-                const searchTerm = event.target.value.toLowerCase();
-                const testItems = document.querySelectorAll('[data-test-id]');
-
-                elements.detailsElements.forEach(detail => detail.open = !!searchTerm);
-
-                testItems.forEach(item => {
-                    const isVisible = item.textContent.toLowerCase().includes(searchTerm);
-                    item.style.display = isVisible ? 'flex' : 'none';
-                    if (isVisible && searchTerm) searchManager.openParentDetails(item);
-                });
-            },
-            openParentDetails(item) {
-                let parent = item.parentElement;
-                while (parent && parent.tagName !== 'ASIDE') {
-                    if (parent.tagName === 'DETAILS') parent.open = true;
-                    parent = parent.parentElement;
-                }
-            },
-            debounce(func, wait) {
-                let timeout;
-                return function (...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-        };
-
-        // Initialize all managers
-        themeManager.init();
-        testDetailsManager.attachEventListeners();
-        filterManager.init();
-        searchManager.init();
-
-        // Expose necessary functions to the global scope
-        window.showSummary = testDetailsManager.hide;
-        window.openModal = () => document.querySelector("#testImage").classList.add("is-active");
-        window.closeModal = () => document.querySelector("#testImage").classList.remove("is-active");
-        window.closeErrorModal = (modalId) => document.getElementById(modalId).classList.remove("is-active");
-        window.openTraceViewer = (button) => {
-            const tracePath = button.getAttribute("data-trace");
-            if (tracePath) {
-                const baseUrl = window.location.origin;
-                window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${tracePath}`, "_blank");
-            }
-        };
-        window.openHistory = () => {
-            const historyElement = document.getElementById("historyModal");
-            historyElement.classList.add('is-active');
-
-            let historyContent = '';
-            if (testHistoriesMap && testHistoriesMap.length > 0) {
-                historyContent = testHistoriesMap.map((h, index) => `
-                            <tr>
-                                <td>${h.run_date}</td>
-                                <td>${h.status}</td>
-                                <td>${h.duration}</td>
-                                ${h.error_message ? `<td><div class="modal" id="${index}">
-                                <div class="modal-background"></div>
-                                <div class="modal-content">
-                                <pre><code>${h.error_message}</code></pre>
-                                </div>
-                                <button class="button is-primary" onclick="closeErrorModal(${index})">Close</button>
-                                </div><a class="button is-link" onclick="showHistoryErrorMessage(${index})">Show error</a></td>` : '<td>No Error</td>'}
-                            </tr>
-                        `).join('');
-            } else {
-                historyContent = '<p class="title">No history available</p>';
-            }
-
-            historyElement.innerHTML = `
-                        <div class="modal-background"></div>
-                        <div class="modal-card">
-                            <header class="modal-card-head">
-                                <p class="modal-card-title">Test History</p>
-                                <button class="button is-primary" onclick="closeHistoryModal()">Close</button>
-                            </header>
-                            <section class="modal-card-body">
-                            <table class="table is-hoverable is-fullwidth">
-                                <thead>
-                                    <tr>
-                                    <th title="Run Date">Run Date</th>
-                                    <th title="Status">Status</th>
-                                    <th title="Duration">Duration</th>
-                                    <th title="Reason">Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                ${historyContent}
-                                </tbody>
-                            </table>
-                            </section>
+                        </div>
+                        <div class="content-wrapper">
+                            ${this.renderTestContent(test)}
                         </div>
                     `;
-        };
-        window.closeHistoryModal = () => {
-            document.getElementById("historyModal").classList.remove('is-active');
-        };
-        window.showHistoryErrorMessage = (modalId) => {
-            document.getElementById(modalId)?.classList.add('is-active');
-        };
+
+                    this.attachScreenshotListeners(test);
+                    this.attachSteps(test);
+                },
+                getStatusClass(status) {
+                    if (status.startsWith('passed')) return 'success';
+                    if (status === 'flaky') return 'warning';
+                    if (status === 'failed') return 'danger';
+                    return 'info';
+                },
+                getStatusIcon(status) {
+                    if (status.startsWith('passed')) return 'check-circle';
+                    if (status === 'flaky') return 'exclamation-triangle';
+                    if (status === 'failed') return 'times-circle';
+                    return 'question-circle';
+                },
+                renderTestContent(test) {
+                    let content = '';
+                    if (test.status !== "skipped") {
+                        content += this.renderScreenshotsAndVideo(test);
+                    }
+                    content += this.renderAdditionalInfo(test);
+                    content += this.renderSteps(test);
+                    content += this.renderErrors(test);
+                    content += this.renderLogs(test);
+                    return content;
+                },
+                renderScreenshotsAndVideo(test) {
+                    let content = '<div class="card mb-5"><div class="card-content"><div class="columns is-multiline">';
+                    if (test.screenshots && test.screenshots.length > 0) {
+                        content += `
+                            <div class="column is-half">
+                                <div id="testImage" class="modal">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-content">
+                                        <p class="image">
+                                            <img id="screenshot-modal-img" src="${test.screenshots[0]}" alt="Screenshot">
+                                        </p>
+                                    </div>
+                                    <button onclick="closeModal()" class="modal-close is-large" aria-label="close"></button>
+                                </div>
+                                <figure class="image">
+                                    <img id="screenshot-main-img" onclick="openModal()" src="${test.screenshots[0]}" alt="Screenshot">
+                                </figure>
+                                <nav class="mt-4 pagination is-small is-centered ${test.screenshots.length > 1 ? '' : 'is-hidden'}" role="navigation" aria-label="pagination">
+                                    <a class="pagination-previous">Previous</a>
+                                    <a class="pagination-next">Next</a>
+                                    <ul class="pagination-list">
+                                        ${test.screenshots.map((_, index) => `
+                                            <li>
+                                                <a class="pagination-link ${index === 0 ? 'is-current' : ''}" aria-label="Goto screenshot ${index + 1}">${index + 1}</a>
+                                            </li>`).join('')}
+                                    </ul>
+                                </nav>
+                            </div>
+                        `;
+                    }
+                    if (test.videoPath) {
+                        content += `
+                            <div class="column is-half">
+                                <div class="video-preview">
+                                    <video controls width="100%" height="auto" preload="metadata">
+                                        <source src="${test.videoPath}" type="video/webm">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    content += '</div>';
+                    content += `
+                        <div class="columns">
+                            <div class="column">
+                                <button
+                                    onclick="openHistory()"
+                                    class="button is-primary is-fullwidth mt-3">
+                                    <span class="icon"><i class="fa-solid fa-timeline" style="color: #FFD43B;"></i></span>
+                                    <span class="has-text-white pl-2">Open history</span>
+                                </button>
+                                <div id="historyModal" class="modal">
+                                    <div class="modal-background"></div>
+                                </div>
+                            </div>
+                            ${test.tracePath ? `
+                            <div class="column">
+                                <button
+                                    data-trace="${test.tracePath}"
+                                    onclick="openTraceViewer(this)"
+                                    class="button is-primary is-fullwidth mt-3">
+                                    <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
+                                    <span class="has-text-white pl-2">View Trace</span>
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    content += '</div></div>';
+                    return content;
+                },
+                renderAdditionalInfo(test) {
+                    if (!(test.annotations.length || test.testTags.length > 0)) return '';
+                    return `
+                        <div class="card mb-5">
+                            <header class="card-header">
+                                <p class="card-header-title">Additional Information</p>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    ${test.testTags.length > 0 ? `
+                                    <div class="control mb-4">
+                                        <div class="tags is-rounded"> 
+                                            ${test.testTags.map(tag => `<span class="tag is-primary is-medium">${tag}</span>`).join('')}
+                                        </div>
+                                    </div>` : ""}
+                                    ${test.annotations
+                                        .filter(annotation => annotation !== null && annotation !== undefined)
+                                        .map(annotation => `
+                                        <div class="mb-4">
+                                            ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
+                                            <br>
+                                            ${annotation?.description ? `<strong class="has-text-link">Description: </strong><span>${annotation.description}</span>` : ''}
+                                        </div>
+                                        `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                renderSteps(test) {
+                    if (test.steps.length === 0) return '';
+                    return `
+                        <div class="card">
+                            <header class="card-header">
+                                <p class="card-header-title">Steps</p>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <span id="stepDetails" class="content"></span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                renderErrors(test) {
+                    if (!test.errors.length) return '';
+                    return `
+                        <div class="card mt-5">
+                            <header class="card-header">
+                                <p class="card-header-title">Errors</p>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                renderLogs(test) {
+                    if (!test.logs) return '';
+                    return `
+                        <div class="card mt-5">
+                            <header class="card-header">
+                                <p class="card-header-title">Logs</p>
+                            </header>
+                            <div class="card-content">
+                                <div class="content">
+                                    <pre>${test.logs}</pre>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                },
+                attachScreenshotListeners(test) {
+                    if (test.screenshots && test.screenshots.length > 0) {
+                        let currentScreenshotIndex = 0;
+                        const changeScreenshot = (direction) => {
+                            currentScreenshotIndex = (currentScreenshotIndex + direction + test.screenshots.length) % test.screenshots.length;
+                            this.updateScreenshot(test.screenshots, currentScreenshotIndex);
+                        };
+                        const gotoScreenshot = (index) => {
+                            currentScreenshotIndex = index;
+                            this.updateScreenshot(test.screenshots, currentScreenshotIndex);
+                        };
+                        document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
+                        document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
+                        document.querySelectorAll('.pagination-link').forEach((link, index) => {
+                            link.addEventListener('click', () => gotoScreenshot(index));
+                        });
+                    }
+                },
+                updateScreenshot(screenshots, index) {
+                    document.getElementById('screenshot-main-img').src = screenshots[index];
+                    document.getElementById('screenshot-modal-img').src = screenshots[index];
+                    document.querySelectorAll('.pagination-link').forEach((link, i) => {
+                        link.classList.toggle('is-current', i === index);
+                    });
+                },
+                attachSteps(test) {
+                    const stepDetailsDiv = document.getElementById('stepDetails');
+                    if (stepDetailsDiv) {
+                        const stepsList = document.createElement("ul");
+                        stepsList.setAttribute("id", "steps");
+                        test.steps.forEach(step => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong class="${step.snippet ? 'has-text-danger' : ''}">${step.title}</strong>`;
+                            if (step.snippet) {
+                                const pre = document.createElement('pre');
+                                const code = document.createElement('code');
+                                const locationText = step.location ? `\n\nat: ${step.location}` : '';
+                                code.innerHTML = `${step.snippet}${locationText}`;
+                                code.setAttribute('data-lang', 'js');
+                                pre.appendChild(code);
+                                li.appendChild(pre);
+                            }
+                            stepsList.appendChild(li);
+                        });
+                        stepDetailsDiv.appendChild(stepsList);
+                    }
+                },
+                attachEventListeners() {
+                    const testItems = document.querySelectorAll('[data-test-id]');
+                    testItems.forEach(item => {
+                        item.addEventListener('click', () => {
+                            testItems.forEach(i => i.classList.remove('listselected'));
+                            item.classList.add('listselected');
+                            const testId = item.getAttribute('data-test-id');
+                            const testHistoryId = item.getAttribute('data-test-history-id');
+                            const test = testData[testId];
+                            const historyEntry = testHistory.find(entry => entry.testId === testHistoryId);
+                            testHistoriesMap = historyEntry ? historyEntry.history : null;
+                            testHistoryTitle =  historyEntry.testId ? historyEntry.testId.split(":")[2] : '';
+                            this.show(test);
+                        });
+                    });
+                }
+            };
+
+            const filterManager = {
+                init() {
+                    this.attachEventListeners();
+                },
+                attachEventListeners() {
+                    const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.addEventListener('change', () => this.applyFilters());
+                    });
+
+                    const filters = document.querySelectorAll('.filter');
+                    filters.forEach(filter => {
+                        filter.addEventListener('click', () => {
+                            filters.forEach(f => f.classList.remove('active'));
+                            filter.classList.add('active');
+                            this.applyFilters();
+                        });
+                    });
+                },
+                applyFilters() {
+                    const selectedProjects = this.getSelectedValues('project');
+                    const selectedTags = this.getSelectedValues('tag');
+                    const selectedStatus = document.querySelector('.filter.active')?.getAttribute('data-status') || 'all';
+
+                    elements.detailsElements.forEach(details => {
+                        const items = details.querySelectorAll('div[data-test-id]');
+                        let shouldShowDetails = false;
+
+                        items.forEach(item => {
+                            const isVisible = this.shouldShowItem(item, selectedProjects, selectedTags, selectedStatus);
+                            item.classList.toggle('is-hidden', !isVisible);
+                            shouldShowDetails = shouldShowDetails || isVisible;
+                        });
+
+                        details.open = shouldShowDetails;
+                        details.classList.toggle('is-hidden', !shouldShowDetails);
+                    });
+
+                    this.updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
+                },
+                getSelectedValues(type) {
+                    return Array.from(document.querySelectorAll(`#select-filter input[type="checkbox"][data-filter-type="${type}"]:checked`))
+                        .map(checkbox => checkbox.value.trim());
+                },
+                shouldShowItem(item, projects, tags, status) {
+                    const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean);
+                    const projectName = item.getAttribute('data-project-name').trim();
+                    const testStatus = item.getAttribute('data-test-status').trim();
+
+                    const matchesProject = projects.length === 0 || projects.includes(projectName);
+                    const matchesTags = tags.length === 0 || tags.every(tag => testTags.includes(tag));
+                    const matchesStatus = this.matchesStatus(testStatus, status);
+
+                    return matchesProject && matchesTags && matchesStatus;
+                },
+                matchesStatus(testStatus, selectedStatus) {
+                    if (selectedStatus === 'all') return testStatus !== 'skipped';
+                    if (selectedStatus === 'failed') return testStatus === 'failed' || testStatus === 'timedOut';
+                    if (selectedStatus === 'retry') return testStatus.includes('retry');
+                    if (selectedStatus === 'flaky') return testStatus.includes('flaky');
+                    return testStatus === selectedStatus;
+                },
+                updateSelectedFiltersDisplay(projects, tags, status) {
+                    let displayText = [];
+                    if (projects.length > 0) displayText.push(`Projects: ${projects.join(', ')}`);
+                    if (tags.length > 0) displayText.push(`Tags: ${tags.join(', ')}`);
+                    if (status !== 'all') displayText.push(`Status: ${status}`);
+                    elements.filtersDisplay.innerHTML = displayText.length > 0 ? displayText.join(' | ') : 'All Tests';
+                }
+            };
+
+            const searchManager = {
+                init() {
+                    elements.searchInput.addEventListener('input', this.debounce(this.filterTests, 300));
+                },
+                filterTests(event) {
+                    const searchTerm = event.target.value.toLowerCase();
+                    const testItems = document.querySelectorAll('[data-test-id]');
+
+                    elements.detailsElements.forEach(detail => detail.open = !!searchTerm);
+
+                    testItems.forEach(item => {
+                        const isVisible = item.textContent.toLowerCase().includes(searchTerm);
+                        item.style.display = isVisible ? 'flex' : 'none';
+                        if (isVisible && searchTerm) searchManager.openParentDetails(item);
+                    });
+                },
+                openParentDetails(item) {
+                    let parent = item.parentElement;
+                    while (parent && parent.tagName !== 'ASIDE') {
+                        if (parent.tagName === 'DETAILS') parent.open = true;
+                        parent = parent.parentElement;
+                    }
+                },
+                debounce(func, wait) {
+                    let timeout;
+                    return function(...args) {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => func.apply(this, args), wait);
+                    };
+                }
+            };
+
+            // Initialize all managers
+            themeManager.init();
+            testDetailsManager.attachEventListeners();
+            filterManager.init();
+            searchManager.init();
+
+            // Expose necessary functions to the global scope
+            window.showSummary = testDetailsManager.hide;
+            window.openModal = () => document.querySelector("#testImage").classList.add("is-active");
+            window.closeModal = () => document.querySelector("#testImage").classList.remove("is-active");
+            window.closeErrorModal = (modalId) => document.getElementById(modalId).classList.remove("is-active");
+            window.openTraceViewer = (button) => {
+                const tracePath = button.getAttribute("data-trace");
+                if (tracePath) {
+                    const baseUrl = window.location.origin;
+                    window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${tracePath}`, "_blank");
+                }
+            };
+            window.openHistory = () => {
+                const historyElement = document.getElementById("historyModal");
+                historyElement.classList.add('is-active');
+
+                let historyContent = '';
+                if (testHistoriesMap && testHistoriesMap.length > 0) {
+                    historyContent = testHistoriesMap.map((h, index) => `
+                        <tr>
+                            <td>${h.run_date}</td>
+                            <td>${h.status}</td>
+                            <td>${h.duration}</td>
+                            ${h.error_message ? `<td><div class="modal" id="${index}">
+                            <div class="modal-background"></div>
+                            <div class="modal-content">
+                            <pre><code>${h.error_message}</code></pre>
+                            </div>
+                            <button class="button is-primary" onclick="closeErrorModal(${index})">Close</button>
+                            </div><a class="button is-link" onclick="showHistoryErrorMessage(${index})">Show error</a></td>` : '<td>No Error</td>'}
+                        </tr>
+                    `).join('');
+                } else {
+                    historyContent = '<p class="title">No history available</p>';
+                }
+
+                historyElement.innerHTML = `
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">${testHistoryTitle}</p>
+                            <button class="button is-primary" onclick="closeHistoryModal()">Close</button>
+                        </header>
+                        <section class="modal-card-body">
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                <th title="Run Date">Run Date</th>
+                                <th title="Status">Status</th>
+                                <th title="Duration">Duration</th>
+                                <th title="Reason">Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            ${historyContent}
+                            </tbody>
+                        </table>
+                        </section>
+                    </div>
+                `;
+            };
+            window.closeHistoryModal = () => {
+                document.getElementById("historyModal").classList.remove('is-active');
+            };
+            window.showHistoryErrorMessage = (modalId) => {
+                document.getElementById(modalId)?.classList.add('is-active');
+            };
         });
     </script>
 </body>
-
 </html>
