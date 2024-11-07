@@ -225,10 +225,10 @@
                             ` : ''}
                             </div>
                             <div class="columns">
-                                <div class="column is-3">
+                                <div class="column">
                                     <button
                                         onclick="openHistory()"
-                                        class="button is-link is-fullwidth mt-3">
+                                        class="button is-primary is-fullwidth mt-3">
                                         <span class="icon"><i class="fa-solid fa-timeline" style="color: #FFD43B;"></i></span>
                                         <span class="has-text-white pl-2">Open history</span>
                                     </button>
@@ -237,11 +237,11 @@
                                 </div>
                                 </div>
                                 ${test.tracePath ? `
-                               <div class="column is-3">
+                               <div class="column">
                                     <button
                                         data-trace="${test.tracePath}"
                                         onclick="openTraceViewer(this)"
-                                        class="button is-link is-fullwidth mt-3">
+                                        class="button is-primary is-fullwidth mt-3">
                                         <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
                                         <span class="has-text-white pl-2">View Trace</span>
                                     </button>
@@ -388,6 +388,8 @@
             window.openTraceViewer = openTraceViewer;
             window.openHistory = openHistory;
             window.closeHistoryModal = closeHistoryModal;
+            window.showHistoryErrorMessage = showHistoryErrorMessage;
+            
             document.addEventListener('keydown', (event) => {
                 if (event.key === "Escape") {
                     closeModal();
@@ -411,12 +413,12 @@
                 let historyContent = '';
                 if (testHistoriesMap && testHistoriesMap.length > 0) {
                     historyContent = testHistoriesMap.map(h => `
-                        <div class="box">
-                            <p class="has-text-weight-bold"><strong>Status:</strong> ${h.status}</p>
-                            <p><strong>Duration:</strong> ${h.duration}</p>
-                            <p><strong>Run Date:</strong> ${h.run_date}</p>
-                            ${h.error_message ? `<p><strong>Error Message:</strong> ${h.error_message}</p>` : ''}
-                        </div>
+                        <tr>
+                            <td>${h.run_date}</td>
+                            <td>${h.status}</td>
+                            <td>${h.duration}</td>
+                           ${h.error_message ? `<td><a class="button is-link" onclick="showHistoryErrorMessage()">Show error</a></td>` : 'No Error'}
+                        </tr>
                     `).join('');
                 } else {
                     historyContent = '<p class="title">No history available</p>';
@@ -427,10 +429,22 @@
                     <div class="modal-card">
                         <header class="modal-card-head">
                             <p class="modal-card-title">Test History</p>
-                            <button class="button is-link" onclick="closeHistoryModal()">Close</button>
+                            <button class="button is-primary" onclick="closeHistoryModal()">Close</button>
                         </header>
                         <section class="modal-card-body">
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                <th title="Run Date">Run Date</th>
+                                <th title="Status">Status</th>
+                                <th title="Duration">Duration</th>
+                                <th title="Reason">Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             ${historyContent}
+                            </tbody>
+                        </table>
                         </section>
                     </div>
                 `;
@@ -441,6 +455,7 @@
                 historyElement.classList.remove('is-active');
             }
             let testHistoriesMap = {};
+            function showHistoryErrorMessage(){}
             function attachEventListeners() {
                 const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
