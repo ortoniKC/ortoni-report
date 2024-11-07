@@ -59,7 +59,7 @@ export class DatabaseManager {
     for (const result of results) {
       await stmt.run([
         runId,
-        `${result.filePath}:${result.title}`,
+        `${result.filePath}:${result.projectName}:${result.title}`,
         result.status,
         result.duration,
         result.errors.join('\n')

@@ -39,7 +39,6 @@
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
-
             const themeButton = document.getElementById("toggle-theme");
             const preferredTheme = themeButton.getAttribute("data-theme-status");
             const themeIcon = document.getElementById("theme-icon");
@@ -80,7 +79,7 @@
             }
             window.showSummary = showSummary;
 
-            function displayTestDetails(test, testHistory) {
+            function displayTestDetails(test, history) {
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
                 summary.style.display = 'none';
@@ -135,7 +134,7 @@
                 if (history && history.length > 0) {
                     historyContent = history.map(h => `
                         <li>
-                            <strong>Run Date:</strong> ${h.runDate} -
+                            <strong>Run Date:</strong> ${h.run_date} -
                             <strong>Status:</strong> ${h.status}
                         </li>
                     `).join('');
@@ -418,7 +417,8 @@
                         const testId = item.getAttribute('data-test-id');
                         const testHistoryId = item.getAttribute('data-test-history-id');
                         const test = testData[testId];
-                        const history = testHistory[testHistoryId];
+                        const historyEntry = testHistory.find(entry => entry.testId === testHistoryId);
+                        const history = historyEntry ? historyEntry.history : null;
                         displayTestDetails(test, history);
                     });
                 });

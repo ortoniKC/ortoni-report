@@ -45,6 +45,9 @@ export class HTMLGenerator {
         history: history
       };
     }));
+    testHistories.map(h=>{
+      console.log(h.history)
+    })
     return {
       utcRunDate: utcRunDate,
       localRunDate: localRunDate,
@@ -71,6 +74,7 @@ export class HTMLGenerator {
       title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
       ...this.extractProjectStats(projectResults)
     };
+    
   }
 
   private calculateProjectResults(filteredResults: TestResultData[], results: TestResultData[], projectSet: Set<string>) {
