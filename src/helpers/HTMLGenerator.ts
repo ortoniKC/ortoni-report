@@ -38,7 +38,7 @@ export class HTMLGenerator {
     const utcRunDate = formatDateUTC(new Date());
     const localRunDate = formatDateLocal(utcRunDate);
     const testHistories = await Promise.all(results.map(async (result) => {
-      const testId = `${result.filePath}:${result.title}`;
+      const testId = `${result.filePath}:${result.projectName}:${result.title}`;
       const history = await this.dbManager.getTestHistory(testId);
       return {
         testId: testId,

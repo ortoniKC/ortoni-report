@@ -35,6 +35,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let testData = {{{ json results }}};
+            let testHistory = {{{ json testHistories }}};
             const testDetails = document.getElementById('testDetails');
             const summary = document.getElementById('summary');
             const backButton = document.querySelector('button#back-to-summary');
@@ -79,7 +80,7 @@
             }
             window.showSummary = showSummary;
 
-            function displayTestDetails(test) {
+            function displayTestDetails(test, testHistory) {
                 const summary = document.getElementById('summary');
                 const testDetails = document.getElementById('testDetails');
                 summary.style.display = 'none';
@@ -130,7 +131,19 @@
                     statusClass = 'info';
                     statusIcon = 'question-circle';
                 }
+                let historyContent = '';
+                if (history && history.length > 0) {
+                    historyContent = history.map(h => `
+                        <li>
+                            <strong>Run Date:</strong> ${h.runDate} -
+                            <strong>Status:</strong> ${h.status}
+                        </li>
+                    `).join('');
+                } else {
+                    historyContent = '<li>No history available</li>';
+                }
                 testDetails.innerHTML = `
+                    <ul>${historyContent}</ul>
                     <div class="sticky-header">
                         <div class="card mb-3">
                          <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
@@ -316,6 +329,9 @@
                         </div>
                         ` : ''}
                     </div>`
+
+
+                    
                 if (test.screenshots.length > 0) {
                     document.querySelector('.pagination-previous').addEventListener('click', () => changeScreenshot(-1));
                     document.querySelector('.pagination-next').addEventListener('click', () => changeScreenshot(1));
@@ -400,8 +416,10 @@
                         testItems.forEach(i => i.classList.remove('listselected'));
                         item.classList.add('listselected');
                         const testId = item.getAttribute('data-test-id');
+                        const testHistoryId = item.getAttribute('data-test-history-id');
                         const test = testData[testId];
-                        displayTestDetails(test);
+                        const history = testHistory[testHistoryId];
+                        displayTestDetails(test, history);
                     });
                 });
                 const filters = document.querySelectorAll('.filter');
