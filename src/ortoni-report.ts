@@ -83,7 +83,7 @@ export default class OrtoniReport implements Reporter {
           console.error("OrtoniReport: Error saving test run to database");
         }
       } else {
-        console.log("OrtoniReport: Report generation skipped due to undefined location in error");
+        console.error("OrtoniReport: Report generation skipped due to error in Playwright worker!");
       }
     } catch (error) {
       this.shouldGenerateReport = false;
@@ -96,7 +96,7 @@ export default class OrtoniReport implements Reporter {
       await this.dbManager.close();
       if (this.shouldGenerateReport) {
         this.fileManager.copyTraceViewerAssets();
-        console.log(`Ortoni HTML report generated at ${this.outputPath}`);
+        console.info(`Ortoni HTML report generated at ${this.outputPath}`);
         this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
         await new Promise(_resolve => { });
       }
