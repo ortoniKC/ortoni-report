@@ -84,6 +84,7 @@
                     let currentScreenshotIndex = 0;
                     const statusClass = this.getStatusClass(test.status);
                     const statusIcon = this.getStatusIcon(test.status);
+                    const projectIcon = this.getProjectIcon(test.projectName);
 
                     elements.testDetails.innerHTML = `
                         <div class="sticky-header">
@@ -126,8 +127,8 @@
                                     ${test.projectName ? `
                                     <div class="card-footer-item">
                                         <div class="is-flex is-align-items-center">
-                                            <span class="icon status-icon has-text-info">
-                                                <i class="fa fa-window-maximize"></i>
+                                            <span class="icon status-icon has-text-link">
+                                                ${projectIcon}
                                             </span>
                                             <span> ${test.projectName}</span>
                                         </div>
@@ -155,6 +156,11 @@
                     if (status === 'flaky') return 'exclamation-triangle';
                     if (status === 'failed') return 'times-circle';
                     return 'question-circle';
+                },
+                getProjectIcon(project) {
+                    if (project === 'webkit') return `<i class="fa-brands fa-safari"></i>`;
+                    if (project === 'firefox') return `<i class="fa-brands fa-firefox"></i>`;
+                    return `<i class="fa-brands fa-chrome"></i>`;
                 },
                 renderTestContent(test) {
                     let content = '';
@@ -216,7 +222,7 @@
                                 <button
                                     onclick="openHistory()"
                                     class="button is-primary is-fullwidth mt-3">
-                                    <span class="icon"><i class="fa-solid fa-timeline" style="color: #FFD43B;"></i></span>
+                                    <span class="icon"><i class="fa-solid fa-timeline"></i></span>
                                     <span class="has-text-white pl-2">Open history</span>
                                 </button>
                                 <div id="historyModal" class="modal">
@@ -229,7 +235,7 @@
                                     data-trace="${test.tracePath}"
                                     onclick="openTraceViewer(this)"
                                     class="button is-primary is-fullwidth mt-3">
-                                    <span class="icon"><i class="fa-solid fa-tv" style="color: #FFD43B;"></i></span>
+                                    <span class="icon"><i class="fa-solid fa-tv"></i></span>
                                     <span class="has-text-white pl-2">View Trace</span>
                                 </button>
                             </div>
