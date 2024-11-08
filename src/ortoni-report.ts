@@ -22,6 +22,7 @@ export default class OrtoniReport implements Reporter {
   private outputPath: string | undefined;
   private dbManager: DatabaseManager;
   private shouldGenerateReport: boolean = true;
+  private showConsoleLogs: boolean | undefined = true;
 
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
     this.folderPath = ortoniConfig.folderPath || 'ortoni-report';
@@ -31,6 +32,7 @@ export default class OrtoniReport implements Reporter {
     this.fileManager = new FileManager(this.folderPath);
     this.serverManager = new ServerManager(ortoniConfig);
     this.testResultProcessor = new TestResultProcessor("");
+    this.showConsoleLogs = ortoniConfig.stdIO !== false;
   }
 
   private reportsCount: number = 0;
@@ -44,7 +46,7 @@ export default class OrtoniReport implements Reporter {
   }
 
   onStdOut(chunk: string | Buffer, _test: void | TestCase, _result: void | TestResult): void {
-    if (this.reportsCount == 1) {
+    if (this.reportsCount == 1 && this.showConsoleLogs) {
       console.log(chunk.toString().trim());
     }
   }

@@ -70,31 +70,12 @@ export interface OrtoniReportConfig {
     * @example 3600
     */
     port?: number;
-}
-
-/**
- * Configuration options for downloading test artifacts.
- */
-export interface Download {
-    /**
-     * Configuration for downloading artifacts. If set to `false`, downloads are disabled.
-     * If set to an object, specify whether to include videos and trace files.
-     */
-    download?: false | {
-        /**
-         * If true, videos will be included in the download.
-         * @default false
-         * @example true
-         */
-        includeVideos?: boolean;
-
-        /**
-         * If true, trace files will be included in the download.
-         * @default false
-         * @example true
-         */
-        includeTrace?: boolean;
-    };
+     /**
+    * Display console logs?
+    * @example boolean
+    * @default true
+    */
+     stdIO?: boolean;
 }
 
 
