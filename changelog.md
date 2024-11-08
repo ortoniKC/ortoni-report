@@ -1,4 +1,8 @@
 # Change Log:
+## v2.0.8
+
+#### 🐛 Fixes
+- **Peer Dependency**: Added peer dependecy to avoid external package conflict
 
 ## v2.0.7
 
