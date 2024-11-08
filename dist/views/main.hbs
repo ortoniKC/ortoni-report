@@ -127,9 +127,9 @@
                                     <div class="card-footer-item">
                                         <div class="is-flex is-align-items-center">
                                             <span class="icon status-icon has-text-info">
-                                                <i class="fa fa-window-maximize" style="color: #B197FC;"></i>
+                                                <i class="fa fa-window-maximize"></i>
                                             </span>
-                                            <span class="" style="color: #B197FC;"> ${test.projectName}</span>
+                                            <span> ${test.projectName}</span>
                                         </div>
                                     </div>
                                     ` : ''}
@@ -496,10 +496,21 @@
             window.openTraceViewer = (button) => {
                 const tracePath = button.getAttribute("data-trace");
                 if (tracePath) {
-                    const baseUrl = window.location.origin;
-                    window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${tracePath}`, "_blank");
+                    const normalizedTracePath = tracePath.replace(/\\/g, '/');
+                    console.log(normalizedTracePath)
+                    const baseUrl = getAdjustedBaseUrl();
+                    window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${normalizedTracePath}`, "_blank");
                 }
             };
+            window.getAdjustedBaseUrl = () => {
+                const origin = window.location.origin;
+                const pathname = window.location.pathname;
+                if (pathname.endsWith('.html')) {
+                    const directoryPath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+                    return `${origin}${directoryPath}`;
+                }
+                return origin;
+            }
             window.openHistory = () => {
                 const historyElement = document.getElementById("historyModal");
                 historyElement.classList.add('is-active');
