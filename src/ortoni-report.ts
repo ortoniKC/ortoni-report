@@ -33,7 +33,7 @@ export default class OrtoniReport implements Reporter {
     this.testResultProcessor = new TestResultProcessor("");
   }
 
-  private reportsCount: number  = 0;
+  private reportsCount: number = 0;
 
   async onBegin(config: FullConfig, _suite: Suite) {
     this.reportsCount = config.reporter.length;

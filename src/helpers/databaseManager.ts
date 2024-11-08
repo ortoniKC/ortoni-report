@@ -1,4 +1,3 @@
-// databaseManager.ts
 import { Database, open } from 'sqlite';
 import sqlite3 from 'sqlite3';
 import { TestResultData } from '../types/testResults';
