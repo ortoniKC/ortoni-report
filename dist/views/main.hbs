@@ -406,7 +406,7 @@
                 },
                 applyFilters() {
                     const selectedProjects = this.getSelectedValues('project');
-                    const selectedTags = this.getSelectedValues('tag');
+                    const selectedTags = this.getSelectedValues('test-tags');
                     const selectedStatus = document.querySelector('.filter.active')?.getAttribute('data-status') || 'all';
 
                     elements.detailsElements.forEach(details => {
