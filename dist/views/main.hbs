@@ -503,7 +503,6 @@
                 const tracePath = button.getAttribute("data-trace");
                 if (tracePath) {
                     const normalizedTracePath = tracePath.replace(/\\/g, '/');
-                    console.log(normalizedTracePath)
                     const baseUrl = getAdjustedBaseUrl();
                     window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${normalizedTracePath}`, "_blank");
                 }
