@@ -33,13 +33,21 @@ export default class OrtoniReport implements Reporter {
     this.testResultProcessor = new TestResultProcessor("");
   }
 
+  private reportsCount: number  = 0;
+
   async onBegin(config: FullConfig, _suite: Suite) {
+    this.reportsCount = config.reporter.length;
     this.results = [];
     this.testResultProcessor = new TestResultProcessor(config.rootDir);
     this.fileManager.ensureReportDirectory();
     await this.dbManager.initialize(path.join(this.folderPath, 'ortoni-data-history.sqlite'));
   }
 
+  onStdOut(chunk: string | Buffer, _test: void | TestCase, _result: void | TestResult): void {
+    if (this.reportsCount == 1) {
+      console.log(chunk.toString().trim());
+    }
+  }
   onTestEnd(test: TestCase, result: TestResult) {
     try {
       const testResult = this.testResultProcessor.processTestResult(test, result, this.projectSet, this.ortoniConfig);
@@ -50,7 +58,7 @@ export default class OrtoniReport implements Reporter {
   }
 
   printsToStdio(): boolean {
-    return false;
+    return true;
   }
 
   onError(error: TestError): void {
@@ -75,21 +83,20 @@ export default class OrtoniReport implements Reporter {
           console.error("OrtoniReport: Error saving test run to database");
         }
       } else {
-        console.error("OrtoniReport: Report generation skipped due to error in Playwright worker");
+        console.log("OrtoniReport: Report generation skipped due to undefined location in error");
       }
     } catch (error) {
+      this.shouldGenerateReport = false;
       console.error("OrtoniReport: Error generating report:", error);
     }
   }
 
   async onExit() {
     try {
-      if (this.shouldGenerateReport) {
-        this.fileManager.copyTraceViewerAssets();
-        console.info(`Ortoni HTML report generated at ${this.outputPath}`);
-      }
       await this.dbManager.close();
       if (this.shouldGenerateReport) {
+        this.fileManager.copyTraceViewerAssets();
+        console.log(`Ortoni HTML report generated at ${this.outputPath}`);
         this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
         await new Promise(_resolve => { });
       }
