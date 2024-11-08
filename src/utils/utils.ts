@@ -74,3 +74,20 @@ export function escapeHtml(unsafe: string): string {
         return escapeMap[match] || match;
     });
 }
+export function formatDateUTC(date: Date): string {
+    return date.toISOString();
+}
+export function formatDateLocal(isoString: string): string {
+    const date = new Date(isoString);
+    const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        // second: '2-digit',
+        hour12: true,
+        timeZoneName: 'short'
+    };
+    return new Intl.DateTimeFormat(undefined, options).format(date);
+}

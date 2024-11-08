@@ -1,5 +1,21 @@
 # Change Log:
 
+## v2.0.7
+
+#### 📦 New Features
+- **Test History Display**: Added support for displaying test history up to the last 10 executions, providing better insight into recent test performance.
+- **Console Error Reporting**: Enhanced with console error display and the ability to skip report generation if no tests are found.
+- **Console Log Configuration**: Introduced a new `console` boolean configuration option to toggle the display of test console logs, set to `true` by default.
+
+#### 👌 Improvements
+- **UI and CSS Enhancements**:
+  - Updated CSS color scheme and implemented minor UI tweaks for a more polished look.
+  - Added project-specific icons for Chromium, Firefox, and WebKit to make test projects easily identifiable.
+
+#### 🐛 Fixes
+- **Trace Link Bug (#38)**: Fixed an issue where the trace link only captured the origin and not the pathname, ensuring accurate trace navigation.
+
+
 
 ## v2.0.6
 

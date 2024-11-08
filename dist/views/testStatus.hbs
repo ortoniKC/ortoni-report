@@ -4,6 +4,6 @@
     {{else if (includes status 'flaky')}}status-flaky
     {{else if (eq status 'skipped')}}status-skipped is-hidden{{/if}}" data-suite-name="{{suite}}"
     data-test-tags="{{joinWithSpace testTags}}" data-project-name="{{projectName}}" data-test-id="{{index}}"
-    data-test-status="{{status}} {{retry}}" data-test-duration="{{duration}}">
+    data-test-history-id="{{testId}}" data-test-status="{{status}} {{retry}}" data-test-duration="{{duration}}">
     {{> testIcons}}
 </div>

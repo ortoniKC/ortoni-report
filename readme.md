@@ -4,7 +4,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
 ### Live Demo: [Ortoni Report](https://ortoni.netlify.app/)
 
-![Ortoni Report Preview](https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/V2.0.5/assets/images/Ortoni-report.png)
+![Ortoni Report Preview](https://github.com/ortoniKC/ortoni-report/blob/V2.0.7/assets/images/v2.0.7.gif?raw=true)
 
 ---
 
@@ -14,8 +14,9 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
    - Tests are structured and grouped by filename, suite, and project, providing a clear and organized view of the entire test execution.
 
-2. **Detailed Breakdown**
+2. **Test History & Detailed Breakdown**
 
+   - Added support for displaying test history up to the last 10 executions, providing better insight into recent test performance.
    - Each suite displays tests categorized by project, with organized test results for better navigation.
 
 3. **Comprehensive Test Details**
@@ -51,6 +52,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
    - Steps
    - Error stack trace
    - Console logs
+   - Tests History
 
 9. **Integration and Configuration**
 
@@ -89,7 +91,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 Run the following command to install the **ortoni-report** package globally:
 
 ```bash
-npm install -g ortoni-report
+npm install -d ortoni-report
 ```
 
 ### Step 2: Configure in `playwright.config.ts`
@@ -101,22 +103,21 @@ import { defineConfig } from "@playwright/test";
 import { OrtoniReportConfig } from "ortoni-report";
 
 const reportConfig: OrtoniReportConfig = {
-  port: 1994,
   open: process.env.CI ? "never" : "always",
-  folderPath: "report",
+  folderPath: "report-db",
   filename: "index.html",
-  logo: "logo.png",
   title: "Ortoni Test Report",
-  showProject: false,
+  showProject: !true,
   projectName: "Ortoni-Report",
-  testType: "Release - Oct 30, 2024",
+  testType: "Release - Nov 09, 2024",
   authorName: "Koushik (LetCode with Koushik)",
-  preferredTheme: "light",
-  base64Image: true,
+  base64Image: false,
+  stdIO: false,
+  preferredTheme: "light"
 };
 
 export default defineConfig({
-  reporter: [["ortoni-report", reportConfig], ["dot"]],
+  reporter: [["ortoni-report", reportConfig]],
   // Other Playwright configurations
 });
 ```
@@ -127,22 +128,21 @@ export default defineConfig({
 import { defineConfig } from "@playwright/test";
 
 const reportConfig = {
-  port: 1994,
-  open: process.env.CI ? "never" : "always",D
-  folderPath: "report",
+  open: process.env.CI ? "never" : "always",
+  folderPath: "report-db",
   filename: "index.html",
-  logo: "logo.png",
   title: "Ortoni Test Report",
-  showProject: false,
+  showProject: !true,
   projectName: "Ortoni-Report",
-  testType: "Release - Oct 21, 2024",
+  testType: "Release - Nov 09, 2024",
   authorName: "Koushik (LetCode with Koushik)",
-  preferredTheme: "light",
-  base64Image: true,
+  base64Image: false,
+  stdIO: false,
+  preferredTheme: "light"
 };
 
 export default defineConfig({
-  reporter: [["ortoni-report", reportConfig], ["dot"]],
+  reporter: [["ortoni-report", reportConfig]],
   // Other Playwright configurations
 });
 ```
@@ -152,6 +152,7 @@ export default defineConfig({
 - **Rich Test Data**: Each test includes details such as title, status, duration, tags, errors, steps, logs, video, and screenshots.
 - **Color-Coded Status**: Green for passed, red for failed, yellow for skipped—offering a quick overview of test outcomes.
 - **Static HTML Report**: Self-contained, standalone HTML files make sharing and storing reports convenient.
+- **Test History**: Added support for displaying test history up to the last 10 executions, providing better insight into recent test performance. 
 
 ---
 
@@ -178,6 +179,8 @@ We encourage you to share feedback and contribute to improving Ortoni Report! Fo
 If you'd like to support this project, you can donate via UPI:
 
 **UPI**: ortoni@axl (Koushik Chatterjee)
+[Buy me coffee](https://buymeacoffee.com/letcode)
+[Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
 
 ---
 
