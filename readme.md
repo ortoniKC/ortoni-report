@@ -8,90 +8,46 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
 ---
 
-## Key Features
+### Key Features
 
-1. **Hierarchical Grouping**
+### 1. **Organization & Grouping**
+- **Hierarchical Grouping**: Tests are structured by filename, suite, and project, providing an organized overview.
+- **Test History & Detailed Breakdown**: Support for displaying up to 10 recent executions, categorized by suite and project for easy navigation.
+- **Integration and Configuration**: Easy integration with Playwright using TypeScript/JavaScript, with configurable preferences.
+- **Advanced Filtering**: Filters for project, tags, and status, with the ability to reset for a full view.
 
-   - Tests are structured and grouped by filename, suite, and project, providing a clear and organized view of the entire test execution.
+### 2. **Detailed Reporting**
+- **Comprehensive Test Details**: Status, duration, tags, errors, logs, screenshots, videos, and trace data.
+- **Test Attachments**: Screenshots, videos, trace viewer, steps, error stack trace, and console logs.
+- **Selected Status Display**: The UI highlights the active status filter for clarity.
 
-2. **Test History & Detailed Breakdown**
+### 3. **Visualization & Insights**
+- **Summary Statistics**: Total tests and distribution of passed, failed, skipped, and flaky tests with success rates.
+- **Chart Visualizations**: Doughnut chart for overall status and bar charts for project-specific comparisons.
+- **Colorful and Intuitive Dashboard**: Vibrant themes for better visual appeal.
 
-   - Added support for displaying test history up to the last 10 executions, providing better insight into recent test performance.
-   - Each suite displays tests categorized by project, with organized test results for better navigation.
+### 4. **Customization & Personalization**
+- **Customization & Themes**: Toggle between light/dark themes, add project details, and personalize reports.
+- **Add Your Logo**: Configurable logo for brand personalization.
+- **Flexibility with Attachments**: Choose Base64 or file paths for screenshots.
+- **Custom Report Paths**: Set custom filenames and folder paths for reports.
 
-3. **Comprehensive Test Details**
-
-   - Rich details include test status (passed, failed, skipped), duration, tags, errors, logs, annotations, screenshots, videos, and trace data.
-   - Users can sort and filter tests by suite, project, or script for more focused insights.
-
-4. **Summary Statistics**
-
-   - Overview displays total tests, passed, failed, skipped, and flaky tests, with a success rate calculation for each suite.
-
-5. **Chart Visualizations**
-
-   - Visualize test result distributions using:
-     - **Doughnut Chart**: Illustrates overall test result status (passed, failed, skipped, flaky).
-     - **Doughnut & Bar Charts**: Breakdown of results per project (Chromium, Firefox, etc.) for easy comparison.
-
-6. **Advanced Search and Reset**
-
-   - Search and filter tests quickly using specific keywords or criteria. Easily reset filters to display all tests again.
-
-7. **Customization & Themes**
-
-   - Personalize reports with project details, author name, test type, and toggle between light and dark themes.
-   - Flexibility to choose between Base64 images or file paths for screenshots.
-   - Customize report filenames and folder paths.
-
-8. **Test Attachments**
-
-   - Screenshots
-   - Videos
-   - Trace viewer
-   - Steps
-   - Error stack trace
-   - Console logs
-   - Tests History
-
-9. **Integration and Configuration**
-
-   - Easily configure and integrate with Playwright using TypeScript/JavaScript.
-   - Configure reporting preferences within the Playwright setup for quick customization.
-
-10. **Add Your Logo**
-
-    - Include your branding by adding a relative or absolute path to the config for a custom logo in the report.
-
-11. **Share Reports**
-
-    - Generated reports are self-contained and ready to share right away, making it easier to distribute and review.
-
-12. **Advanced Filtering**
-
-    - Apply filters based on project, tags, and test status simultaneously for precise reporting. See only the relevant tests.
-
-13. **Colorful and Intuitive Dashboard**
-
-    - Vibrant, intuitive color schemes enhance the dashboard’s visual appeal, improving clarity for quick test status assessment.
-
-14. **Selected Status Display**
-
-    - The UI now clearly displays the selected status filter, helping users keep track of the current filter criteria.
-
-15. **Hide Skipped Tests by Default**
-    - By default, skipped tests are hidden when using the "All Tests" filter, allowing for a more focused review of relevant test cases.
+### 5. **User Experience & Usability**
+- **Advanced Search and Reset**: Search tests with keywords or criteria, with reset options.
+- **Hide Skipped Tests by Default**: Simplifies view by hiding skipped tests initially.
+- **Share Reports**: Self-contained reports for easy sharing and review.
+- **Comprehensive Filters**: Apply multiple filters simultaneously for focused insights. 
 
 ---
 
-## Installation & Setup
+### Installation & Setup
 
 ### Step 1: Install Ortoni Report
 
 Run the following command to install the **ortoni-report** package globally:
 
 ```bash
-npm install -d ortoni-report
+npm install -D ortoni-report
 ```
 
 ### Step 2: Configure in `playwright.config.ts`
@@ -146,33 +102,20 @@ export default defineConfig({
   // Other Playwright configurations
 });
 ```
-
-## Detailed Test Information
-
-- **Rich Test Data**: Each test includes details such as title, status, duration, tags, errors, steps, logs, video, and screenshots.
-- **Color-Coded Status**: Green for passed, red for failed, yellow for skipped—offering a quick overview of test outcomes.
-- **Static HTML Report**: Self-contained, standalone HTML files make sharing and storing reports convenient.
-- **Test History**: Added support for displaying test history up to the last 10 executions, providing better insight into recent test performance. 
-
 ---
 
-## Changelog
+### Changelog
 
 Stay up-to-date with the latest features, improvements, and bug fixes by reviewing the [Changelog](https://github.com/ortoniKC/ortoni-report/blob/main/changelog.md).
 
----
-
-## License
+### License
 
 This project is licensed under the terms of the [LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.md).
 
----
-
-## Feedback and Contributions
+### Feedback and Contributions
 
 We encourage you to share feedback and contribute to improving Ortoni Report! For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
 
----
 
 ## Support
 
@@ -182,12 +125,8 @@ If you'd like to support this project, you can donate via UPI:
 [Buy me coffee](https://buymeacoffee.com/letcode)
 [Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
 
----
-
 Thank you for using **Ortoni Report**! We’re committed to providing you with a superior Playwright testing experience.
 
 ---
 
 **LetCode with Koushik**
-
----
