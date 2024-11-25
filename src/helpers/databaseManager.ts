@@ -10,10 +10,11 @@ export class DatabaseManager {
     try {
       this.db = await open({
         filename: dbPath,
-        driver: sqlite3.Database
+        driver: sqlite3.Database,
       });
 
       await this.createTables();
+      await this.createIndexes();
     } catch (error) {
       console.error('OrtoniReport: Error initializing database:', error);
     }
@@ -47,6 +48,22 @@ export class DatabaseManager {
     }
   }
 
+  private async createIndexes(): Promise<void> {
+    if (!this.db) {
+      console.error('OrtoniReport: Database not initialized');
+      return;
+    }
+
+    try {
+      await this.db.exec(`
+        CREATE INDEX IF NOT EXISTS idx_test_id ON test_results (test_id);
+        CREATE INDEX IF NOT EXISTS idx_run_id ON test_results (run_id);
+      `);
+    } catch (error) {
+      console.error('OrtoniReport: Error creating indexes:', error);
+    }
+  }
+
   async saveTestRun(): Promise<number | null> {
     if (!this.db) {
       console.error('OrtoniReport: Database not initialized');
@@ -55,10 +72,13 @@ export class DatabaseManager {
 
     try {
       const runDate = formatDateUTC(new Date());
-      const { lastID } = await this.db.run(`
+      const { lastID } = await this.db.run(
+        `
         INSERT INTO test_runs (run_date)
         VALUES (?)
-      `, [runDate]);
+      `,
+        [runDate]
+      );
 
       return lastID!;
     } catch (error) {
@@ -74,6 +94,8 @@ export class DatabaseManager {
     }
 
     try {
+      await this.db.exec('BEGIN TRANSACTION;');
+
       const stmt = await this.db.prepare(`
         INSERT INTO test_results (run_id, test_id, status, duration, error_message)
         VALUES (?, ?, ?, ?, ?)
@@ -85,11 +107,14 @@ export class DatabaseManager {
           `${result.filePath}:${result.projectName}:${result.title}`,
           result.status,
           result.duration,
-          result.errors.join('\n')
+          result.errors.join('\n'),
         ]);
       }
+
       await stmt.finalize();
+      await this.db.exec('COMMIT;');
     } catch (error) {
+      await this.db.exec('ROLLBACK;');
       console.error('OrtoniReport: Error saving test results:', error);
     }
   }
@@ -101,18 +126,21 @@ export class DatabaseManager {
     }
 
     try {
-      const results = await this.db.all(`
+      const results = await this.db.all(
+        `
         SELECT tr.status, tr.duration, tr.error_message, trun.run_date
         FROM test_results tr
         JOIN test_runs trun ON tr.run_id = trun.id
         WHERE tr.test_id = ?
         ORDER BY trun.run_date DESC
         LIMIT ?
-      `, [testId, limit]);
+      `,
+        [testId, limit]
+      );
 
-      return results.map(result => ({
+      return results.map((result) => ({
         ...result,
-        run_date: formatDateLocal(result.run_date)
+        run_date: formatDateLocal(result.run_date),
       }));
     } catch (error) {
       console.error('OrtoniReport: Error getting test history:', error);
