@@ -65,7 +65,7 @@ const reportConfig: OrtoniReportConfig = {
   title: "Ortoni Test Report",
   showProject: !true,
   projectName: "Ortoni-Report",
-  testType: "Release - Nov 09, 2024",
+  testType: "e2e",
   authorName: "Koushik (LetCode with Koushik)",
   base64Image: false,
   stdIO: false,
@@ -90,7 +90,7 @@ const reportConfig = {
   title: "Ortoni Test Report",
   showProject: !true,
   projectName: "Ortoni-Report",
-  testType: "Release - Nov 09, 2024",
+  testType: "e2e",
   authorName: "Koushik (LetCode with Koushik)",
   base64Image: false,
   stdIO: false,
@@ -102,6 +102,50 @@ export default defineConfig({
   // Other Playwright configurations
 });
 ```
+## Using the Ortoni Report CLI
+
+### Command: `show-report`
+
+This command starts a local Express server and serves the generated Ortoni report. You can open the report in your default browser.
+
+#### Options
+- **`-d, --dir <path>`**: Path to the folder containing the report. Defaults to `ortoni-report`.
+- **`-f, --file <filename>`**: Name of the report file. Defaults to `ortoni-report.html`.
+- **`-p, --port <port>`**: Port number for the local server. Defaults to `2004`.
+
+#### Example Usage
+
+1. **Default Usage**
+   ```bash
+   npx ortoni-report show-report
+   ```
+   This will:
+   - Look for the report file `ortoni-report.html` in the `ortoni-report` folder.
+   - Start the server on port `2004`.
+
+2. **Custom folder and file Options**
+   ```bash
+   npx ortoni-report show-report --dir custom-folder --file my-report.html --port 3000
+   ```
+   This will:
+   - Look for the file `my-report.html` in `custom-folder`.
+   - Start the server on port `3000`.
+
+#### Errors and Troubleshooting
+- If the specified file or folder does not exist, you will see an error like:
+  ```
+  Error: The file "my-report.html" does not exist in the folder "custom-folder".
+  ```
+  Ensure the file and folder paths are correct.
+
+#### Accessing the Report
+Once the server is running, open your browser and navigate to:
+```
+http://localhost:<port>
+```
+
+Replace `<port>` with the port number you specified or the default port (`2004`). The report will automatically open in your default browser if the `always` option is enabled.
+
 ---
 
 ### Changelog
@@ -121,8 +165,10 @@ We encourage you to share feedback and contribute to improving Ortoni Report! Fo
 
 If you'd like to support this project, you can donate via UPI:
 
-**UPI**: ortoni@axl (Koushik Chatterjee)
+<img src="https://raw.githubusercontent.com/ortoniKC/ortoniKC/refs/heads/main/ortoni.png" alt="ortoni@ybl" title="UPI Payment" style="width:25%; height:25%">
+
 [Buy me coffee](https://buymeacoffee.com/letcode)
+
 [Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
 
 Thank you for using **Ortoni Report**! We’re committed to providing you with a superior Playwright testing experience.
