@@ -1,4 +1,22 @@
 # Change Log:
+
+## v2.0.9
+
+#### 📦 New Features
+- **Command to Open Report (CLI)**: Introduced a new command to open the Ortoni Report directly for streamlined access.
+```
+npx ortoni-report show-report
+```
+
+#### 👌 Improvements
+- **Database Optimization**: Enhanced database operations with transactions and indexing for better performance and reliability.
+- **CSS and UI Enhancements**:
+  - Improved tabbed design for steps, errors, and logs (#50), ensuring an organized and intuitive user experience.
+  - Added CSS improvements for tabs, enhancing visual clarity and usability.
+  - Adjusted summary text position for better alignment and readability.
+- **Configuration Options**:
+  - Added support for specifying directory, filename, and an optional port number for increased flexibility.
+
 ## v2.0.8
 
 #### 🐛 Fixes

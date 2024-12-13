@@ -4,6 +4,7 @@
 <style>
     {{{inlineCss}}}
 </style>
+
 <body>
     {{> navbar }}
     <section class="section mt-6">
@@ -47,7 +48,7 @@
                 htmlElement: document.documentElement,
                 searchInput: document.querySelector('input[name="search"]'),
                 detailsElements: document.querySelectorAll('details'),
-                filtersDisplay: document.getElementById('selected-filters')
+                filtersDisplay: document.getElementById('selected-filters'),
             };
 
             const themeManager = {
@@ -141,7 +142,6 @@
                             ${this.renderTestContent(test)}
                         </div>
                     `;
-
                     this.attachScreenshotListeners(test);
                     this.attachSteps(test);
                 },
@@ -168,9 +168,7 @@
                         content += this.renderScreenshotsAndVideo(test);
                     }
                     content += this.renderAdditionalInfo(test);
-                    content += this.renderSteps(test);
-                    content += this.renderErrors(test);
-                    content += this.renderLogs(test);
+                    content += this.renderTabs(test);
                     return content;
                 },
                 renderScreenshotsAndVideo(test) {
@@ -242,7 +240,7 @@
                             ` : ''}
                         </div>
                     `;
-                    
+
                     content += '</div></div>';
                     return content;
                 },
@@ -262,8 +260,8 @@
                                         </div>
                                     </div>` : ""}
                                     ${test.annotations
-                                        .filter(annotation => annotation !== null && annotation !== undefined)
-                                        .map(annotation => `
+                            .filter(annotation => annotation !== null && annotation !== undefined)
+                            .map(annotation => `
                                         <div class="mb-4">
                                             ${annotation?.type ? `<strong class="has-text-link">Type: </strong><span>${annotation.type}</span>` : ''}
                                             <br>
@@ -275,48 +273,57 @@
                         </div>
                     `;
                 },
+
+                renderTabs(test) {
+                    return `
+                    <div class="card mt-5">
+                        <div class="card-content">
+                            <div class="tabs is-boxed is-fullwidth">
+                                <ul>
+                                    <li class="is-active"><a data-tab="steps">Steps</a></li>
+                                    <li><a data-tab="errors">Errors</a></li>
+                                    <li><a data-tab="logs">Logs</a></li>
+                                </ul>
+                            </div>
+                            <div id="tabContent">
+                                <div id="stepsTab" class="tab-content">
+                                    ${this.renderSteps(test)}
+                                </div>
+                                <div id="errorsTab" class="tab-content" style="display: none;">
+                                    ${this.renderErrors(test)}
+                                </div>
+                                <div id="logsTab" class="tab-content" style="display: none;">
+                                    ${this.renderLogs(test)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                },
+
                 renderSteps(test) {
-                    if (test.steps.length === 0) return '';
+                    if (test.steps.length === 0) return '<p>No steps available.</p>';
                     return `
-                        <div class="card">
-                            <header class="card-header">
-                                <p class="card-header-title">Steps</p>
-                            </header>
-                            <div class="card-content">
-                                <div class="content">
-                                    <span id="stepDetails" class="content"></span>
-                                </div>
-                            </div>
+                        <div class="content">
+                            <span id="stepDetails" class="content"></span>
                         </div>
                     `;
                 },
+
                 renderErrors(test) {
-                    if (!test.errors.length) return '';
+                    if (!test.errors.length) return '<p>No errors reported.</p>';
                     return `
-                        <div class="card mt-5">
-                            <header class="card-header">
-                                <p class="card-header-title">Errors</p>
-                            </header>
-                            <div class="card-content">
-                                <div class="content">
-                                    <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
-                                </div>
-                            </div>
+                        <div class="content">
+                            <pre><code class="data-lang=js">${test.errors.join('\n')}</code></pre>
                         </div>
                     `;
                 },
+
                 renderLogs(test) {
-                    if (!test.logs) return '';
+                    if (!test.logs) return '<p>No logs available.</p>';
                     return `
-                        <div class="card mt-5">
-                            <header class="card-header">
-                                <p class="card-header-title">Logs</p>
-                            </header>
-                            <div class="card-content">
-                                <div class="content">
-                                    <pre>${test.logs}</pre>
-                                </div>
-                            </div>
+                        <div class="content">
+                            <pre>${test.logs}</pre>
                         </div>
                     `;
                 },
@@ -378,151 +385,166 @@
                             const test = testData[testId];
                             const historyEntry = testHistory.find(entry => entry.testId === testHistoryId);
                             testHistoriesMap = historyEntry ? historyEntry.history : null;
-                            testHistoryTitle =  historyEntry.testId ? historyEntry.testId.split(":")[2] : '';
+                            testHistoryTitle = historyEntry.testId ? historyEntry.testId.split(":")[2] : '';
                             this.show(test);
                         });
                     });
-                }
-            };
+                    document.addEventListener('click', (e) => {
+                        const tabLink = e.target.closest('div.tabs a');
+                        if (tabLink) {
+                            e.preventDefault();
+                            const tabId = e.target.getAttribute('data-tab');
+                            const tabLinks = document.querySelectorAll('div.tabs a');
+                            const tabContents = document.querySelectorAll('div.tab-content');
 
-            const filterManager = {
-                init() {
-                    this.attachEventListeners();
-                },
-                attachEventListeners() {
-                    const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
-                    checkboxes.forEach(checkbox => {
-                        checkbox.addEventListener('change', () => this.applyFilters());
+                            tabLinks.forEach(l => l.parentElement.classList.remove('is-active'));
+                            tabContents.forEach(c => c.style.display = 'none');
+
+                            e.target.parentElement.classList.add('is-active');
+                            document.getElementById(`${tabId}Tab`).style.display = 'block';
+                        }
                     });
-
-                    const filters = document.querySelectorAll('.filter');
-                    filters.forEach(filter => {
-                        filter.addEventListener('click', () => {
-                            filters.forEach(f => f.classList.remove('active'));
-                            filter.classList.add('active');
-                            this.applyFilters();
-                        });
-                    });
-                },
-                applyFilters() {
-                    const selectedProjects = this.getSelectedValues('project');
-                    const selectedTags = this.getSelectedValues('test-tags');
-                    const selectedStatus = document.querySelector('.filter.active')?.getAttribute('data-status') || 'all';
-
-                    elements.detailsElements.forEach(details => {
-                        const items = details.querySelectorAll('div[data-test-id]');
-                        let shouldShowDetails = false;
-
-                        items.forEach(item => {
-                            const isVisible = this.shouldShowItem(item, selectedProjects, selectedTags, selectedStatus);
-                            item.classList.toggle('is-hidden', !isVisible);
-                            shouldShowDetails = shouldShowDetails || isVisible;
-                        });
-
-                        details.open = shouldShowDetails;
-                        details.classList.toggle('is-hidden', !shouldShowDetails);
-                    });
-
-                    this.updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
-                },
-                getSelectedValues(type) {
-                    return Array.from(document.querySelectorAll(`#select-filter input[type="checkbox"][data-filter-type="${type}"]:checked`))
-                        .map(checkbox => checkbox.value.trim());
-                },
-                shouldShowItem(item, projects, tags, status) {
-                    const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean);
-                    const projectName = item.getAttribute('data-project-name').trim();
-                    const testStatus = item.getAttribute('data-test-status').trim();
-
-                    const matchesProject = projects.length === 0 || projects.includes(projectName);
-                    const matchesTags = tags.length === 0 || tags.every(tag => testTags.includes(tag));
-                    const matchesStatus = this.matchesStatus(testStatus, status);
-
-                    return matchesProject && matchesTags && matchesStatus;
-                },
-                matchesStatus(testStatus, selectedStatus) {
-                    if (selectedStatus === 'all') return testStatus !== 'skipped';
-                    if (selectedStatus === 'failed') return testStatus === 'failed' || testStatus === 'timedOut';
-                    if (selectedStatus === 'retry') return testStatus.includes('retry');
-                    if (selectedStatus === 'flaky') return testStatus.includes('flaky');
-                    return testStatus === selectedStatus;
-                },
-                updateSelectedFiltersDisplay(projects, tags, status) {
-                    let displayText = [];
-                    if (projects.length > 0) displayText.push(`Projects: ${projects.join(', ')}`);
-                    if (tags.length > 0) displayText.push(`Tags: ${tags.join(', ')}`);
-                    if (status !== 'all') displayText.push(`Status: ${status}`);
-                    elements.filtersDisplay.innerHTML = displayText.length > 0 ? displayText.join(' | ') : 'All Tests';
-                }
-            };
-
-            const searchManager = {
-                init() {
-                    elements.searchInput.addEventListener('input', this.debounce(this.filterTests, 300));
-                },
-                filterTests(event) {
-                    const searchTerm = event.target.value.toLowerCase();
-                    const testItems = document.querySelectorAll('[data-test-id]');
-
-                    elements.detailsElements.forEach(detail => detail.open = !!searchTerm);
-
-                    testItems.forEach(item => {
-                        const isVisible = item.textContent.toLowerCase().includes(searchTerm);
-                        item.style.display = isVisible ? 'flex' : 'none';
-                        if (isVisible && searchTerm) searchManager.openParentDetails(item);
-                    });
-                },
-                openParentDetails(item) {
-                    let parent = item.parentElement;
-                    while (parent && parent.tagName !== 'ASIDE') {
-                        if (parent.tagName === 'DETAILS') parent.open = true;
-                        parent = parent.parentElement;
                     }
-                },
-                debounce(func, wait) {
-                    let timeout;
-                    return function(...args) {
-                        clearTimeout(timeout);
-                        timeout = setTimeout(() => func.apply(this, args), wait);
-                    };
-                }
-            };
+                };
 
-            // Initialize all managers
-            themeManager.init();
-            testDetailsManager.attachEventListeners();
-            filterManager.init();
-            searchManager.init();
+                const filterManager = {
+                    init() {
+                        this.attachEventListeners();
+                    },
+                    attachEventListeners() {
+                        const checkboxes = document.querySelectorAll('#select-filter input[type="checkbox"]');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.addEventListener('change', () => this.applyFilters());
+                        });
 
-            // Expose necessary functions to the global scope
-            window.showSummary = testDetailsManager.hide;
-            window.openModal = () => document.querySelector("#testImage").classList.add("is-active");
-            window.closeModal = () => document.querySelector("#testImage").classList.remove("is-active");
-            window.closeErrorModal = (modalId) => document.getElementById(modalId).classList.remove("is-active");
-            window.openTraceViewer = (button) => {
-                const tracePath = button.getAttribute("data-trace");
-                if (tracePath) {
-                    const normalizedTracePath = tracePath.replace(/\\/g, '/');
-                    const baseUrl = getAdjustedBaseUrl();
-                    window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${normalizedTracePath}`, "_blank");
-                }
-            };
-            window.getAdjustedBaseUrl = () => {
-                const origin = window.location.origin;
-                const pathname = window.location.pathname;
-                if (pathname.endsWith('.html')) {
-                    const directoryPath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
-                    return `${origin}${directoryPath}`;
-                }
-                return origin;
-            }
-            window.openHistory = () => {
-                const historyElement = document.getElementById("historyModal");
-                historyElement.classList.add('is-active');
+                        const filters = document.querySelectorAll('.filter');
+                        filters.forEach(filter => {
+                            filter.addEventListener('click', () => {
+                                filters.forEach(f => f.classList.remove('active'));
+                                filter.classList.add('active');
+                                this.applyFilters();
+                            });
+                        });
+                    },
+                    applyFilters() {
+                        const selectedProjects = this.getSelectedValues('project');
+                        const selectedTags = this.getSelectedValues('test-tags');
+                        const selectedStatus = document.querySelector('.filter.active')?.getAttribute('data-status') || 'all';
 
-                let historyContent = '';
-                if (testHistoriesMap && testHistoriesMap.length > 0) {
-                    historyContent = testHistoriesMap.map((h, index) => `
+                        elements.detailsElements.forEach(details => {
+                            const items = details.querySelectorAll('div[data-test-id]');
+                            let shouldShowDetails = false;
+
+                            items.forEach(item => {
+                                const isVisible = this.shouldShowItem(item, selectedProjects, selectedTags, selectedStatus);
+                                item.classList.toggle('is-hidden', !isVisible);
+                                shouldShowDetails = shouldShowDetails || isVisible;
+                            });
+
+                            details.open = shouldShowDetails;
+                            details.classList.toggle('is-hidden', !shouldShowDetails);
+                        });
+
+                        this.updateSelectedFiltersDisplay(selectedProjects, selectedTags, selectedStatus);
+                    },
+                    getSelectedValues(type) {
+                        return Array.from(document.querySelectorAll(`#select-filter input[type="checkbox"][data-filter-type="${type}"]:checked`))
+                            .map(checkbox => checkbox.value.trim());
+                    },
+                    shouldShowItem(item, projects, tags, status) {
+                        const testTags = item.getAttribute('data-test-tags').trim().split(' ').filter(Boolean);
+                        const projectName = item.getAttribute('data-project-name').trim();
+                        const testStatus = item.getAttribute('data-test-status').trim();
+
+                        const matchesProject = projects.length === 0 || projects.includes(projectName);
+                        const matchesTags = tags.length === 0 || tags.every(tag => testTags.includes(tag));
+                        const matchesStatus = this.matchesStatus(testStatus, status);
+
+                        return matchesProject && matchesTags && matchesStatus;
+                    },
+                    matchesStatus(testStatus, selectedStatus) {
+                        if (selectedStatus === 'all') return testStatus !== 'skipped';
+                        if (selectedStatus === 'failed') return testStatus === 'failed' || testStatus === 'timedOut';
+                        if (selectedStatus === 'retry') return testStatus.includes('retry');
+                        if (selectedStatus === 'flaky') return testStatus.includes('flaky');
+                        return testStatus === selectedStatus;
+                    },
+                    updateSelectedFiltersDisplay(projects, tags, status) {
+                        let displayText = [];
+                        if (projects.length > 0) displayText.push(`Projects: ${projects.join(', ')}`);
+                        if (tags.length > 0) displayText.push(`Tags: ${tags.join(', ')}`);
+                        if (status !== 'all') displayText.push(`Status: ${status}`);
+                        elements.filtersDisplay.innerHTML = displayText.length > 0 ? displayText.join(' | ') : 'All Tests';
+                    }
+                };
+
+                const searchManager = {
+                    init() {
+                        elements.searchInput.addEventListener('input', this.debounce(this.filterTests, 300));
+                    },
+                    filterTests(event) {
+                        const searchTerm = event.target.value.toLowerCase();
+                        const testItems = document.querySelectorAll('[data-test-id]');
+
+                        elements.detailsElements.forEach(detail => detail.open = !!searchTerm);
+
+                        testItems.forEach(item => {
+                            const isVisible = item.textContent.toLowerCase().includes(searchTerm);
+                            item.style.display = isVisible ? 'flex' : 'none';
+                            if (isVisible && searchTerm) searchManager.openParentDetails(item);
+                        });
+                    },
+                    openParentDetails(item) {
+                        let parent = item.parentElement;
+                        while (parent && parent.tagName !== 'ASIDE') {
+                            if (parent.tagName === 'DETAILS') parent.open = true;
+                            parent = parent.parentElement;
+                        }
+                    },
+                    debounce(func, wait) {
+                        let timeout;
+                        return function (...args) {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => func.apply(this, args), wait);
+                        };
+                    }
+                };
+
+                // Initialize all managers
+                themeManager.init();
+                testDetailsManager.attachEventListeners();
+                filterManager.init();
+                searchManager.init();
+
+                // Expose necessary functions to the global scope
+                window.showSummary = testDetailsManager.hide;
+                window.openModal = () => document.querySelector("#testImage").classList.add("is-active");
+                window.closeModal = () => document.querySelector("#testImage").classList.remove("is-active");
+                window.closeErrorModal = (modalId) => document.getElementById(modalId).classList.remove("is-active");
+                window.openTraceViewer = (button) => {
+                    const tracePath = button.getAttribute("data-trace");
+                    if (tracePath) {
+                        const normalizedTracePath = tracePath.replace(/\\/g, '/');
+                        const baseUrl = getAdjustedBaseUrl();
+                        window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${normalizedTracePath}`, "_blank");
+                    }
+                };
+                window.getAdjustedBaseUrl = () => {
+                    const origin = window.location.origin;
+                    const pathname = window.location.pathname;
+                    if (pathname.endsWith('.html')) {
+                        const directoryPath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+                        return `${origin}${directoryPath}`;
+                    }
+                    return origin;
+                }
+                    window.openHistory = () => {
+                    const historyElement = document.getElementById("historyModal");
+                    historyElement.classList.add('is-active');
+
+                    let historyContent = '';
+                    if (testHistoriesMap && testHistoriesMap.length > 0) {
+                        historyContent = testHistoriesMap.map((h, index) => `
                         <tr>
                             <td>${h.run_date}</td>
                             <td>${h.status}</td>
@@ -536,11 +558,11 @@
                             </div><a class="button is-link" onclick="showHistoryErrorMessage(${index})">Show error</a></td>` : '<td>No Error</td>'}
                         </tr>
                     `).join('');
-                } else {
-                    historyContent = '<p class="title">No history available</p>';
-                }
+                    } else {
+                        historyContent = '<p class="title">No history available</p>';
+                    }
 
-                historyElement.innerHTML = `
+                    historyElement.innerHTML = `
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
@@ -564,14 +586,15 @@
                         </section>
                     </div>
                 `;
-            };
-            window.closeHistoryModal = () => {
-                document.getElementById("historyModal").classList.remove('is-active');
-            };
-            window.showHistoryErrorMessage = (modalId) => {
-                document.getElementById(modalId)?.classList.add('is-active');
-            };
-        });
+                };
+                window.closeHistoryModal = () => {
+                    document.getElementById("historyModal").classList.remove('is-active');
+                };
+                window.showHistoryErrorMessage = (modalId) => {
+                    document.getElementById(modalId)?.classList.add('is-active');
+                };
+            });
     </script>
 </body>
+
 </html>
