@@ -8,13 +8,13 @@ program.version("2.0.9").description("Ortoni Playwright Test Report CLI");
 program
     .command("show-report")
     .description("Open the generated Ortoni report")
-    .option("-f, --folder <path>", "Path to the folder containing the report", "ortoni-report")
-    .option("-n, --name <filename>", "Name of the report file", "ortoni-report.html")
+    .option("-d, --dir <path>", "Path to the folder containing the report", "ortoni-report")
+    .option("-f, --file <filename>", "Name of the report file", "ortoni-report.html")
     .option("-p, --port <port>", "Number of the port", "2004")
     .action((options) => {
         const projectRoot = process.cwd();
-        const folderPath = path.resolve(projectRoot, options.folder);
-        const filePath = path.resolve(folderPath, options.name);
+        const folderPath = path.resolve(projectRoot, options.dir);
+        const filePath = path.resolve(folderPath, options.file);
         const port = parseInt(options.port) || 2004;
 
         const fullFilePath = path.resolve(process.cwd(), folderPath, filePath);
