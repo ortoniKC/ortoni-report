@@ -3,7 +3,6 @@
     :root {
         --sidebar-width: 250px;
         --sidebar-collapsed-width: 60px;
-        --header-height: 60px;
     }
 
     body {
@@ -23,9 +22,8 @@
     .sidebar {
         width: var(--sidebar-width);
         border-right: 1px solid #e0e0e0;
-        height: calc(100vh - var(--header-height));
+        height: 100vh;
         position: fixed;
-        top: var(--header-height);
         left: 0;
         transition: width 0.3s ease;
         z-index: 10;
@@ -42,6 +40,12 @@
     }
 
     .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-footer {
         list-style: none;
         padding: 0;
         margin: 0;
@@ -65,7 +69,6 @@
     }
 
     .sidebar-menu-link.active {
-        background-color: #e8e8e8;
         font-weight: bold;
         border-left: 3px solid #3273dc;
     }
@@ -90,6 +93,22 @@
         height: var(--header-height);
         z-index: 20;
     }
+
+    .theme {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: #4a4a4a;
+        text-decoration: none;
+        transition: background-color 0.2s;
+        bottom: 15px;
+        position: absolute;
+    }
+
+    .theme .icon {
+        margin-right: 0.5rem;
+    }
+
 
     .section {
         margin-top: var(--header-height);
@@ -117,32 +136,10 @@
         .sidebar-toggle {
             display: block;
         }
-         .sidebar-toggle-btn {
+
+        .sidebar-toggle-btn {
             display: none;
         }
-    }
-
-    /* Dark theme adjustments */
-    html[data-theme="dark"] .sidebar {
-        background-color: #1a1a1a;
-        border-right-color: #333;
-    }
-
-    html[data-theme="dark"] .sidebar-header {
-        border-bottom-color: #333;
-    }
-
-    html[data-theme="dark"] .sidebar-menu-link {
-        color: #e4e4e4;
-    }
-
-    html[data-theme="dark"] .sidebar-menu-link:hover {
-        background-color: #2a2a2a;
-    }
-
-    html[data-theme="dark"] .sidebar-menu-link.active {
-        background-color: #2c2c2c;
-        border-left-color: #3273dc;
     }
 
     .sidebar-toggle-btn {
@@ -181,10 +178,43 @@
     .main-content.expanded {
         margin-left: var(--sidebar-collapsed-width);
     }
+    .sidebar-header {
+        cursor: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        font-weight: bold;
+        height: 60px; /* Fixed height for consistency */
+    }
+
+    .sidebar-header .logo {
+        display: none; /* Hide logo by default */
+        width: 30px; /* Adjust logo size as needed */
+        height: 30px;
+    }
+
+    .sidebar-header .header-text {
+        display: block; /* Show text by default */
+    }
+
+    /* Collapsed state adjustments */
+    .sidebar.collapsed .sidebar-header .header-text {
+        display: none; /* Hide text when collapsed */
+    }
+
+    .sidebar.collapsed .sidebar-header .logo {
+        cursor: :none !important;
+        display: block; /* Show logo when collapsed */
+    }
 </style>
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        Ortoni Report
+     <div class="sidebar-header">
+        <figure class="image">
+          <img alt="Logo" class="logo" src="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/ortoni.png" />
+        </figure>
+        <span class="header-text">Ortoni Report</span>
     </div>
     <ul class="sidebar-menu">
         <li class="sidebar-menu-item">
@@ -204,6 +234,13 @@
             </a>
         </li>
     </ul>
+    <a href="#" class="theme" data-theme-status="{{preferredTheme}}" id="toggle-theme">
+        <span class="icon">
+            <i class="" id="theme-icon"></i>
+        </span>
+        <span class="sidebar-menu-text">Theme</span>
+    </a>
+
     <button class="sidebar-toggle-btn" id="sidebar-toggle">
         <i class="fa fa-chevron-left" id="sidebar-toggle-icon"></i>
     </button>

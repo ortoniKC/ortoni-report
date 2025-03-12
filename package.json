@@ -38,7 +38,6 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.2",
     "@types/sqlite3": "^3.1.11",
-    "@types/ws": "^8.5.12",
     "ansi-to-html": "^0.7.2",
     "commander": "^12.1.0",
     "express": "^4.21.1",
@@ -48,8 +47,7 @@
   },
   "peerDependencies": {
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "ws": "^8.18.0"
+    "sqlite3": "^5.1.7"
   },
   "main": "dist/ortoni-report.js",
   "module": "dist/ortoni-report.mjs",

@@ -168,6 +168,10 @@
         new Chart(projectbarChart, {
             type: 'bar',
             data: {
+                barPercentage: 1,
+                barThickness: 6,
+                maxBarThickness: 8,
+                minBarLength: 2,
                 labels: projectNames,
                 datasets: [
                     {
@@ -194,7 +198,7 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 scales: {
                     x: {
                         beginAtZero: true

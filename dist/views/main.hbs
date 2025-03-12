@@ -6,8 +6,6 @@
 </style>
 
 <body>
-    {{> navbar }}
-    
     <div class="app-container">
         <!-- Sidebar -->
       {{> sidebar}}
@@ -377,13 +375,9 @@
                     this.elements.testDetails.innerHTML = `
                         <div class="sticky-header">
                             <div class="card mb-3">
-                                <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
-                                    <span class="icon"><i class="fa fa-chevron-left"></i></span>
-                                    <span>Back to Dashboard</span>
-                                </button>
                                 <div class="card-content">
                                     <div class="content has-text-centered">
-                                        <h1 class="title is-2">${test.title}</h1>
+                                        <h1 class="title is-4">${test.title}</h1>
                                         <p class="subtitle is-5" id="filepath">${test.location}</p>
                                     </div>
                                 </div>
@@ -395,7 +389,7 @@
                                                     <span class="icon status-icon has-text-${statusClass}">
                                                         <i class="fa fa-${statusIcon}"></i>
                                                     </span>
-                                                    <span class="has-text-weight-bold is-uppercase has-text-${statusClass}">${test.status}</span>
+                                                    <span class="has-text-weight-bold is-capitalized has-text-${statusClass}">${test.status}</span>
                                                 </div>
                                             </div>
                                         </div>
