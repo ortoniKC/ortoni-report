@@ -3,6 +3,7 @@
     :root {
         --sidebar-width: 250px;
         --sidebar-collapsed-width: 60px;
+        --primary-color: #735DA5;
     }
 
     body {
@@ -59,7 +60,6 @@
         display: flex;
         align-items: center;
         padding: 0.75rem 1rem;
-        color: #4a4a4a;
         text-decoration: none;
         transition: background-color 0.2s;
     }
@@ -70,7 +70,7 @@
 
     .sidebar-menu-link.active {
         font-weight: bold;
-        border-left: 3px solid #3273dc;
+        border-left: 3px solid var(--primary-color);
     }
 
     .sidebar-menu-link .icon {
@@ -98,7 +98,6 @@
         display: flex;
         align-items: center;
         padding: 0.75rem 1rem;
-        color: #4a4a4a;
         text-decoration: none;
         transition: background-color 0.2s;
         bottom: 15px;
@@ -148,7 +147,7 @@
         right: -15px;
         width: 30px;
         height: 30px;
-        background-color: #3273dc;
+        background-color: var(--primary-color);;
         color: white;
         border-radius: 50%;
         display: flex;
@@ -182,7 +181,7 @@
         cursor: none;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: start;
         padding: 1rem;
         border-bottom: 1px solid #e0e0e0;
         font-weight: bold;
@@ -190,7 +189,6 @@
     }
 
     .sidebar-header .logo {
-        display: none; /* Hide logo by default */
         width: 30px; /* Adjust logo size as needed */
         height: 30px;
     }
@@ -205,7 +203,6 @@
     }
 
     .sidebar.collapsed .sidebar-header .logo {
-        cursor: :none !important;
         display: block; /* Show logo when collapsed */
     }
 </style>
@@ -214,7 +211,7 @@
         <figure class="image">
           <img alt="Logo" class="logo" src="https://raw.githubusercontent.com/ortoniKC/ortoni-report/refs/heads/main/ortoni.png" />
         </figure>
-        <span class="header-text">Ortoni Report</span>
+        <span class="header-text ml-4 title is-5">Ortoni Report</span>
     </div>
     <ul class="sidebar-menu">
         <li class="sidebar-menu-item">

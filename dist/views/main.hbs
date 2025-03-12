@@ -3,6 +3,7 @@
 {{> head}}
 <style>
     {{{inlineCss}}}
+    
 </style>
 
 <body>
@@ -15,12 +16,12 @@
             <div id="dashboard-section" class="content-section">
                 <h1 class="title is-3">Dashboard</h1>
                 <div class="columns is-multiline has-text-centered">
-                    {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
-                    {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
-                    {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
-                    {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
-                    {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
-                    {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
+                    {{> summaryCard bg="hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important" status="all" statusHeader="All Tests" statusCount=totalCount}}
+                    {{> summaryCard bg="hsl(var(--bulma-success-h), var(--bulma-success-s), var(--bulma-success-l)) !important" status="passed" statusHeader="Passed" statusCount=passCount}}
+                    {{> summaryCard bg="hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-danger-l)) !important" status="failed" statusHeader="Failed" statusCount=failCount}}
+                    {{> summaryCard bg="hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-l)) !important" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
+                    {{> summaryCard bg="hsl(var(--bulma-warning-h), var(--bulma-warning-s), var(--bulma-warning-l)) !important" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
+                    {{> summaryCard bg="#69748c" status="retry" statusHeader="Retry" statusCount=retryCount}}
                 </div>
                 <div class="box">
                     {{> userInfo}}

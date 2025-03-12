@@ -1,8 +1,8 @@
 {{#if (gr statusCount) }}
 <div class="column is-one-sixth">
-    <div class="box has-background-{{bg}} filter" data-status="{{status}}">
-        <p class="title is-size-3 has-text-white mb-0">{{statusCount}}</p>
-        <p class="subtitle is-size-7 has-text-white-bis">{{statusHeader}}</p>
+    <div class="box" style="border-left: 5px solid {{bg}}" data-status="{{status}}">
+        <p class="title is-size-3 mb-0">{{statusCount}}</p>
+        <p class="subtitle is-size-7">{{statusHeader}}</p>
     </div>
 </div>
 {{/if}}
