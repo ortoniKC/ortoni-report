@@ -98,6 +98,7 @@ export class HTMLGenerator {
       groupedResults: groupResults(this.ortoniConfig, results),
       projectName: this.ortoniConfig.projectName,
       authorName: this.ortoniConfig.authorName,
+      meta: this.ortoniConfig.meta,
       testType: this.ortoniConfig.testType,
       preferredTheme: this.ortoniConfig.preferredTheme,
       successRate: successRate,

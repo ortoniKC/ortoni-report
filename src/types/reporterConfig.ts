@@ -76,4 +76,10 @@ export interface OrtoniReportConfig {
    * @default true
    */
   stdIO?: boolean;
+
+  /**
+   * Metadata for the report. ['TestCycle': 'Cycle 1', 'TestEnvironment':'QA', etc]
+   * @example { "key": "value" } as string
+   */
+  meta?: Record<string, string>;
 }

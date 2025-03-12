@@ -35,35 +35,55 @@
         <div class="box">
             <header class="title is-4">Suite</header>
             {{#if (or authorName testType)}}
-            <div class="column is-half">
-                <div class="content">
-                    {{#if authorName}}
-                    <div class="field">
-                        <label class="label" for="Tester">Tester</label>
-                        <p class="is-flex is-align-items-center">
-                            <span class="icon has-text-info mr-2">
-                                <i class="fas fa-user-tie"></i>
-                            </span>
-                            <span class="is-size-5">{{authorName}}</span>
-                        </p>
-                    </div>
-                    {{/if}}
-                    {{#if testType}}
-                    <div class="field">
-                        <label class="label" for="testType">Test Type</label>
-                        <p class="is-flex is-align-items-center">
-                            <span class="icon has-text-primary mr-2">
-                                <i class="fas fa-code-branch"></i>
-                            </span>
-                            <span class="is-size-5">{{testType}}</span>
-                        </p>
-                    </div>
-                    {{/if}}
+            <div class="content">
+                {{#if projectName}}
+                <div class="field">
+                    <label class="label" for="ProjectName">Project Name</label>
+                    <p class="is-flex is-align-items-center">
+                        <span class="icon has-text-info mr-2">
+                            <i class="fa-solid fa-shield"></i>
+                        </span>
+                        <span class="is-size-5">{{projectName}}</span>
+                    </p>
+                </div>
+                {{/if}}
+                {{#if authorName}}
+                <div class="field">
+                    <label class="label" for="Tester">Tester</label>
+                    <p class="is-flex is-align-items-center">
+                        <span class="icon has-text-info mr-2">
+                            <i class="fas fa-user-tie"></i>
+                        </span>
+                        <span class="is-size-5">{{authorName}}</span>
+                    </p>
+                </div>
+                {{/if}}
+                {{#if testType}}
+                <div class="field">
+                    <label class="label" for="testType">Test Type</label>
+                    <p class="is-flex is-align-items-center">
+                        <span class="icon has-text-info mr-2">
+                            <i class="fas fa-code-branch"></i>
+                        </span>
+                        <span class="is-size-5">{{testType}}</span>
+                    </p>
                 </div>
                 {{/if}}
             </div>
+            {{/if}}
         </div>
     </div>
+    {{#if meta}}
+    <div class="column">
+        <div class="box">
+            <header class="title is-4">Meta Information</header>
+            {{#each meta}}
+            <p><strong>{{@key}}:</strong> {{this}}</p>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
 </div>
 
 <div class="box">
