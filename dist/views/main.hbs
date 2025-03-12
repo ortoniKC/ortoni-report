@@ -3,36 +3,186 @@
 {{> head}}
 <style>
     {{{inlineCss}}}
+
+    /* Additional styles for sidebar layout */
+    :root {
+        --sidebar-width: 250px;
+        --header-height: 60px;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        border-right: 1px solid #e0e0e0;
+        height: calc(100vh - var(--header-height));
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        z-index: 10;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        font-weight: bold;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-menu-item {
+        padding: 0;
+    }
+
+    .sidebar-menu-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: #4a4a4a;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .sidebar-menu-link:hover {
+        background-color: #eeeeee;
+    }
+
+    .sidebar-menu-link.active {
+        background-color: #e8e8e8;
+        font-weight: bold;
+        border-left: 3px solid #3273dc;
+    }
+
+    .sidebar-menu-link .icon {
+        margin-right: 0.5rem;
+    }
+
+    .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: 1.5rem;
+        overflow-y: auto;
+    }
+
+   
+    .section {
+        margin-top: var(--header-height);
+        padding-top: 1rem;
+    }
+
+    .test-list {
+        margin-top: 1rem;
+    }
+
+    /* Mobile responsive styles */
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.is-active {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .sidebar-toggle {
+            display: block;
+        }
+    }
 </style>
 
 <body>
-    {{> navbar }}
-    <section class="section mt-6">
-        <main class="container">
-            <div class="columns">
-                <aside class="column is-two-fifths">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                Ortoni Report
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link active" data-section="dashboard">
+                        <span class="icon">
+                            <i class="fa fa-chart-bar"></i>
+                        </span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="#" class="sidebar-menu-link" data-section="tests">
+                        <span class="icon">
+                            <i class="fa fa-vial"></i>
+                        </span>
+                        Tests
+                    </a>
+                </li>
+                <li>
+                    <button id="toggle-theme" class="" data-theme-status="{{preferredTheme}}">
+          <span class="icon">
+            <i class="" id="theme-icon"></i>
+          </span>
+        </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section">
+                <h1 class="title is-3">Dashboard</h1>
+                <div class="columns is-multiline has-text-centered">
+                    {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
+                    {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
+                    {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
+                    {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
+                    {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
+                    {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
+                </div>
+                <div class="box">
+                    {{> userInfo}}
+                </div>
+            </div>
+
+            <!-- Tests Section -->
+            <div id="tests-section" class="content-section" style="display: none;">
+                <h1 class="title is-3">Tests</h1>
                     {{> testPanel}}
-                    {{> project}}
-                </aside>
-                <section class="column is-three-fifths">
-                    <div id="summary">
-                        <div class="columns is-multiline has-text-centered">
-                            {{> summaryCard bg="primary" status="all" statusHeader="All Tests" statusCount=totalCount}}
-                            {{> summaryCard bg="success" status="passed" statusHeader="Passed" statusCount=passCount}}
-                            {{> summaryCard bg="danger" status="failed" statusHeader="Failed" statusCount=failCount}}
-                            {{> summaryCard bg="info" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
-                            {{> summaryCard bg="warning" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
-                            {{> summaryCard bg="retry" status="retry" statusHeader="Retry" statusCount=retryCount}}
+                <div class="test-list">
+                    <div class="columns">
+                        <div class="column column column is-two-fifths">
+                        {{> project}}
                         </div>
-                        <div class="box">
-                            {{> userInfo}}
+                        <div class="column column is-three-fifths">
+                            <!-- Test Details Section -->
+                            <div id="testDetails" style="display: none;"></div>
                         </div>
                     </div>
-                    <div id="testDetails" style="display: none;"></div>
-                </section>
+                </div>
             </div>
         </main>
-    </section>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             /**
@@ -107,6 +257,80 @@
 
             /**
              * ====================================
+             * SIDEBAR MANAGER
+             * ====================================
+             */
+            class SidebarManager {
+                /**
+                 * Initialize the sidebar manager
+                 */
+                constructor() {
+                    this.sidebarLinks = document.querySelectorAll('.sidebar-menu-link');
+                    this.sections = document.querySelectorAll('.content-section');
+                    this.testDetailsSection = document.getElementById('testDetails');
+                    this.init();
+                }
+
+                /**
+                 * Initialize sidebar manager
+                 */
+                init() {
+                    this.attachEventListeners();
+                }
+
+                /**
+                 * Attach event listeners
+                 */
+                attachEventListeners() {
+                    this.sidebarLinks.forEach(link => {
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.setActiveLink(link);
+                            this.showSection(link.getAttribute('data-section'));
+                        });
+                    });
+                }
+
+                /**
+                 * Set active link
+                 * @param {HTMLElement} activeLink - Active link
+                 */
+                setActiveLink(activeLink) {
+                    this.sidebarLinks.forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    activeLink.classList.add('active');
+                }
+
+                /**
+                 * Show section
+                 * @param {string} sectionId - Section ID
+                 */
+                showSection(sectionId) {
+                    // Hide test details if showing a main section
+                    this.testDetailsSection.style.display = 'none';
+                    
+                    // Show the selected section
+                    this.sections.forEach(section => {
+                       section.style.display = 'none';
+                    });
+                    document.getElementById(`${sectionId}-section`).style.display = 'block';
+                }
+
+                /**
+                 * Show test details
+                 */
+                showTestDetails() {
+                  /*  this.sections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    */
+                    this.testDetailsSection.style.display = 'block';
+                }
+            }
+
+            /**
+             * ====================================
              * THEME MANAGER
              * ====================================
              */
@@ -158,11 +382,13 @@
                  * @param {Object} elements - DOM elements
                  * @param {Object} testData - Test data
                  * @param {Array} testHistory - Test history data
+                 * @param {SidebarManager} sidebarManager - Sidebar manager
                  */
-                constructor(elements, testData, testHistory) {
+                constructor(elements, testData, testHistory, sidebarManager) {
                     this.elements = elements;
                     this.testData = testData;
                     this.testHistory = testHistory;
+                    this.sidebarManager = sidebarManager;
                     this.testHistoriesMap = null;
                     this.testHistoryTitle = '';
                     this.currentScreenshotIndex = 0;
@@ -173,9 +399,8 @@
                  * @param {Object} test - Test data
                  */
                 show(test) {
-                    this.elements.summary.style.display = 'none';
+                    this.sidebarManager.showTestDetails();
                     this.elements.testDetails.style.opacity = '0';
-                    this.elements.testDetails.style.display = 'block';
                     setTimeout(() => {
                         this.elements.testDetails.style.opacity = '1';
                     }, 50);
@@ -183,11 +408,11 @@
                 }
 
                 /**
-                 * Hide test details and show summary
+                 * Hide test details and show dashboard
                  */
                 hide() {
-                    this.elements.summary.style.display = 'block';
-                    this.elements.testDetails.style.display = 'none';
+                    // Find the dashboard link and click it
+                    document.querySelector('.sidebar-menu-link[data-section="dashboard"]').click();
                 }
 
                 /**
@@ -203,10 +428,6 @@
                     this.elements.testDetails.innerHTML = `
                         <div class="sticky-header">
                             <div class="card mb-3">
-                                <button class="button is-primary mb-3" id="back-to-summary" onclick="showSummary()">
-                                    <span class="icon"><i class="fa fa-chevron-left"></i></span>
-                                    <span>Back to Summary</span>
-                                </button>
                                 <div class="card-content">
                                     <div class="content has-text-centered">
                                         <h1 class="title is-2">${test.title}</h1>
@@ -839,19 +1060,64 @@
 
             /**
              * ====================================
+             * MOBILE RESPONSIVE MANAGER
+             * ====================================
+             */
+            class MobileManager {
+                /**
+                 * Initialize the mobile manager
+                 */
+                constructor() {
+                    this.sidebar = document.getElementById('sidebar');
+                    this.init();
+                }
+
+                /**
+                 * Initialize mobile manager
+                 */
+                init() {
+                    // Add sidebar toggle button to navbar for mobile
+                    const navbar = document.querySelector('.navbar-brand');
+                    if (navbar) {
+                        const toggleButton = document.createElement('a');
+                        toggleButton.className = 'navbar-item sidebar-toggle is-hidden-desktop';
+                        toggleButton.innerHTML = '<i class="fa fa-bars"></i>';
+                        toggleButton.addEventListener('click', () => this.toggleSidebar());
+                        navbar.appendChild(toggleButton);
+                    }
+
+                    // Close sidebar when clicking on a link on mobile
+                    const sidebarLinks = document.querySelectorAll('.sidebar-menu-link');
+                    sidebarLinks.forEach(link => {
+                        link.addEventListener('click', () => {
+                            if (window.innerWidth < 769) {
+                                this.sidebar.classList.remove('is-active');
+                            }
+                        });
+                    });
+                }
+
+                /**
+                 * Toggle sidebar on mobile
+                 */
+                toggleSidebar() {
+                    this.sidebar.classList.toggle('is-active');
+                }
+            }
+
+            /**
+             * ====================================
              * INITIALIZATION
              * ====================================
              */
             // Initialize data
             const testData = {{{ json results }}};
             const testHistory = {{{ json testHistories }}};
-            let testHistoriesMap = {};
-            let testHistoryTitle = '';
 
             // Initialize DOM elements
             const elements = {
                 testDetails: document.getElementById('testDetails'),
-                summary: document.getElementById('summary'),
+                summary: document.getElementById('dashboard-section'),
                 themeButton: document.getElementById("toggle-theme"),
                 themeIcon: document.getElementById("theme-icon"),
                 htmlElement: document.documentElement,
@@ -861,11 +1127,13 @@
             };
 
             // Initialize managers
+            const sidebarManager = new SidebarManager();
             const themeManager = new ThemeManager(elements);
-            const testDetailsManager = new TestDetailsManager(elements, testData, testHistory);
+            const testDetailsManager = new TestDetailsManager(elements, testData, testHistory, sidebarManager);
             const filterManager = new FilterManager(elements);
             const searchManager = new SearchManager(elements);
             const historyManager = new HistoryManager(testHistory);
+            const mobileManager = new MobileManager();
 
             // Attach event listeners
             testDetailsManager.attachEventListeners();
@@ -885,7 +1153,6 @@
             };
             window.getAdjustedBaseUrl = Utils.getAdjustedBaseUrl;
             window.openHistory = () => {
-                const historyEntry = testHistory.find(entry => entry.testId === testHistoryTitle);
                 historyManager.setCurrentHistory(testDetailsManager.testHistoriesMap, testDetailsManager.testHistoryTitle);
                 historyManager.openHistory();
             };
