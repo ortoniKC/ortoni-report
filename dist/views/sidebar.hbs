@@ -1,0 +1,210 @@
+<style>
+    /* Additional styles for sidebar layout */
+    :root {
+        --sidebar-width: 250px;
+        --sidebar-collapsed-width: 60px;
+        --header-height: 60px;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+    .app-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: var(--sidebar-width);
+        border-right: 1px solid #e0e0e0;
+        height: calc(100vh - var(--header-height));
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        transition: width 0.3s ease;
+        z-index: 10;
+    }
+
+    .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        font-weight: bold;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-menu-item {
+        padding: 0;
+    }
+
+    .sidebar-menu-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: #4a4a4a;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .sidebar-menu-link:hover {
+        background-color: #eeeeee;
+    }
+
+    .sidebar-menu-link.active {
+        background-color: #e8e8e8;
+        font-weight: bold;
+        border-left: 3px solid #3273dc;
+    }
+
+    .sidebar-menu-link .icon {
+        margin-right: 0.5rem;
+    }
+
+    .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: 1.5rem;
+        overflow-y: auto;
+        transition: margin-left 0.3s ease;
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height);
+        z-index: 20;
+    }
+
+    .section {
+        margin-top: var(--header-height);
+        padding-top: 1rem;
+    }
+
+    .test-list {
+        margin-top: 1rem;
+    }
+
+    /* Mobile responsive styles */
+    @media screen and (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.is-active {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .sidebar-toggle {
+            display: block;
+        }
+         .sidebar-toggle-btn {
+            display: none;
+        }
+    }
+
+    /* Dark theme adjustments */
+    html[data-theme="dark"] .sidebar {
+        background-color: #1a1a1a;
+        border-right-color: #333;
+    }
+
+    html[data-theme="dark"] .sidebar-header {
+        border-bottom-color: #333;
+    }
+
+    html[data-theme="dark"] .sidebar-menu-link {
+        color: #e4e4e4;
+    }
+
+    html[data-theme="dark"] .sidebar-menu-link:hover {
+        background-color: #2a2a2a;
+    }
+
+    html[data-theme="dark"] .sidebar-menu-link.active {
+        background-color: #2c2c2c;
+        border-left-color: #3273dc;
+    }
+
+    .sidebar-toggle-btn {
+        position: absolute;
+        bottom: 20px;
+        right: -15px;
+        width: 30px;
+        height: 30px;
+        background-color: #3273dc;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-menu-text {
+        transition: opacity 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .sidebar.collapsed .sidebar-menu-text {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .sidebar.collapsed .sidebar-header {
+        text-align: center;
+        padding: 1rem 0.5rem;
+    }
+
+    .main-content.expanded {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+</style>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        Ortoni Report
+    </div>
+    <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-link active" data-section="dashboard">
+                <span class="icon">
+                    <i class="fa fa-chart-bar"></i>
+                </span>
+                <span class="sidebar-menu-text">Dashboard</span>
+            </a>
+        </li>
+        <li class="sidebar-menu-item">
+            <a href="#" class="sidebar-menu-link" data-section="tests">
+                <span class="icon">
+                    <i class="fa fa-vial"></i>
+                </span>
+                <span class="sidebar-menu-text">Tests</span>
+            </a>
+        </li>
+    </ul>
+    <button class="sidebar-toggle-btn" id="sidebar-toggle">
+        <i class="fa fa-chevron-left" id="sidebar-toggle-icon"></i>
+    </button>
+</aside>
