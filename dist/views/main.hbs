@@ -20,9 +20,7 @@
                     {{> summaryCard bg="hsl(var(--bulma-warning-h), var(--bulma-warning-s), var(--bulma-warning-l)) !important" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
                     {{> summaryCard bg="#69748c" status="retry" statusHeader="Retry" statusCount=retryCount}}
                 </div>
-                <div class="box">
-                    {{> userInfo}}
-                </div>
+                {{> userInfo}}
             </div>
             <div id="tests-section" class="content-section" style="display: none;">
                     <div class="test-list">

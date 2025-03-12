@@ -70,3 +70,11 @@
 .filter.active {
     font-weight: bold;
 }
+.chart-container {
+    width: 100%;
+    overflow-x: auto; /* Enables horizontal scrolling */
+}
+#projectbarChart {
+    max-width: 100%;
+    height: 400px; /* Adjust height for better visibility */
+}

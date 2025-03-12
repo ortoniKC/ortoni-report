@@ -1,210 +1,232 @@
-<header class="has-text-centered title is-4">Suite</header>
 <div class="columns is-multiline">
-    <div class="column is-half">
-        <div class="field">
-            <label class="label" for="Success Rate">Success Rate</label>
-            <p class="is-flex is-align-items-center">
-                <span class="icon has-text-success mr-2">
-                    <i class="fas fa-chart-pie"></i>
-                </span>
-                <span class="is-size-5 has-text-weight-bold">{{successRate}} %</span>
-            </p>
-        </div>
-        <div class="field">
-            <label class="label" for="Last Run">Last Run</label>
-            <p class="is-flex is-align-items-center">
-                <span class="icon has-text-info mr-2">
-                    <i class="fas fa-calendar-alt"></i>
-                </span>
-                <span class="is-size-5">{{lastRunDate}}</span>
-            </p>
-        </div>
-        <div class="field">
-            <label class="label" for="Duration">Duration</label>
-            <p class="is-flex is-align-items-center">
-                <span class="icon has-text-warning mr-2">
-                    <i class="fas fa-stopwatch"></i>
-                </span>
-                <span class="is-size-5">{{totalDuration}}</span>
-            </p>
-        </div>
-    </div>
-    {{#if (or authorName testType)}}
-    <div class="column is-half">
-        <div class="content">
-            {{#if authorName}}
+    <div class="column">
+        <div class="box">
+            <header class="title is-4">Result</header>
             <div class="field">
-                <label class="label" for="Tester">Tester</label>
+                <label class="label" for="Success Rate">Success Rate</label>
+                <p class="is-flex is-align-items-center">
+                    <span class="icon has-text-success mr-2">
+                        <i class="fas fa-chart-pie"></i>
+                    </span>
+                    <span class="is-size-5 has-text-weight-bold">{{successRate}} %</span>
+                </p>
+            </div>
+            <div class="field">
+                <label class="label" for="Last Run">Last Run</label>
                 <p class="is-flex is-align-items-center">
                     <span class="icon has-text-info mr-2">
-                        <i class="fas fa-user-tie"></i>
+                        <i class="fas fa-calendar-alt"></i>
                     </span>
-                    <span class="is-size-5">{{authorName}}</span>
+                    <span class="is-size-5">{{lastRunDate}}</span>
                 </p>
             </div>
-            {{/if}}
-
-            {{#if testType}}
             <div class="field">
-                <label class="label" for="testType">Test Type</label>
+                <label class="label" for="Duration">Duration</label>
                 <p class="is-flex is-align-items-center">
-                    <span class="icon has-text-primary mr-2">
-                        <i class="fas fa-code-branch"></i>
+                    <span class="icon has-text-warning mr-2">
+                        <i class="fas fa-stopwatch"></i>
                     </span>
-                    <span class="is-size-5">{{testType}}</span>
+                    <span class="is-size-5">{{totalDuration}}</span>
                 </p>
             </div>
-            {{/if}}
         </div>
     </div>
-    {{/if}}
+    <div class="column">
+        <div class="box">
+            <header class="title is-4">Suite</header>
+            {{#if (or authorName testType)}}
+            <div class="column is-half">
+                <div class="content">
+                    {{#if authorName}}
+                    <div class="field">
+                        <label class="label" for="Tester">Tester</label>
+                        <p class="is-flex is-align-items-center">
+                            <span class="icon has-text-info mr-2">
+                                <i class="fas fa-user-tie"></i>
+                            </span>
+                            <span class="is-size-5">{{authorName}}</span>
+                        </p>
+                    </div>
+                    {{/if}}
+                    {{#if testType}}
+                    <div class="field">
+                        <label class="label" for="testType">Test Type</label>
+                        <p class="is-flex is-align-items-center">
+                            <span class="icon has-text-primary mr-2">
+                                <i class="fas fa-code-branch"></i>
+                            </span>
+                            <span class="is-size-5">{{testType}}</span>
+                        </p>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
 </div>
-<div class="columns">
-    <div class="column">
-        <h2 class="is-4 has-text-weight-bold">Summary</h2>
-        <hr class="has-background-primary">
-        <div class="chart-container">
-            <canvas id="testChart"></canvas>
-        </div>
-    </div>
-    <div class="column">
-        <h2 class="is-4 has-text-weight-bold">Projects</h2>
-        <hr class="has-background-primary">
-        <div class="chart-container">
-            <canvas id="projectChart"></canvas>
-        </div>
-    </div>
-    <div class="column">
-        <h2 class="is-4 has-text-weight-bold">Each Projects</h2>
-        <hr class="has-background-primary">
-        <div class="chart-container has-text-centered">
-            <canvas id="projectbarChart"></canvas>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const overallChart = document.getElementById('testChart');
-        new Chart(overallChart, {
-            type: "doughnut",
-            data: {
-                labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
-                datasets: [{
-                    data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-            backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']}]
-            },
-            options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        filter: function (legendItem, chartData) {
-                            const value = chartData.datasets[0].data[legendItem.index];
-                            return value !== 0;
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (tooltipItem) {
-                            const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
-                            const value = tooltipItem.raw;
-                            const percentage = ((value / total) * 100).toFixed(2);
-                            return `${tooltipItem.label}: ${value} tests (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-        });
-        const projectChart = document.getElementById('projectChart');
-        const projectbarChart = document.getElementById('projectbarChart');
 
-        const projectNames = {{{ json projectNames }}};
-        const totalTests = {{{ json totalTests }}};
-        function generateRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-        const backgroundColors = totalTests.map(() => generateRandomColor());
-        new Chart(projectChart, {
-            type: 'doughnut',
-            data: {
-                labels: projectNames,
-                datasets: [{
-                    data: totalTests,
-                    backgroundColor: backgroundColors
-                }]
+<div class="box">
+    <div class="columns">
+        <div class="column">
+            <h2 class="is-4 has-text-weight-bold">Summary</h2>
+            <hr class="has-background-primary">
+            <div class="chart-container">
+                <canvas id="testChart"></canvas>
+            </div>
+        </div>
+        <div class="column">
+            <h2 class="is-4 has-text-weight-bold">Projects</h2>
+            <hr class="has-background-primary">
+            <div class="chart-container">
+                <canvas id="projectChart"></canvas>
+            </div>
+        </div>
+        <div class="column">
+            <h2 class="is-4 has-text-weight-bold">Each Projects</h2>
+            <hr class="has-background-primary">
+            <div class="chart-container has-text-centered">
+                <canvas id="projectbarChart"></canvas>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const overallChart = document.getElementById('testChart');
+            new Chart(overallChart, {
+                type: "doughnut",
+                data: {
+                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
+                    datasets: [{
+                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
+                backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']}]
             },
-            options: {
+                options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            filter: function (legendItem, chartData) {
+                                const value = chartData.datasets[0].data[legendItem.index];
+                                return value !== 0;
+                            }
+                        }
                     },
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw + ' tests';
+                                const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+                                const value = tooltipItem.raw;
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return `${tooltipItem.label}: ${value} tests (${percentage}%)`;
                             }
                         }
                     }
                 }
             }
         });
-        const passedTests = {{ json passedTests }};
-        const failedTests = {{ json failedTests }};
-        const skippedTests = {{ json skippedTests }};
-        const retryTests = {{ json retryTests }};
-        new Chart(projectbarChart, {
-            type: 'bar',
-            data: {
-                barPercentage: 1,
-                barThickness: 6,
-                maxBarThickness: 8,
-                minBarLength: 2,
-                labels: projectNames,
-                datasets: [
-                    {
-                        label: 'Passed',
-                        data: passedTests,
-                        backgroundColor: '#28a745',
-                    },
-                    {
-                        label: 'Failed',
-                        data: failedTests,
-                        backgroundColor: '#ff6685',
-                    },
-                    {
-                        label: 'Skipped',
-                        data: skippedTests,
-                        backgroundColor: '#66d1ff',
-                    },
-                    {
-                        label: 'Flaky',
-                        data: retryTests,
-                        backgroundColor: '#ffb70f',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
+            const projectChart = document.getElementById('projectChart');
+            const projectbarChart = document.getElementById('projectbarChart');
+
+            const projectNames = {{{ json projectNames }}};
+            const totalTests = {{{ json totalTests }}};
+            function generateRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            const backgroundColors = totalTests.map(() => generateRandomColor());
+            new Chart(projectChart, {
+                type: 'doughnut',
+                data: {
+                    labels: projectNames,
+                    datasets: [{
+                        data: totalTests,
+                        backgroundColor: backgroundColors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' tests';
+                                }
+                            }
+                        }
                     }
                 }
-            }
-        });
-    </script>
+            });
+            const passedTests = {{ json passedTests }};
+            const failedTests = {{ json failedTests }};
+            const skippedTests = {{ json skippedTests }};
+            const retryTests = {{ json retryTests }};
+            new Chart(projectbarChart, {
+                type: 'bar',
+                data: {
+                    barPercentage: 1,
+                    barThickness: 6,
+                    maxBarThickness: 8,
+                    minBarLength: 2,
+                    labels: projectNames,
+                    datasets: [
+                        {
+                            label: 'Passed',
+                            data: passedTests,
+                            backgroundColor: '#28a745',
+                        },
+                        {
+                            label: 'Failed',
+                            data: failedTests,
+                            backgroundColor: '#ff6685',
+                        },
+                        {
+                            label: 'Skipped',
+                            data: skippedTests,
+                            backgroundColor: '#66d1ff',
+                        },
+                        {
+                            label: 'Flaky',
+                            data: retryTests,
+                            backgroundColor: '#ffb70f',
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    },
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8,
+                }
+            });
+        </script>
+    </div>
 </div>
