@@ -63,7 +63,10 @@
     margin-right: 0.5rem;
 }
 .content-wrapper {
-    max-height: 60vh; /* Adjust height as needed */
+    max-height: 90vh; /* Adjust height as needed */
     overflow-y: auto;
     padding: 0.5rem;
+}
+.filter.active {
+    font-weight: bold;
 }

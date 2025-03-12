@@ -25,11 +25,19 @@
                 </div>
             </div>
             <div id="tests-section" class="content-section" style="display: none;">
-                <h1 class="title is-3">Tests</h1>
-                    {{> testPanel}}
                     <div class="test-list">
                     <div class="columns">
-                        <div class="column column column is-two-fifths">
+                        <div class="column column is-two-fifths">
+                        <h1 class="title is-3">Tests</h1>
+                        <div class="columns is-multiline has-text-centered">
+                        {{> summaryCard icon="fa-solid fa-vial" filter="filter" bg="hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important" status="all" statusHeader="All Tests" statusCount=totalCount}}
+                        {{> summaryCard icon="fa fa-check-circle" filter="filter" bg="hsl(var(--bulma-success-h), var(--bulma-success-s), var(--bulma-success-l)) !important" status="passed" statusHeader="Passed" statusCount=passCount}}
+                        {{> summaryCard icon="fa fa-times-circle" filter="filter" bg="hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-danger-l)) !important" status="failed" statusHeader="Failed" statusCount=failCount}}
+                        {{> summaryCard icon="fa fa-question-circle" filter="filter" bg="hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-l)) !important" status="skipped" statusHeader="Skipped" statusCount=skipCount}}
+                        {{> summaryCard icon="fa fa-exclamation-triangle" filter="filter" bg="hsl(var(--bulma-warning-h), var(--bulma-warning-s), var(--bulma-warning-l)) !important" status="flaky" statusHeader="Flaky" statusCount=flakyCount}}
+                        {{> summaryCard icon="fa-solid fa-repeat" filter="filter" bg="#69748c" status="retry" statusHeader="Retry" statusCount=retryCount}}
+                    </div>
+                        {{> testPanel}}
                         {{> project}}
                         </div>
                         <div class="column column is-three-fifths">
@@ -40,7 +48,6 @@
             </div>
         </main>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             /**
@@ -760,10 +767,16 @@
 
                     const filters = document.querySelectorAll('.filter');
                     filters.forEach(filter => {
-                        filter.addEventListener('click', () => {
-                            filters.forEach(f => f.classList.remove('active'));
-                            filter.classList.add('active');
-                            this.applyFilters();
+                        filter.addEventListener('click', (event) => {
+                            filters.forEach(f => {
+                            f.classList.remove('active');
+                            f.style.borderRight = ''; // Reset previous border-right
+                        });
+                        const clickedFilter = event.currentTarget;
+                        clickedFilter.classList.add('active');
+                        const borderLeftColor = window.getComputedStyle(clickedFilter).borderLeftColor;
+                        clickedFilter.style.setProperty('border-right', `5px solid ${borderLeftColor}`, 'important');
+                        this.applyFilters();
                         });
                     });
                 }
