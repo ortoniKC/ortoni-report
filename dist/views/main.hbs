@@ -8,11 +8,8 @@
 
 <body>
     <div class="app-container">
-        <!-- Sidebar -->
       {{> sidebar}}
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Dashboard Section -->
             <div id="dashboard-section" class="content-section">
                 <h1 class="title is-3">Dashboard</h1>
                 <div class="columns is-multiline has-text-centered">
@@ -27,8 +24,6 @@
                     {{> userInfo}}
                 </div>
             </div>
-
-            <!-- Tests Section -->
             <div id="tests-section" class="content-section" style="display: none;">
                 <h1 class="title is-3">Tests</h1>
                     {{> testPanel}}
@@ -38,13 +33,11 @@
                         {{> project}}
                         </div>
                         <div class="column column is-three-fifths">
-                            <!-- Test Details Section -->
                             <div id="testDetails" style="display: none;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
