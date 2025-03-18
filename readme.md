@@ -1,17 +1,21 @@
-# Ortoni Report by Koushik (LetCode with Koushik)
+# Ortoni Report
 
 Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report generator tailored for Playwright tests. Designed with powerful features and customizable options, Ortoni Report simplifies the process of reviewing and managing test results, making test reporting more intuitive and accessible.
 
-### Live Demo: [Ortoni Report](https://ortoni.netlify.app/)
+### Live Demo: [Ortoni Report](https://ortoni.letcode.in/)
 
 ![Ortoni Report Preview](https://github.com/ortoniKC/ortoni-report/blob/V2.0.9/assets/images/release.gif?raw=true)
 
 ---
 
-### Key Features
+## Key Features
 
-### 1. **Organization & Grouping**
+### 1. **Organization & Navigation**
 
+- **New Sidebar Navigation**: The previous navbar has been replaced with a sidebar, offering a more structured and intuitive navigation experience.
+- **Sidebar Sections**:
+  - **Dashboard**: View overall test statistics and summaries.
+  - **Tests**: Browse detailed test results, including logs, screenshots, and errors.
 - **Hierarchical Grouping**: Tests are structured by filename, suite, and project, providing an organized overview.
 - **Test History & Detailed Breakdown**: Support for displaying up to 10 recent executions, categorized by suite and project for easy navigation.
 - **Integration and Configuration**: Easy integration with Playwright using TypeScript/JavaScript, with configurable preferences.
@@ -27,11 +31,11 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
 - **Summary Statistics**: Total tests and distribution of passed, failed, skipped, and flaky tests with success rates.
 - **Chart Visualizations**: Doughnut chart for overall status and bar charts for project-specific comparisons.
-- **Colorful and Intuitive Dashboard**: Vibrant themes for better visual appeal.
+- **All-New Colorful UI**: A vibrant, redesigned interface with better contrast and readability.
 
 ### 4. **Customization & Personalization**
 
-- **Customization & Themes**: Toggle between light/dark themes, add project details, and personalize reports.
+- **New Color Scheme**: Supports both **light and dark themes**, ensuring a comfortable viewing experience.
 - **Add Your Logo**: Configurable logo for brand personalization.
 - **Flexibility with Attachments**: Choose Base64 or file paths for screenshots.
 - **Custom Report Paths**: Set custom filenames and folder paths for reports.
@@ -42,10 +46,11 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 - **Hide Skipped Tests by Default**: Simplifies view by hiding skipped tests initially.
 - **Share Reports**: Self-contained reports for easy sharing and review.
 - **Comprehensive Filters**: Apply multiple filters simultaneously for focused insights.
+- **Meta**: Add user meta information to the reporter
 
 ---
 
-### Installation & Setup
+## Installation & Setup
 
 ### Step 1: Install Ortoni Report
 
@@ -75,6 +80,14 @@ const reportConfig: OrtoniReportConfig = {
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
+  meta: {
+    project: "Playwright",
+    version: "3.0.0",
+    description: "Playwright test report",
+    testCycle: "1",
+    release: "1.0.0",
+    platform: "Windows",
+  },
 };
 
 export default defineConfig({
@@ -100,6 +113,14 @@ const reportConfig = {
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
+  meta: {
+    project: "Playwright",
+    version: "3.0.0",
+    description: "Playwright test report",
+    testCycle: "1",
+    release: "1.0.0",
+    platform: "Windows",
+  },
 };
 
 export default defineConfig({
@@ -129,7 +150,6 @@ This command starts a local Express server and serves the generated Ortoni repor
    ```
 
    This will:
-
    - Look for the report file `ortoni-report.html` in the `ortoni-report` folder.
    - Start the server on port `2004`.
 
@@ -161,30 +181,30 @@ Replace `<port>` with the port number you specified or the default port (`2004`)
 
 ---
 
-### Changelog
+## Changelog
 
 Stay up-to-date with the latest features, improvements, and bug fixes by reviewing the [Changelog](https://github.com/ortoniKC/ortoni-report/blob/main/changelog.md).
 
-### License
+## License
 
 This project is licensed under the terms of the [LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.md).
 
-### Feedback and Contributions
+## Feedback and Contributions
 
-We encourage you to share feedback and contribute to improving Ortoni Report! For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
+I encourage you to share feedback and contribute to improving Ortoni Report! For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
 
 ## Support
 
 If you'd like to support this project, you can donate via UPI:
 
-<img src="https://raw.githubusercontent.com/ortoniKC/ortoniKC/refs/heads/main/ortoni.png" alt="ortoni@ybl" title="UPI Payment" style="width:25%; height:25%">
+![UPI Payment](https://raw.githubusercontent.com/ortoniKC/ortoniKC/refs/heads/main/ortoni.png)
 
-[Buy me coffee](https://buymeacoffee.com/letcode)
+[Buy me coffee](https://buymeacoffee.com/letcode) | [Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
 
-[Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
-
-Thank you for using **Ortoni Report**! We’re committed to providing you with a superior Playwright testing experience.
+Thank you for using **Ortoni Report**! I'm committed to providing you with a superior Playwright testing experience.
 
 ---
+**Developer & Designer**
+Koushik Chatterjee - [YouTuber](http://youtube.com/@letcode)
 
 **LetCode with Koushik**
