@@ -1,3 +1,9 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "[handlebars]": {
+        "editor.formatOnSave": false
+    },
+    "[css]": {
+        "editor.formatOnSave": false
+    }
 }

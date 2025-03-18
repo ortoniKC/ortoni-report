@@ -1,20 +1,16 @@
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg, #694F8E 0%, #B692C2 100%);
-        --flaky-gradient: linear-gradient(135deg, #ffb70f 0%, #ffd65a 100%);
+        --primary-gradient: hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important;
+        --flaky-gradient: hsl(var(--bulma-warning-h), var(--bulma-warning-s), var(--bulma-warning-l)) !important;
         --retry-gradient: linear-gradient(135deg, #94a3b8 0%, #c0cad9 100%);
-        --skip-gradient: linear-gradient(135deg, #66d1ff 0%, #99e1ff 100%);
-        --success-gradient: linear-gradient(135deg, #34d399 0%, #059669 100%);
-        --error-gradient: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
-        --glass-bg: rgba(255, 255, 255, 0.7);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --shadow-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        --skip-gradient: hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-l)) !important;
+        --success-gradient: hsl(var(--bulma-success-h), var(--bulma-success-s), var(--bulma-success-l)) !important;
+        --error-gradient: hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-danger-l)) !important;
     }
 
-    .sidebar {
-        height: 100%;
+    .projectsidebar {
         overflow-y: auto;
-        max-height: calc(100vh - 100px);
+        max-height: 60vh;
         padding: 0px 10px 0px 0px;
     }
 
@@ -32,8 +28,7 @@
         align-items: center;
         gap: 0.5rem;
         border-radius: 8px;
-        background: var(--primary-gradient);
-        color: white;
+        border-left: 3px solid var(--primary-gradient);
     }
 
     .test-suite {
@@ -54,8 +49,8 @@
     }
 
     .test-case summary {
+        border-left: transparent;
         padding: 0.35rem 0.5rem;
-        color: inherit;
         background: transparent;
         transition: background-color 0.2s ease;
     }
@@ -78,23 +73,23 @@
     }
 
     .status-passed {
-        background: var(--success-gradient);
-        color: white;
+        border-left: 4px solid var(--success-gradient);
     }
 
     .status-skipped {
-        background: var(--skip-gradient);
-        color: white;
+        border-left: 4px solid var(--skip-gradient);
     }
 
     .status-failed {
-        background: var(--error-gradient);
-        color: white;
+        border-left: 4px solid var(--error-gradient);
     }
 
     .status-flaky {
-        background: var(--flaky-gradient);
-        color: white;
+        border-left: 4px solid var(--flaky-gradient);
+    }
+
+    .status-retry {
+        border-left: 4px solid #69748c;
     }
 
     .icon-chevron {
@@ -105,6 +100,11 @@
 
     details[open]>summary .icon-chevron {
         transform: rotate(90deg);
+    }
+
+    .listselected {
+        font-weight: bold;
+        border-right: 4px solid var(--bulma-primary);
     }
 
     .duration-tag {
@@ -129,7 +129,7 @@
         animation: slideIn 0.2s ease-out;
     }
 </style>
-<div class="content sidebar">
+<div class="content projectsidebar">
     {{#if showProject}}
     {{#each groupedResults}}
     <details class="test-group">

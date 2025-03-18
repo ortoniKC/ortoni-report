@@ -1,5 +1,24 @@
 # Change Log:
 
+## v3.0.0
+
+#### 📦 New Features
+1. **SideBar**:
+
+   - Navbar is removed and a new side bar is introduces.
+   - Summay and Tests in 2 different section
+
+2. **New Color Scheme**:
+    - All new design to enhance the user viewing and exploring options
+    - New Color scheme supports both dark and light theme
+
+3. **Meta section**:
+   -  User can add meta information about the project or release cycle (Refer to the example)
+
+4. **Overall redisgn**:
+    - A new fresh UI look and perfomance increase
+
+
 ## v2.0.9
 
 #### 📦 New Features
