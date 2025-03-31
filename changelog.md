@@ -10,11 +10,14 @@
 
 2. **Bundler size**:
 
-  - Reduced bundler package size from 5 mb to 407.4 kb
-  - Reduced bundler unpacked size from 5 mb to 1.9 mb  
+  - Reduced bundler package size from 1.20 mB to 104 kB
+  - Reduced bundler unpacked size from 5 mB to 760 kB  
 
 3. **Test History**    
   - Improved test history UI
+
+4. **Chart**
+  - Improved chart layout with plot area chart for summary  
 
 
 ## v3.0.0
