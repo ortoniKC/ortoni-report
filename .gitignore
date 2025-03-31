@@ -7,6 +7,6 @@ dist/ortoni-report.d.ts
 dist/ortoni-report.js
 dist/ortoni-report.mjs
 dist/cli
-dist/chunk-RHM5OWYN.mjs
 dist/*.mjs
 dist/*d.mts
+*.tgz

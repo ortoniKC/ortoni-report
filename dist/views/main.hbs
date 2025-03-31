@@ -11,7 +11,11 @@
       {{> sidebar}}
         <main class="main-content">
             <div id="dashboard-section" class="content-section">
+                {{#if logo}}
+                <img src="{{logo}}" alt="{{projectName}}" class="logoimage" />
+                {{else}}
                 <h1 class="title is-3">Dashboard</h1>
+                {{/if}}
                 <div class="columns is-multiline has-text-centered">
                     {{> summaryCard bg="hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important" status="all" statusHeader="All Tests" statusCount=totalCount}}
                     {{> summaryCard bg="hsl(var(--bulma-success-h), var(--bulma-success-s), var(--bulma-success-l)) !important" status="passed" statusHeader="Passed" statusCount=passCount}}
@@ -916,19 +920,20 @@
             }
 
             /**
-             * ====================================
-             * HISTORY MANAGER
-             * ====================================
-             */
+ * ====================================
+ * HISTORY MANAGER
+ * ====================================
+ */
             class HistoryManager {
                 /**
                  * Initialize the history manager
                  * @param {Array} testHistory - Test history data
                  */
                 constructor(testHistory) {
-                    this.testHistory = testHistory;
-                    this.testHistoriesMap = null;
-                    this.testHistoryTitle = '';
+                    this.testHistory = testHistory
+                    this.testHistoriesMap = null
+                    this.testHistoryTitle = ""
+                    this.activeErrorModal = null
                 }
 
                 /**
@@ -937,68 +942,188 @@
                  * @param {string} title - Test title
                  */
                 setCurrentHistory(historyMap, title) {
-                    this.testHistoriesMap = historyMap;
-                    this.testHistoryTitle = title;
+                    this.testHistoriesMap = historyMap
+                    this.testHistoryTitle = title
                 }
 
                 /**
                  * Open history modal
                  */
                 openHistory() {
-                    const historyElement = document.getElementById("historyModal");
-                    historyElement.classList.add('is-active');
+                    const historyElement = document.getElementById("historyModal")
+                    historyElement.classList.add("is-active")
 
-                    let historyContent = '';
+                    let historyContent = ""
                     if (this.testHistoriesMap && this.testHistoriesMap.length > 0) {
-                        historyContent = this.testHistoriesMap.map((h, index) => `
-                            <tr>
-                                <td>${h.run_date}</td>
-                                <td>${h.status}</td>
-                                <td>${h.duration}</td>
-                                ${h.error_message ? `<td><div class="modal" id="${index}">
+                        historyContent = this.testHistoriesMap
+                            .map(
+                                (h, index) => `
+                <tr>
+                    <td>${h.run_date}</td>
+                    <td>
+                        <span class="tag is-${this.getStatusClass(h.status)}">
+                            ${h.status}
+                        </span>
+                    </td>
+                    <td>${h.duration}</td>
+                    <td>
+                        ${h.error_message
+                                        ? `<div class="modal" id="error-${index}">
                                 <div class="modal-background"></div>
-                                <div class="modal-content">
-                                <pre><code>${h.error_message}</code></pre>
+                                <div class="modal-card">
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title">
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-exclamation-triangle"></i>
+                                                </span>
+                                                <span>Error Details</span>
+                                            </span>
+                                        </p>
+                                        <button class="delete" aria-label="close" onclick="closeErrorModal('error-${index}')"></button>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <div class="notification is-danger is-light">
+                                            <pre><code>${h.error_message}</code></pre>
+                                        </div>
+                                    </section>
+                                    <footer class="modal-card-foot">
+                                        <button class="button is-primary" onclick="closeErrorModal('error-${index}')">Close</button>
+                                    </footer>
                                 </div>
-                                <button class="button is-primary" onclick="closeErrorModal(${index})">Close</button>
-                                </div><a class="button is-link" onclick="showHistoryErrorMessage(${index})">Show error</a></td>` : '<td>No Error</td>'}
-                            </tr>
-                        `).join('');
+                            </div>
+                            <button class="button is-small is-link" onclick="showHistoryErrorMessage('error-${index}')">
+                                <span class="icon">
+                                    <i class="fa-solid fa-exclamation-triangle"></i>
+                                </span>
+                                <span>View Error</span>
+                            </button>`
+                                        : '<span class="tag is-success is-light">No Error</span>'
+                                    }
+                    </td>
+                </tr>
+            `,
+                            )
+                            .join("")
                     } else {
-                        historyContent = '<p class="title">No history available</p>';
+                        historyContent = `
+                <tr>
+                    <td colspan="4">
+                        <div class="notification is-info is-light">
+                            <p class="has-text-centered">
+                                <span class="icon">
+                                    <i class="fa-solid fa-info-circle"></i>
+                                </span>
+                                <span>No history available for this test.</span>
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            `
                     }
 
                     historyElement.innerHTML = `
-                        <div class="modal-background"></div>
-                        <div class="modal-card">
-                            <header class="modal-card-head">
-                                <p class="modal-card-title">${this.testHistoryTitle}</p>
-                                <button class="button is-primary" onclick="closeHistoryModal()">Close</button>
-                            </header>
-                            <section class="modal-card-body">
-                                <table class="table is-hoverable is-fullwidth">
-                                    <thead>
-                                        <tr>
-                                            <th title="Run Date">Run Date</th>
-                                            <th title="Status">Status</th>
-                                            <th title="Duration">Duration</th>
-                                            <th title="Reason">Reason</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${historyContent}
-                                    </tbody>
-                                </table>
-                            </section>
-                        </div>
-                    `;
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="fa-solid fa-history"></i>
+                            </span>
+                            <span>Test History: ${this.testHistoryTitle}</span>
+                        </span>
+                    </p>
+                    <button class="delete" aria-label="close" onclick="closeHistoryModal()"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="table-container">
+                        <table class="table is-hoverable is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th title="Run Date">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-calendar"></i>
+                                            </span>
+                                            <span>Run Date</span>
+                                        </span>
+                                    </th>
+                                    <th title="Status">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-check-circle"></i>
+                                            </span>
+                                            <span>Status</span>
+                                        </span>
+                                    </th>
+                                    <th title="Duration">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-clock"></i>
+                                            </span>
+                                            <span>Duration</span>
+                                        </span>
+                                    </th>
+                                    <th title="Details">
+                                        <span class="icon-text">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-info-circle"></i>
+                                            </span>
+                                            <span>Details</span>
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${historyContent}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-primary" onclick="closeHistoryModal()">Close</button>
+                </footer>
+            </div>
+        `
+
+                    // Add keyboard event listener for ESC key
+                    document.addEventListener("keydown", this.handleEscKeyPress)
+                }
+
+                /**
+                 * Get status class based on test status
+                 * @param {string} status - Test status
+                 * @returns {string} CSS class
+                 */
+                getStatusClass(status) {
+                    if (status && status.startsWith("passed")) return "success"
+                    if (status === "flaky") return "warning"
+                    if (status === "failed") return "danger"
+                    if (status === "skipped") return "info"
+                    if (status && status.includes("retry")) return "link"
+                    return "dark"
+                }
+
+                /**
+                 * Handle ESC key press to close modal
+                 * @param {KeyboardEvent} event - Keyboard event
+                 */
+                handleEscKeyPress = (event) => {
+                    if (event.key === "Escape") {
+                        this.closeHistoryModal()
+                    }
                 }
 
                 /**
                  * Close history modal
                  */
                 closeHistoryModal() {
-                    document.getElementById("historyModal").classList.remove('is-active');
+                    const historyElement = document.getElementById("historyModal")
+                    historyElement.classList.remove("is-active")
+
+                    // Remove keyboard event listener
+                    document.removeEventListener("keydown", this.handleEscKeyPress)
                 }
 
                 /**
@@ -1006,10 +1131,17 @@
                  * @param {string} modalId - Modal ID
                  */
                 showHistoryErrorMessage(modalId) {
-                    document.getElementById(modalId)?.classList.add('is-active');
+                    document.getElementById(modalId)?.classList.add("is-active")
+                }
+
+                /**
+                 * Close error modal
+                 * @param {string} modalId - Modal ID
+                 */
+                closeErrorModal(modalId) {
+                    document.getElementById(modalId)?.classList.remove("is-active")
                 }
             }
-
             /**
              * ====================================
              * MOBILE RESPONSIVE MANAGER

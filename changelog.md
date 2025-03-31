@@ -1,22 +1,45 @@
 # Change Log:
 
+## v3.0.1
+
+#### 👌 Improvements
+
+1. **Logo**:
+  - Add project specific logo to the dashboard page
+  - If logo is present then Dashboar text is hidden
+
+2. **Bundler size**:
+  - Reduced bundler package size from 1.20 mB to 104 kB
+  - Reduced bundler unpacked size from 5 mB to 760 kB  
+
+3. **Test History**    
+  - Improved test history UI
+
+4. **Chart**
+  - Improved chart layout with plot area chart for summary
+
+#### 🐛 Fixes
+
+1. Percentage is taking retry also in count #64
+
+
 ## v3.0.0
 
 #### 📦 New Features
 1. **SideBar**:
 
-   - Navbar is removed and a new side bar is introduces.
-   - Summay and Tests in 2 different section
+  - Navbar is removed and a new side bar is introduces.
+  - Summay and Tests in 2 different section
 
 2. **New Color Scheme**:
-    - All new design to enhance the user viewing and exploring options
-    - New Color scheme supports both dark and light theme
+  - All new design to enhance the user viewing and exploring options
+  - New Color scheme supports both dark and light theme
 
 3. **Meta section**:
-   -  User can add meta information about the project or release cycle (Refer to the example)
+  -  User can add meta information about the project or release cycle (Refer to the example)
 
 4. **Overall redisgn**:
-    - A new fresh UI look and perfomance increase
+  - A new fresh UI look and perfomance increase
 
 
 ## v2.0.9

@@ -113,16 +113,27 @@
         <script>
             const overallChart = document.getElementById('testChart');
             new Chart(overallChart, {
-                type: "doughnut",
+                type: "polarArea",
                 data: {
                     labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
-                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
-                backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']}]
-            },
+                        data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}, {{ retryCount }}],
+                backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f', '#69748c']}]
+                },
                 options: {
+                scales: {
+                    r: {
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
+                borderJoinStyle: 'bevel',
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -145,7 +156,8 @@
                     }
                 }
             }
-        });
+            });
+           
             const projectChart = document.getElementById('projectChart');
             const projectbarChart = document.getElementById('projectbarChart');
 
@@ -190,6 +202,8 @@
             const failedTests = {{ json failedTests }};
             const skippedTests = {{ json skippedTests }};
             const retryTests = {{ json retryTests }};
+            const flakyTests = {{ json flakyTests }};
+
             new Chart(projectbarChart, {
                 type: 'bar',
                 data: {
@@ -216,8 +230,13 @@
                         },
                         {
                             label: 'Flaky',
-                            data: retryTests,
+                            data: flakyTests,
                             backgroundColor: '#ffb70f',
+                        },
+                        {
+                            label: 'Retry',
+                            data: retryTests,
+                            backgroundColor: '#69748c',
                         }
                     ]
                 },

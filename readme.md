@@ -1,10 +1,10 @@
 # Ortoni Report
 
-Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report generator tailored for Playwright tests. Designed with powerful features and customizable options, Ortoni Report simplifies the process of reviewing and managing test results, making test reporting more intuitive and accessible.
+A comprehensive and visually appealing HTML report generator tailored for Playwright tests. Designed with powerful features and customizable options, Ortoni Report simplifies the process of reviewing and managing test results, making test reporting more intuitive and accessible.
 
 ### Live Demo: [Ortoni Report](https://ortoni.letcode.in/)
 
-![Ortoni Report Preview](https://github.com/ortoniKC/ortoni-report/blob/V2.0.9/assets/images/release.gif?raw=true)
+![Ortoni Report Preview](assets/ortoni-report.gif)
 
 ---
 
@@ -12,7 +12,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 
 ### 1. **Organization & Navigation**
 
-- **New Sidebar Navigation**: The previous navbar has been replaced with a sidebar, offering a more structured and intuitive navigation experience.
+- **Sidebar Navigation**: Offering a more structured and intuitive navigation experience.
 - **Sidebar Sections**:
   - **Dashboard**: View overall test statistics and summaries.
   - **Tests**: Browse detailed test results, including logs, screenshots, and errors.
@@ -30,7 +30,7 @@ Welcome to **Ortoni Report**, a comprehensive and visually appealing HTML report
 ### 3. **Visualization & Insights**
 
 - **Summary Statistics**: Total tests and distribution of passed, failed, skipped, and flaky tests with success rates.
-- **Chart Visualizations**: Doughnut chart for overall status and bar charts for project-specific comparisons.
+- **Chart Visualizations**: Plotarea chart for overall status, doghnut for projects and bar charts for project-specific comparisons.
 - **All-New Colorful UI**: A vibrant, redesigned interface with better contrast and readability.
 
 ### 4. **Customization & Personalization**
@@ -72,11 +72,12 @@ const reportConfig: OrtoniReportConfig = {
   open: process.env.CI ? "never" : "always", // default to never
   folderPath: "report-db",
   filename: "index.html",
+  logo:"logo.{png, jpg}",
   title: "Ortoni Test Report",
   showProject: !true,
   projectName: "Ortoni-Report",
   testType: "e2e",
-  authorName: "Koushik (LetCode with Koushik)",
+  authorName: "Koushik",
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
@@ -105,11 +106,12 @@ const reportConfig = {
   open: process.env.CI ? "never" : "always",
   folderPath: "report-db",
   filename: "index.html",
+  logo:"logo.{png, jpg}",
   title: "Ortoni Test Report",
   showProject: !true,
   projectName: "Ortoni-Report",
   testType: "e2e",
-  authorName: "Koushik (LetCode with Koushik)",
+  authorName: "Koushik",
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
@@ -205,6 +207,6 @@ Thank you for using **Ortoni Report**! I'm committed to providing you with a sup
 
 ---
 **Developer & Designer**
-Koushik Chatterjee - [YouTuber](http://youtube.com/@letcode)
+[Koushik Chatterjee](https://letcode.in/contact)
 
 **LetCode with Koushik**

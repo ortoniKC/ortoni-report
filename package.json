@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "tsc": "tsc",
@@ -20,12 +20,13 @@
     "url": "git+https://github.com/ortoniKC/ortoni-report"
   },
   "keywords": [
-    "playwright report",
-    "playwright letcode",
-    "letcode koushik",
-    "ortoni report",
+    "playwright",
+    "letcode",
+    "koushik",
+    "ortoni",
     "ortoni-report",
-    "playwright html"
+    "report",
+    "reporter"
   ],
   "author": "Koushik Chatterjee (LetCode with Koushik)",
   "license": "GPL-3.0-only",
@@ -38,14 +39,14 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.2",
     "@types/sqlite3": "^3.1.11",
-    "ansi-to-html": "^0.7.2",
-    "commander": "^12.1.0",
-    "express": "^4.21.1",
-    "handlebars": "^4.7.8",
     "tsup": "^8.4.0",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
+    "ansi-to-html": "^0.7.2",
+    "commander": "^12.1.0",
+    "express": "^4.21.1",
+    "handlebars": "^4.7.8",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
