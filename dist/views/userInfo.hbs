@@ -113,16 +113,27 @@
         <script>
             const overallChart = document.getElementById('testChart');
             new Chart(overallChart, {
-                type: "doughnut",
+                type: "polarArea",
                 data: {
                     labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
                     datasets: [{
                         data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}],
                 backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f']}]
-            },
+                },
                 options: {
+                scales: {
+                    r: {
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
+                borderJoinStyle: 'bevel',
                 plugins: {
                     legend: {
                         position: 'bottom',
