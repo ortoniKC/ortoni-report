@@ -51,7 +51,7 @@ export class HTMLGenerator {
   ) {
     const totalTests = filteredResults.length;
     const passedTests = results.filter((r) => r.status === "passed").length;
-    const flakyTests = results.filter((r) => r.flaky === "flaky").length;
+    const flakyTests = results.filter((r) => r.status === "flaky").length;
     const failed = filteredResults.filter(
       (r) => r.status === "failed" || r.status === "timedOut"
     ).length;
@@ -131,7 +131,8 @@ export class HTMLGenerator {
         ).length,
         skippedTests: allProjectTests.filter((r) => r.status === "skipped")
           .length,
-        retryTests: allProjectTests.filter((r) => r.status === "flaky").length,
+        retryTests: allProjectTests.filter((r) => r.isRetry).length,
+        flakyTests: allProjectTests.filter((r) => r.status === "flaky").length,
         totalTests: projectTests.length,
       };
     });
@@ -147,6 +148,7 @@ export class HTMLGenerator {
       failedTests: projectResults.map((result) => result.failedTests),
       skippedTests: projectResults.map((result) => result.skippedTests),
       retryTests: projectResults.map((result) => result.retryTests),
+      flakyTests: projectResults.map((result) => result.flakyTests),
     };
   }
 
