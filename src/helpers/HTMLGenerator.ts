@@ -175,7 +175,6 @@ export class HTMLGenerator {
   private registerPartials() {
     [
       "head",
-      "navbar",
       "sidebar",
       "testPanel",
       "summaryCard",
