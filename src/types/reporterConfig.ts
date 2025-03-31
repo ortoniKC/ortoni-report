@@ -49,8 +49,9 @@ export interface OrtoniReportConfig {
   base64Image?: boolean;
   /**
    * The local relative of the logo image.
-   * Recommended to keep within the ${folderPath} folder
-   * @example "folderPath/logo.png"
+   * Recommended to keep within the report genrated folder.
+   * @default "ortoni-report/logo.png"
+   * @example "logo.png"
    */
   logo?: string;
   /**
