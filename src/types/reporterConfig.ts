@@ -83,4 +83,9 @@ export interface OrtoniReportConfig {
    * @example { "key": "value" } as string
    */
   meta?: Record<string, string>;
+
+  /**
+   * Chart type on the dashboard.
+   * @example "doughnut" | "pie"   */
+  chartType?: "doughnut" | "pie";
 }

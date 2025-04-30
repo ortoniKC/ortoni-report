@@ -107,6 +107,7 @@ export class HTMLGenerator {
       allTags: Array.from(allTags),
       showProject: this.ortoniConfig.showProject || false,
       title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
+      chartType: this.ortoniConfig.chartType || "pie",
       ...this.extractProjectStats(projectResults),
     };
   }
