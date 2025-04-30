@@ -25,7 +25,6 @@
                     {{> summaryCard bg="#69748c" status="retry" statusHeader="Retry" statusCount=retryCount}}
                 </div>
                 {{> userInfo}}
-                {{> analytics}}
             </div>
             <div id="tests-section" class="content-section" style="display: none;">
                     <div class="test-list">
@@ -48,6 +47,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div id="analytics-section" class="content-section" style="display: none;">
+                {{> analytics}}
             </div>
         </main>
     </div>
@@ -136,6 +138,7 @@
                     this.sidebarLinks = document.querySelectorAll('.sidebar-menu-link');
                     this.sections = document.querySelectorAll('.content-section');
                     this.testDetailsSection = document.getElementById('testDetails');
+                    this.analyticsSection = document.getElementById('analytics-section');
                     this.sidebar = document.getElementById('sidebar');
                     this.mainContent = document.querySelector('.main-content');
                     this.init();
@@ -179,6 +182,7 @@
                 showSection(sectionId) {
                     // Hide test details if showing a main section
                     this.testDetailsSection.style.display = 'none';
+                    this.analyticsSection.style.display = 'none';
                     
                     // Show the selected section
                     this.sections.forEach(section => {
