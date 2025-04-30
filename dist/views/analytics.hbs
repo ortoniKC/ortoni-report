@@ -1,4 +1,4 @@
-<div class="container">
+<div> 
   <h1 class="title is-3">Test Analytics Dashboard</h1>
   <div class="columns is-multiline has-text-centered">
     {{> summaryCard bg="hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important"
@@ -7,44 +7,37 @@
     statusHeader="Total Tests" statusCount=reportAnalyticsData.summary.totalTests}}
     {{> summaryCard bg="hsl(var(--bulma-success-h), var(--bulma-success-s), var(--bulma-success-l)) !important"
     status="Passed" statusHeader="Passed" statusCount=reportAnalyticsData.summary.passed}}
-    {{> summaryCard bg="hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-danger-l)) !important" status="Failed"
+    {{> summaryCard bg="hsl(var(--bulma-danger-h), var(--bulma-danger-s), var(--bulma-danger-l)) !important"
+    status="Failed"
     statusHeader="Failed" statusCount=reportAnalyticsData.summary.failed}}
-    {{> summaryCard bg="hsl(var(--bulma-primary-h), var(--bulma-primary-s), var(--bulma-primary-l)) !important"
-     statusHeader="Pass Rate" statusCount=reportAnalyticsData.summary.passRate}}
+    {{> summaryCard bg="hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-l)) !important"
+    statusHeader="Pass Rate" statusCount=reportAnalyticsData.summary.passRate}}
     {{> summaryCard bg="#69748c" statusHeader="Avg Duration" statusCount=reportAnalyticsData.summary.avgDuration}}
   </div>
-  <!-- Trends Chart -->
+
   <section class="box">
     <h2 class="title is-4">Trends Over Time</h2>
     <canvas id="trendChart" height="100"></canvas>
   </section>
 
-  <!-- Flaky Tests -->
   <section class="box">
     <h2 class="title is-4">Top Flaky Tests</h2>
     <table class="table is-striped is-fullwidth">
       <thead>
         <tr>
           <th>Test ID</th>
-          <th>Passed</th>
-          <th>Failed</th>
-          <th>Total</th>
         </tr>
       </thead>
       <tbody>
         {{#each reportAnalyticsData.flakyTests}}
         <tr>
           <td>{{this.test_id}}</td>
-          <td>{{this.passed}}</td>
-          <td>{{this.failed}}</td>
-          <td>{{this.total}}</td>
         </tr>
         {{/each}}
       </tbody>
     </table>
   </section>
 
-  <!-- Slowest Tests -->
   <section class="box">
     <h2 class="title is-4">Slowest Tests</h2>
     <table class="table is-striped is-fullwidth">

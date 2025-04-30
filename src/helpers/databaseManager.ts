@@ -245,7 +245,7 @@ export class DatabaseManager {
     }
   }
 
-  async getFlakyTests(limit = 10): Promise<{ test_id: string; passed: number; failed: number; total: number }[]> {
+  async getFlakyTests(limit = 10): Promise<{ test_id: string; total: number }[]> {
     if (!this.db) {
       console.error('OrtoniReport: Database not initialized');
       return [];
@@ -256,12 +256,11 @@ export class DatabaseManager {
       SELECT
         test_id,
         COUNT(*) AS total,
-        SUM(CASE WHEN status = 'passed' THEN 1 ELSE 0 END) AS passed,
-        SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed
+        SUM(CASE WHEN status = 'flaky' THEN 1 ELSE 0 END) AS flaky
       FROM test_results
       GROUP BY test_id
-      HAVING passed > 0 AND failed > 0
-      ORDER BY failed DESC
+      HAVING flaky > 0
+      ORDER BY flaky DESC
       LIMIT ?
     `, [limit]);
     } catch (error) {
