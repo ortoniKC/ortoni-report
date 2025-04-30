@@ -4,6 +4,7 @@ import { groupResults } from "../utils/groupProjects";
 import {
   formatDate,
   formatDateLocal,
+  formatDateNoTimezone,
   formatDateUTC,
   safeStringify,
 } from "../utils/utils";
@@ -53,7 +54,7 @@ export class HTMLGenerator {
   }
   async chartTrendData() {
     return {
-      labels: (await this.getReportData()).trends.map(t => t.run_date),
+      labels: (await this.getReportData()).trends.map(t => formatDateNoTimezone(t.run_date)),
       passed: (await this.getReportData()).trends.map(t => t.passed),
       failed: (await this.getReportData()).trends.map(t => t.failed),
       avgDuration: (await this.getReportData()).trends.map(t => t.avg_duration),
