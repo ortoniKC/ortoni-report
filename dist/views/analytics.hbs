@@ -11,8 +11,8 @@
     status="Failed"
     statusHeader="Failed" statusCount=reportAnalyticsData.summary.failed}}
     {{> summaryCard bg="hsl(var(--bulma-info-h), var(--bulma-info-s), var(--bulma-info-l)) !important"
-    statusHeader="Pass Rate" statusCount=reportAnalyticsData.summary.passRate}}
-    {{> summaryCard bg="#69748c" statusHeader="Avg Duration" statusCount=reportAnalyticsData.summary.avgDuration}}
+    statusHeader="Pass Rate: %" statusCount=reportAnalyticsData.summary.passRate}}
+    {{> summaryCard bg="#69748c" statusHeader="Avg Duration (ms)" statusCount=reportAnalyticsData.summary.avgDuration}} 
   </div>
 
   <section class="box">
