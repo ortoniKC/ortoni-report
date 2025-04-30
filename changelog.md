@@ -1,5 +1,18 @@
 # Change Log:
 
+## v3.0.2
+
+#### 📦 New Features
+1. Test Analytics dashboard
+  - Shows summary of total runs, totals test, passed, failed, pass rate and average duration
+  - Trends over time - upto 30 runs
+  - Top flaky test list
+  - slowest test list with average duration
+
+#### 👌 Improvements
+1. Set chart option as pie or doughnut for summary and projects
+
+
 ## v3.0.1
 
 #### 👌 Improvements

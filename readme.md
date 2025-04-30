@@ -12,41 +12,51 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 
 ### 1. **Organization & Navigation**
 
-- **Sidebar Navigation**: Offering a more structured and intuitive navigation experience.
-- **Sidebar Sections**:
-  - **Dashboard**: View overall test statistics and summaries.
-  - **Tests**: Browse detailed test results, including logs, screenshots, and errors.
-- **Hierarchical Grouping**: Tests are structured by filename, suite, and project, providing an organized overview.
-- **Test History & Detailed Breakdown**: Support for displaying up to 10 recent executions, categorized by suite and project for easy navigation.
-- **Integration and Configuration**: Easy integration with Playwright using TypeScript/JavaScript, with configurable preferences.
-- **Advanced Filtering**: Filters for project, tags, and status, with the ability to reset for a full view.
+- **Sidebar Navigation**: Enjoy a clean and structured layout for seamless navigation.
+- **Sections**:
+  - **Dashboard**: High-level overview of test analytics and trends.
+  - **Tests**: Dive into individual test details including logs, screenshots, and errors.
+  - **Analytics**: Track overall execution metrics, trends, and flaky/slow test insights.
+- **Hierarchical Grouping**: Tests are organized by filename, suite, and project for better traceability.
+- **Test History View**: Access up to 10 recent executions, categorized by suite and project.
+- **Configurable Integration**: Easy setup with Playwright using TypeScript/JavaScript, along with customizable preferences.
+- **Advanced Filtering**: Filter by project, tags, and status — with a reset option for full visibility.
 
 ### 2. **Detailed Reporting**
 
-- **Comprehensive Test Details**: Status, duration, tags, errors, logs, screenshots, videos, and trace data.
-- **Test Attachments**: Screenshots, videos, trace viewer, steps, error stack trace, and console logs.
-- **Selected Status Display**: The UI highlights the active status filter for clarity.
+- **Comprehensive Test Data**: Includes status, duration, tags, logs, errors, screenshots, videos, and trace viewer.
+- **Native Trace Viewer**: Directly open the trace viewer within the reporter.
 
 ### 3. **Visualization & Insights**
 
-- **Summary Statistics**: Total tests and distribution of passed, failed, skipped, and flaky tests with success rates.
-- **Chart Visualizations**: Plotarea chart for overall status, doghnut for projects and bar charts for project-specific comparisons.
-- **All-New Colorful UI**: A vibrant, redesigned interface with better contrast and readability.
+- **Test Analytics Dashboard** 🌟 **(New!)**
+  - Summary of total test runs, passed/failed counts, pass rate, and average duration.
+  - **Trends Over Time**: Line chart showing test results across the last 30 runs.
+  - **Top Flaky Tests**: Identify unstable tests quickly.
+  - **Slowest Tests**: View tests with highest average durations.
+
+- **Chart Visualizations**:
+  - Pie or doughnut charts for test summary and per-project breakdowns **(Improved!)**
+  - Bar charts for project-specific comparisons.
+  - **Line Chart for Trends**: Visualize execution status progression over time.
+
+- **Colorful UI**: Redesigned with vibrant, high-contrast visuals for improved readability and engagement.
 
 ### 4. **Customization & Personalization**
 
-- **New Color Scheme**: Supports both **light and dark themes**, ensuring a comfortable viewing experience.
-- **Add Your Logo**: Configurable logo for brand personalization.
-- **Flexibility with Attachments**: Choose Base64 or file paths for screenshots.
-- **Custom Report Paths**: Set custom filenames and folder paths for reports.
+- **Theme Support**: Switch between **light** and **dark** themes for a comfortable viewing experience.
+- **Custom Branding**: Add your company or project logo for a branded look.
+- **Flexible Attachments**: Choose between Base64 or file path formats for media files.
+- **Custom Paths**: Define report filenames and output folders as needed.
 
 ### 5. **User Experience & Usability**
 
-- **Advanced Search and Reset**: Search tests with keywords or criteria, with reset options.
-- **Hide Skipped Tests by Default**: Simplifies view by hiding skipped tests initially.
-- **Share Reports**: Self-contained reports for easy sharing and review.
-- **Comprehensive Filters**: Apply multiple filters simultaneously for focused insights.
-- **Meta**: Add user meta information to the reporter
+- **Search & Reset**: Quickly search by keyword or status, with easy reset controls.
+- **Skip Management**: Skipped tests are hidden by default to declutter views.
+- **Self-Contained Reports**: Easily share and review offline-friendly reports.
+- **Multi-Filters**: Combine filters for targeted test analysis.
+- **Meta Information**: Add custom user or environment metadata to reports.
+- **CLI**: Open the reporter anytime using the builin CLI
 
 ---
 
@@ -81,6 +91,7 @@ const reportConfig: OrtoniReportConfig = {
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
+  chartType: "doughnut" | "pie";
   meta: {
     project: "Playwright",
     version: "3.0.0",
@@ -115,6 +126,7 @@ const reportConfig = {
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
+  chartType: "doughnut" | "pie";
   meta: {
     project: "Playwright",
     version: "3.0.0",
