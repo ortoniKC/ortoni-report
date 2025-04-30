@@ -43,6 +43,23 @@ export class HTMLGenerator {
     return template({ ...data, inlineCss: cssContent });
   }
 
+  async getReportData() {
+    return {
+      summary: await this.dbManager.getSummaryData(),
+      trends: await this.dbManager.getTrends(),
+      flakyTests: await this.dbManager.getFlakyTests(),
+      slowTests: await this.dbManager.getSlowTests(),
+    };
+  }
+  async chartTrendData() {
+    return {
+      labels: (await this.getReportData()).trends.map(t => t.run_date),
+      passed: (await this.getReportData()).trends.map(t => t.passed),
+      failed: (await this.getReportData()).trends.map(t => t.failed),
+      avgDuration: (await this.getReportData()).trends.map(t => t.avg_duration),
+    }
+  };
+
   private async prepareReportData(
     filteredResults: TestResultData[],
     totalDuration: string,
@@ -108,6 +125,8 @@ export class HTMLGenerator {
       showProject: this.ortoniConfig.showProject || false,
       title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
       chartType: this.ortoniConfig.chartType || "pie",
+      reportAnalyticsData: await this.getReportData(),
+      chartData: await this.chartTrendData(),
       ...this.extractProjectStats(projectResults),
     };
   }
@@ -185,6 +204,7 @@ export class HTMLGenerator {
       "project",
       "testStatus",
       "testIcons",
+      "analytics",
     ].forEach((partialName) => {
       Handlebars.registerPartial(
         partialName,
