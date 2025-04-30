@@ -125,12 +125,21 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: {
+                                filter: function (legendItem, chartData) {
+                                    const value = chartData.datasets[0].data[legendItem.index];
+                                    return value !== 0;
+                                }
+                            }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function (tooltipItem) {
-                                    return tooltipItem.label + ': ' + tooltipItem.raw + ' tests';
+                                    const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = tooltipItem.raw;
+                                    const percentage = ((value / total) * 100).toFixed(2);
+                                    return `${tooltipItem.label}: ${value} tests (${percentage}%)`;
                                 }
                             }
                         }
