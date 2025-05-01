@@ -159,4 +159,140 @@ export class DatabaseManager {
       }
     }
   }
+
+  async getSummaryData(): Promise<{
+    totalRuns: number;
+    totalTests: number;
+    passed: number;
+    failed: number;
+    passRate: number;
+    avgDuration: number;
+  }> {
+    if (!this.db) {
+      console.error('OrtoniReport: Database not initialized');
+      return {
+        totalRuns: 0,
+        totalTests: 0,
+        passed: 0,
+        failed: 0,
+        passRate: 0,
+        avgDuration: 0,
+      };
+    }
+
+    try {
+      const summary = await this.db.get(`
+      SELECT
+        (SELECT COUNT(*) FROM test_runs) as totalRuns,
+        (SELECT COUNT(*) FROM test_results) as totalTests,
+        (SELECT COUNT(*) FROM test_results WHERE status = 'passed') as passed,
+        (SELECT COUNT(*) FROM test_results WHERE status = 'failed') as failed,
+        (SELECT AVG(CAST(duration AS FLOAT)) FROM test_results) as avgDuration
+    `);
+
+      const passRate = summary.totalTests
+        ? ((summary.passed / summary.totalTests) * 100).toFixed(2)
+        : 0;
+
+      return {
+        totalRuns: summary.totalRuns,
+        totalTests: summary.totalTests,
+        passed: summary.passed,
+        failed: summary.failed,
+        passRate: parseFloat(passRate.toString()),
+        avgDuration: Math.round(summary.avgDuration || 0),
+      };
+    } catch (error) {
+      console.error('OrtoniReport: Error getting summary data:', error);
+      return {
+        totalRuns: 0,
+        totalTests: 0,
+        passed: 0,
+        failed: 0,
+        passRate: 0,
+        avgDuration: 0,
+      };
+    }
+  }
+
+  async getTrends(limit = 30): Promise<{ run_date: string; passed: number; failed: number; avg_duration: number }[]> {
+    if (!this.db) {
+      console.error('OrtoniReport: Database not initialized');
+      return [];
+    }
+
+    try {
+      const rows = await this.db.all(`
+      SELECT trun.run_date,
+        SUM(CASE WHEN tr.status = 'passed' THEN 1 ELSE 0 END) AS passed,
+        SUM(CASE WHEN tr.status = 'failed' THEN 1 ELSE 0 END) AS failed,
+        AVG(CAST(tr.duration AS FLOAT)) AS avg_duration
+      FROM test_results tr
+      JOIN test_runs trun ON tr.run_id = trun.id
+      GROUP BY trun.run_date
+      ORDER BY trun.run_date DESC
+      LIMIT ?
+    `, [limit]);
+
+      return rows.map(row => ({
+        ...row,
+        run_date: formatDateLocal(row.run_date),
+        avg_duration: Math.round(row.avg_duration || 0),
+      }));
+    } catch (error) {
+      console.error('OrtoniReport: Error getting trends data:', error);
+      return [];
+    }
+  }
+
+  async getFlakyTests(limit = 10): Promise<{ test_id: string; total: number }[]> {
+    if (!this.db) {
+      console.error('OrtoniReport: Database not initialized');
+      return [];
+    }
+
+    try {
+      return await this.db.all(`
+      SELECT
+        test_id,
+        COUNT(*) AS total,
+        SUM(CASE WHEN status = 'flaky' THEN 1 ELSE 0 END) AS flaky
+      FROM test_results
+      GROUP BY test_id
+      HAVING flaky > 0
+      ORDER BY flaky DESC
+      LIMIT ?
+    `, [limit]);
+    } catch (error) {
+      console.error('OrtoniReport: Error getting flaky tests:', error);
+      return [];
+    }
+  }
+
+  async getSlowTests(limit = 10): Promise<{ test_id: string; avg_duration: number }[]> {
+    if (!this.db) {
+      console.error('OrtoniReport: Database not initialized');
+      return [];
+    }
+
+    try {
+      const rows = await this.db.all(`
+      SELECT
+        test_id,
+        AVG(CAST(duration AS FLOAT)) AS avg_duration
+      FROM test_results
+      GROUP BY test_id
+      ORDER BY avg_duration DESC
+      LIMIT ?
+    `, [limit]);
+
+      return rows.map(row => ({
+        test_id: row.test_id,
+        avg_duration: Math.round(row.avg_duration || 0),
+      }));
+    } catch (error) {
+      console.error('OrtoniReport: Error getting slow tests:', error);
+      return [];
+    }
+  }
 }

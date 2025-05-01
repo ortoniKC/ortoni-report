@@ -91,3 +91,11 @@ export function formatDateLocal(isoString: string): string {
     };
     return new Intl.DateTimeFormat(undefined, options).format(date);
 }
+export function formatDateNoTimezone(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleString('en-US', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZoneName: undefined,
+    });
+}

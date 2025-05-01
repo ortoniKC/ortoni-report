@@ -113,49 +113,38 @@
         <script>
             const overallChart = document.getElementById('testChart');
             new Chart(overallChart, {
-                type: "polarArea",
+                type: '{{ chartType }}',
                 data: {
-                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky'],
+                    labels: ['Passed', 'Failed', 'Skipped', 'Flaky', 'Retry'],
                     datasets: [{
                         data: [{{ passCount }}, {{ failCount }}, {{ skipCount }}, {{ flakyCount }}, {{ retryCount }}],
                 backgroundColor: ['#28a745', '#ff6685', '#66d1ff', '#ffb70f', '#69748c']}]
                 },
                 options: {
-                scales: {
-                    r: {
-                        ticks: {
-                            display: false
-                        },
-                        grid: {
-                            color: '#e0e0e0'
-                        }
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                borderJoinStyle: 'bevel',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            filter: function (legendItem, chartData) {
-                                const value = chartData.datasets[0].data[legendItem.index];
-                                return value !== 0;
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                filter: function (legendItem, chartData) {
+                                    const value = chartData.datasets[0].data[legendItem.index];
+                                    return value !== 0;
+                                }
                             }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
-                                const value = tooltipItem.raw;
-                                const percentage = ((value / total) * 100).toFixed(2);
-                                return `${tooltipItem.label}: ${value} tests (${percentage}%)`;
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const total = tooltipItem.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = tooltipItem.raw;
+                                    const percentage = ((value / total) * 100).toFixed(2);
+                                    return `${tooltipItem.label}: ${value} tests (${percentage}%)`;
+                                }
                             }
                         }
                     }
                 }
-            }
             });
            
             const projectChart = document.getElementById('projectChart');
@@ -173,7 +162,7 @@
             }
             const backgroundColors = totalTests.map(() => generateRandomColor());
             new Chart(projectChart, {
-                type: 'doughnut',
+                type: '{{ chartType }}',
                 data: {
                     labels: projectNames,
                     datasets: [{
