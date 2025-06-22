@@ -1,7 +1,7 @@
 import { Reporter, FullConfig, Suite, TestCase, TestResult, FullResult, TestError } from "@playwright/test/reporter";
 import { FileManager } from "./helpers/fileManager";
 import { HTMLGenerator } from "./helpers/HTMLGenerator";
-import { TestResultProcessor } from "./helpers/resultProcessor ";
+import { TestResultProcessor } from "./helpers/resultProcessor";
 import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
