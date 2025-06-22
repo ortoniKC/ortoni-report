@@ -10,3 +10,8 @@ dist/cli
 dist/*.mjs
 dist/*d.mts
 *.tgz
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
