@@ -1,5 +1,11 @@
 # Change Log:
 
+## v3.0.4
+
+#### 🐛 Bug Fixes
+
+- Chart not showing latest trends
+
 ## v3.0.3
 
 #### 📦 New Features

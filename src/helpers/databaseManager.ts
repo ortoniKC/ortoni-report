@@ -219,7 +219,7 @@ export class DatabaseManager {
   }
 
   async getTrends(
-    limit = 30
+    limit = 100
   ): Promise<
     { run_date: string; passed: number; failed: number; avg_duration: number }[]
   > {
@@ -238,13 +238,13 @@ export class DatabaseManager {
       FROM test_results tr
       JOIN test_runs trun ON tr.run_id = trun.id
       GROUP BY trun.run_date
-      ORDER BY trun.run_date ASC
+      ORDER BY trun.run_date DESC
       LIMIT ?
     `,
         [limit]
       );
 
-      return rows.map((row) => ({
+      return rows.reverse().map((row) => ({
         ...row,
         run_date: formatDateLocal(row.run_date),
         avg_duration: Math.round(row.avg_duration || 0),
