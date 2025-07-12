@@ -74,7 +74,8 @@ export function attachFiles(
         fullPath,
         relativePath,
         "markdownPath",
-        testResult
+        testResult,
+        markdown
       );
     }
   });
@@ -124,21 +125,27 @@ function handleAttachment(
   testResult: TestResultData,
   markdown?: string
 ) {
+  if (attachmentPath) {
+    fs.copyFileSync(attachmentPath, fullPath);
+    testResult[resultKey] = relativePath;
+  }
+
   if (resultKey === "markdownPath" && markdown) {
+    const dir = path.dirname(fullPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
     let existingContent = "";
     if (fs.existsSync(fullPath)) {
       existingContent = fs.readFileSync(fullPath, "utf-8");
     }
 
     const combinedContent = markdown + "\n\n" + existingContent;
-    fs.writeFileSync(fullPath, combinedContent); // overwrite with prepended content
+    fs.writeFileSync(fullPath, combinedContent);
+
     testResult[resultKey] = relativePath;
     return;
-  }
-
-  if (attachmentPath) {
-    fs.copyFileSync(attachmentPath, fullPath);
-    testResult[resultKey] = relativePath;
   }
 }
 

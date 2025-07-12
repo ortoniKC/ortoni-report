@@ -60,14 +60,11 @@ export class TestResultProcessor {
       base64Image: ortoniConfig.base64Image,
     };
     const instruction = `# Instructions
-                          - Following Playwright test failed.
-                          - Explain why, be concise, respect Playwright best practices.
-                          - Provide a snippet of code with the fix, if possible.`;
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.\n`;
     const markdownTemplate =
-      instruction +
-      "# Error details \n" +
-      testResult.steps.join("\n\n") +
-      testResult.errors.join("\n\n");
+      instruction + "# Error details \n" + testResult.errors.join("\n\n");
 
     attachFiles(test.id, result, testResult, ortoniConfig, markdownTemplate);
     return testResult;
