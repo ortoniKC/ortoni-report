@@ -25,6 +25,8 @@ export class TestResultProcessor {
     const title = test.title.replace(tagPattern, "").trim();
     const suite = test.titlePath()[3].replace(tagPattern, "").trim();
 
+
+
     const testResult: TestResultData = {
       port: ortoniConfig.port || 2004,
       annotations: test.annotations,
@@ -45,8 +47,14 @@ export class TestResultProcessor {
       filters: projectSet,
       base64Image: ortoniConfig.base64Image,
     };
+    const instruction = `# Instructions
+                          - Following Playwright test failed.
+                          - Explain why, be concise, respect Playwright best practices.
+                          - Provide a snippet of code with the fix, if possible.`
+    const markdownTemplate = instruction + '# Error details \n' + testResult.steps.join("\n\n") + testResult.errors.join("\n\n");
 
-    attachFiles(test.id, result, testResult, ortoniConfig);
+
+    attachFiles(test.id, result, testResult, ortoniConfig, markdownTemplate);
     return testResult;
   }
 
@@ -62,4 +70,6 @@ export class TestResultProcessor {
       };
     });
   }
+
+
 }

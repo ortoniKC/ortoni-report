@@ -4,7 +4,7 @@ import fs from "fs";
 import { TestResultData } from "../types/testResults";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 
-export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
+export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig, markdown: string) {
     const folderPath = config.folderPath || 'ortoni-report';
     const attachmentsFolder = path.join(folderPath, 'ortoni-data', 'attachments', subFolder);
 
@@ -60,12 +60,32 @@ function handleImage(attachmentPath: string | undefined, body: Buffer | undefine
     }
 }
 
-function handleAttachment(attachmentPath: string | undefined, fullPath: string, relativePath: string, resultKey: 'videoPath' | 'tracePath' | 'markdownPath', testResult: TestResultData) {
+function handleAttachment(
+    attachmentPath: string | undefined,
+    fullPath: string,
+    relativePath: string,
+    resultKey: 'videoPath' | 'tracePath' | 'markdownPath',
+    testResult: TestResultData,
+    markdown?: string
+) {
+    if (resultKey === 'markdownPath' && markdown) {
+        let existingContent = '';
+        if (fs.existsSync(fullPath)) {
+            existingContent = fs.readFileSync(fullPath, 'utf-8');
+        }
+
+        const combinedContent = markdown + '\n\n' + existingContent;
+        fs.writeFileSync(fullPath, combinedContent); // overwrite with prepended content
+        testResult[resultKey] = relativePath;
+        return;
+    }
+
     if (attachmentPath) {
         fs.copyFileSync(attachmentPath, fullPath);
         testResult[resultKey] = relativePath;
     }
 }
+
 
 function getFileExtension(contentType: string): string {
     const extensions: { [key: string]: string } = {
