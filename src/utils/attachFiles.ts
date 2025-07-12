@@ -5,7 +5,7 @@ import { TestResultData } from "../types/testResults";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export function attachFiles(subFolder: string, result: TestResult, testResult: TestResultData, config: OrtoniReportConfig) {
-    const folderPath = config.folderPath ||  'ortoni-report';
+    const folderPath = config.folderPath || 'ortoni-report';
     const attachmentsFolder = path.join(folderPath, 'ortoni-data', 'attachments', subFolder);
 
     if (!fs.existsSync(attachmentsFolder)) {
@@ -31,6 +31,8 @@ export function attachFiles(subFolder: string, result: TestResult, testResult: T
             handleAttachment(attachmentPath, fullPath, relativePath, 'videoPath', testResult);
         } else if (name === "trace") {
             handleAttachment(attachmentPath, fullPath, relativePath, 'tracePath', testResult);
+        } else if (name === "error-context") {
+            handleAttachment(attachmentPath, fullPath, relativePath, 'markdownPath', testResult);
         }
     });
 }
@@ -58,7 +60,7 @@ function handleImage(attachmentPath: string | undefined, body: Buffer | undefine
     }
 }
 
-function handleAttachment(attachmentPath: string | undefined, fullPath: string, relativePath: string, resultKey: 'videoPath' | 'tracePath', testResult: TestResultData) {
+function handleAttachment(attachmentPath: string | undefined, fullPath: string, relativePath: string, resultKey: 'videoPath' | 'tracePath' | 'markdownPath', testResult: TestResultData) {
     if (attachmentPath) {
         fs.copyFileSync(attachmentPath, fullPath);
         testResult[resultKey] = relativePath;
@@ -69,7 +71,9 @@ function getFileExtension(contentType: string): string {
     const extensions: { [key: string]: string } = {
         "image/png": "png",
         "video/webm": "webm",
-        "application/zip": "zip"
+        "application/zip": "zip",
+        "text/markdown": "md",
+
     };
     return extensions[contentType] || "unknown";
 }

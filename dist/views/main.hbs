@@ -543,10 +543,20 @@
                                 </button>
                             </div>
                             ` : ''}
-                        </div>
                     `;
-
-                    content += '</div></div>';
+                    if (test.markdownPath) {
+                        content += `
+                            <div class="column">
+                            <button
+                                onclick="window.open('${test.markdownPath}', '_blank')"
+                                class="button is-primary is-fullwidth mt-3">
+                                <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
+                                <span class="has-text-white pl-2">Open Markdown</span>
+                            </button>
+                            </div>
+                        `;
+                    }
+                    content += '</div></div></div>';
                     return content;
                 }
 

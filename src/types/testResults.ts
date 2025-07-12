@@ -25,5 +25,6 @@ export interface TestResultData {
     filters: Set<string>;
     tracePath?: string;
     videoPath?: string;
+    markdownPath?: string;
     base64Image: boolean | undefined;
 }
