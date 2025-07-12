@@ -85,17 +85,15 @@ export function formatDateLocal(isoString: string): string {
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        // second: '2-digit',
         hour12: true,
         timeZoneName: 'short'
     };
     return new Intl.DateTimeFormat(undefined, options).format(date);
 }
-export function formatDateNoTimezone(dateStr: string): string {
-    const date = new Date(dateStr);
+export function formatDateNoTimezone(isoString: string): string {
+    const date = new Date(isoString);
     return date.toLocaleString('en-US', {
         dateStyle: 'medium',
         timeStyle: 'short',
-        timeZoneName: undefined,
     });
 }

@@ -71,7 +71,7 @@ export class DatabaseManager {
     }
 
     try {
-      const runDate = formatDateUTC(new Date());
+      const runDate = new Date().toISOString();
       const { lastID } = await this.db.run(
         `
         INSERT INTO test_runs (run_date)
