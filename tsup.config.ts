@@ -4,6 +4,7 @@ export default defineConfig({
     entry: ['src/ortoni-report.ts', 'src/cli/cli.ts'],
     dts: true,
     external: [
+        '@playwright/test',
         'playwright-core',
         'sqlite',
         'sqlite3',

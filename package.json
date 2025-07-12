@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "tsc": "tsc",
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/ortoniKC/ortoni-report#readme",
   "devDependencies": {
-    "@playwright/test": "^1.49.0",
+    "@playwright/test": "<2.0.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.2",
     "@types/sqlite3": "^3.1.11",
