@@ -1,15 +1,17 @@
 import { TestResult } from "@playwright/test/reporter";
 import path from "path";
 import fs from "fs";
-import { TestResultData } from "../types/testResults";
+import { Steps, TestResultData } from "../types/testResults";
 import { OrtoniReportConfig } from "../types/reporterConfig";
+import { convertMarkdownToHtml } from "../helpers/markdownConverter";
 
 export function attachFiles(
   subFolder: string,
   result: TestResult,
   testResult: TestResultData,
   config: OrtoniReportConfig,
-  markdown: string
+  steps?: Steps[],
+  errors?: string[]
 ) {
   const folderPath = config.folderPath || "ortoni-report";
   const attachmentsFolder = path.join(
@@ -75,7 +77,8 @@ export function attachFiles(
         relativePath,
         "markdownPath",
         testResult,
-        markdown
+        steps,
+        errors
       );
     }
   });
@@ -123,28 +126,19 @@ function handleAttachment(
   relativePath: string,
   resultKey: "videoPath" | "tracePath" | "markdownPath",
   testResult: TestResultData,
-  markdown?: string
+  steps?: Steps[],
+  errors?: string[]
 ) {
   if (attachmentPath) {
     fs.copyFileSync(attachmentPath, fullPath);
     testResult[resultKey] = relativePath;
   }
 
-  if (resultKey === "markdownPath" && markdown) {
-    const dir = path.dirname(fullPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    let existingContent = "";
-    if (fs.existsSync(fullPath)) {
-      existingContent = fs.readFileSync(fullPath, "utf-8");
-    }
-
-    const combinedContent = markdown + "\n\n" + existingContent;
-    fs.writeFileSync(fullPath, combinedContent);
-
-    testResult[resultKey] = relativePath;
+  if (resultKey === "markdownPath" && errors) {
+    const htmlPath = fullPath.replace(/\.md$/, ".html");
+    const htmlRelativePath = relativePath.replace(/\.md$/, ".html");
+    convertMarkdownToHtml(fullPath, htmlPath, steps || [], errors || []);
+    testResult[resultKey] = htmlRelativePath;
     return;
   }
 }

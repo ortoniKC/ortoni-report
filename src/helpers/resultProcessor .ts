@@ -59,14 +59,15 @@ export class TestResultProcessor {
       filters: projectSet,
       base64Image: ortoniConfig.base64Image,
     };
-    const instruction = `# Instructions
-- Following Playwright test failed.
-- Explain why, be concise, respect Playwright best practices.
-- Provide a snippet of code with the fix, if possible.\n`;
-    const markdownTemplate =
-      instruction + "# Error details \n" + testResult.errors.join("\n\n");
 
-    attachFiles(test.id, result, testResult, ortoniConfig, markdownTemplate);
+    attachFiles(
+      test.id,
+      result,
+      testResult,
+      ortoniConfig,
+      testResult.steps,
+      testResult.errors
+    );
     return testResult;
   }
 
