@@ -122,6 +122,21 @@
                         return `${origin}${directoryPath}`;
                     }
                     return origin;
+                },
+
+                /**
+                 * Copy file path to clipboard
+                 * @param {HTMLElement} button - Button element
+                 * @param {string} text - Text to copy
+                 */
+                copyFilePath(button, text) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalIcon = button.innerHTML;
+                        button.innerHTML = '<i class="fa fa-check"></i>';
+                        setTimeout(() => {
+                            button.innerHTML = originalIcon;
+                        }, 1500);
+                    });
                 }
             };
 
@@ -386,7 +401,12 @@
                                 <div class="card-content">
                                     <div class="content has-text-centered">
                                         <h1 class="title is-4">${test.title}</h1>
-                                        <p class="subtitle is-5" id="filepath">${test.location}</p>
+                                        <div class="is-flex is-justify-content-center is-align-items-center">
+                                            <p class="subtitle is-5 mb-0" id="filepath">${test.location}</p>
+                                            <button class="button has-text-primary is-small is-ghost ml-2" onclick="copyFilePath(this, '${test.location}')" title="Copy to clipboard">
+                                                <i class="fa-regular fa-clipboard"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <footer class="card-footer">
@@ -417,7 +437,7 @@
                                     ${test.projectName ? `
                                     <div class="card-footer-item">
                                         <div class="is-flex is-align-items-center">
-                                            <span class="icon status-icon has-text-link">
+                                            <span class="icon status-icon has-text-info">
                                                 ${projectIcon}
                                             </span>
                                             <span> ${test.projectName}</span>
@@ -523,10 +543,20 @@
                                 </button>
                             </div>
                             ` : ''}
-                        </div>
                     `;
-
-                    content += '</div></div>';
+                    if (test.markdownPath) {
+                        content += `
+                            <div class="column">
+                            <button
+                                onclick="window.open('${test.markdownPath}', '_blank')"
+                                class="button is-primary is-fullwidth mt-3">
+                                <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
+                                <span class="has-text-white pl-2">Open Markdown</span>
+                            </button>
+                            </div>
+                        `;
+                    }
+                    content += '</div></div></div>';
                     return content;
                 }
 
@@ -1242,6 +1272,7 @@
                 }
             };
             window.getAdjustedBaseUrl = Utils.getAdjustedBaseUrl;
+            window.copyFilePath = Utils.copyFilePath
             window.openHistory = () => {
                 historyManager.setCurrentHistory(testDetailsManager.testHistoriesMap, testDetailsManager.testHistoryTitle);
                 historyManager.openHistory();

@@ -30,12 +30,14 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 ### 3. **Visualization & Insights**
 
 - **Test Analytics Dashboard** 🌟 **(New!)**
+
   - Summary of total test runs, passed/failed counts, pass rate, and average duration.
   - **Trends Over Time**: Line chart showing test results across the last 30 runs.
   - **Top Flaky Tests**: Identify unstable tests quickly.
   - **Slowest Tests**: View tests with highest average durations.
 
 - **Chart Visualizations**:
+
   - Pie or doughnut charts for test summary and per-project breakdowns **(Improved!)**
   - Bar charts for project-specific comparisons.
   - **Line Chart for Trends**: Visualize execution status progression over time.
@@ -57,6 +59,7 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 - **Multi-Filters**: Combine filters for targeted test analysis.
 - **Meta Information**: Add custom user or environment metadata to reports.
 - **CLI**: Open the reporter anytime using the builin CLI
+- **Open Markdown**: View markdown as HTML - Copy and use it in your AI prompt
 
 ---
 
@@ -77,6 +80,7 @@ Set up **Ortoni Report** in your Playwright configuration file with the followin
 ```typescript
 import { defineConfig } from "@playwright/test";
 import { OrtoniReportConfig } from "ortoni-report";
+import * as os from "os";
 
 const reportConfig: OrtoniReportConfig = {
   open: process.env.CI ? "never" : "always", // default to never
@@ -86,19 +90,19 @@ const reportConfig: OrtoniReportConfig = {
   title: "Ortoni Test Report",
   showProject: !true,
   projectName: "Ortoni-Report",
-  testType: "e2e",
-  authorName: "Koushik",
+  testType: "Functional",
+  authorName: os.userInfo().username,
   base64Image: false,
   stdIO: false,
   preferredTheme: "light",
   chartType: "doughnut" | "pie";
   meta: {
     project: "Playwright",
-    version: "3.0.0",
+    version: "3",
     description: "Playwright test report",
-    testCycle: "1",
-    release: "1.0.0",
-    platform: "Windows",
+    testCycle: "04121994",
+    release: "0.3",
+     platform: os.type(),
   },
 };
 
@@ -164,6 +168,7 @@ This command starts a local Express server and serves the generated Ortoni repor
    ```
 
    This will:
+
    - Look for the report file `ortoni-report.html` in the `ortoni-report` folder.
    - Start the server on port `2004`.
 
@@ -218,6 +223,7 @@ If you'd like to support this project, you can donate via UPI:
 Thank you for using **Ortoni Report**! I'm committed to providing you with a superior Playwright testing experience.
 
 ---
+
 **Developer & Designer**
 [Koushik Chatterjee](https://letcode.in/contact)
 

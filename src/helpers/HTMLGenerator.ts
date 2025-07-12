@@ -54,12 +54,16 @@ export class HTMLGenerator {
   }
   async chartTrendData() {
     return {
-      labels: (await this.getReportData()).trends.map(t => formatDateNoTimezone(t.run_date)),
-      passed: (await this.getReportData()).trends.map(t => t.passed),
-      failed: (await this.getReportData()).trends.map(t => t.failed),
-      avgDuration: (await this.getReportData()).trends.map(t => t.avg_duration),
-    }
-  };
+      labels: (await this.getReportData()).trends.map((t) =>
+        formatDateNoTimezone(t.run_date)
+      ),
+      passed: (await this.getReportData()).trends.map((t) => t.passed),
+      failed: (await this.getReportData()).trends.map((t) => t.failed),
+      avgDuration: (await this.getReportData()).trends.map(
+        (t) => t.avg_duration
+      ),
+    };
+  }
 
   private async prepareReportData(
     filteredResults: TestResultData[],
