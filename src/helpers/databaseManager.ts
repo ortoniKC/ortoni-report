@@ -230,7 +230,7 @@ export class DatabaseManager {
       FROM test_results tr
       JOIN test_runs trun ON tr.run_id = trun.id
       GROUP BY trun.run_date
-      ORDER BY trun.run_date DESC
+      ORDER BY trun.run_date ASC
       LIMIT ?
     `, [limit]);
 
