@@ -5,9 +5,10 @@ import { TestResultProcessor } from "./helpers/resultProcessor ";
 import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
-import { ensureHtmlExtension, msToTime } from "./utils/utils";
+import { ensureHtmlExtension, isTraceDisabled, msToTime } from "./utils/utils";
 import { DatabaseManager } from "./helpers/databaseManager";
 import path from "path";
+import { TraceMode } from "playwright/types/test";
 
 export default class OrtoniReport implements Reporter {
   private testResultProcessor: TestResultProcessor;
@@ -23,6 +24,7 @@ export default class OrtoniReport implements Reporter {
   private dbManager: DatabaseManager;
   private shouldGenerateReport: boolean = true;
   private showConsoleLogs: boolean | undefined = true;
+  private skipTraceViewer: boolean = false;
 
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
     this.folderPath = ortoniConfig.folderPath || 'ortoni-report';
@@ -38,6 +40,10 @@ export default class OrtoniReport implements Reporter {
   private reportsCount: number = 0;
 
   async onBegin(config: FullConfig, _suite: Suite) {
+    this.skipTraceViewer = config.projects.every(project => {
+      const trace = project.use?.trace as TraceMode | undefined;
+      return trace === undefined || trace === 'off';
+    });
     this.reportsCount = config.reporter.length;
     this.results = [];
     this.testResultProcessor = new TestResultProcessor(config.rootDir);
@@ -97,7 +103,8 @@ export default class OrtoniReport implements Reporter {
     try {
       await this.dbManager.close();
       if (this.shouldGenerateReport) {
-        this.fileManager.copyTraceViewerAssets();
+        console.log(this.skipTraceViewer)
+        this.fileManager.copyTraceViewerAssets(this.skipTraceViewer);
         console.info(`Ortoni HTML report generated at ${this.outputPath}`);
         this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
         await new Promise(_resolve => { });

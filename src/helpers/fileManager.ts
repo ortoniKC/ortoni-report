@@ -23,8 +23,9 @@ export class FileManager {
   readCssContent(): string {
     return fs.readFileSync(path.resolve(__dirname, "style", "main.css"), "utf-8");
   }
-  
-  copyTraceViewerAssets() {
+
+  copyTraceViewerAssets(skip: boolean) {
+    if (skip) return;
     const traceViewerFolder = path.join(require.resolve('playwright-core'), '..', 'lib', 'vite', 'traceViewer');
     const traceViewerTargetFolder = path.join(this.folderPath, 'trace');
     const traceViewerAssetsTargetFolder = path.join(traceViewerTargetFolder, 'assets');
