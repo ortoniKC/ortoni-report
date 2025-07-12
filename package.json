@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/ortoniKC/ortoni-report#readme",
   "devDependencies": {
-    "@playwright/test": "<2.0.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.2",
     "@types/sqlite3": "^3.1.11",
@@ -44,6 +43,7 @@
     "marked": "^16.0.0"
   },
   "peerDependencies": {
+    "@playwright/test": "<2.0.0",
     "ansi-to-html": "^0.7.2",
     "commander": "^12.1.0",
     "express": "^4.21.1",
