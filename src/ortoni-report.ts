@@ -5,7 +5,7 @@ import { TestResultProcessor } from "./helpers/resultProcessor ";
 import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
-import { ensureHtmlExtension, isTraceDisabled, msToTime } from "./utils/utils";
+import { ensureHtmlExtension, msToTime } from "./utils/utils";
 import { DatabaseManager } from "./helpers/databaseManager";
 import path from "path";
 import { TraceMode } from "playwright/types/test";
@@ -103,7 +103,6 @@ export default class OrtoniReport implements Reporter {
     try {
       await this.dbManager.close();
       if (this.shouldGenerateReport) {
-        console.log(this.skipTraceViewer)
         this.fileManager.copyTraceViewerAssets(this.skipTraceViewer);
         console.info(`Ortoni HTML report generated at ${this.outputPath}`);
         this.serverManager.startServer(this.folderPath, this.outputFilename, this.overAllStatus);
