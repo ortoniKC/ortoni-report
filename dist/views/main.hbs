@@ -548,8 +548,9 @@
                         content += `
                             <div class="column">
                             <button
-                                onclick="window.open('${test.markdownPath}', '_blank')"
-                                class="button is-primary is-fullwidth mt-3">
+                                class="button is-primary is-fullwidth mt-3"
+                                data-markdown="${test.markdownPath}"
+                                onclick="openMarkdown(this)">
                                 <span class="icon"><i class="fa-solid fa-file-lines"></i></span>
                                 <span class="has-text-white pl-2">Open Markdown</span>
                             </button>
@@ -1269,6 +1270,15 @@
                     const normalizedTracePath = tracePath.replace(/\\/g, '/');
                     const baseUrl = Utils.getAdjustedBaseUrl();
                     window.open(`${baseUrl}/trace/index.html?trace=${baseUrl}/${normalizedTracePath}`, "_blank");
+                }
+            };
+            window.openMarkdown = (button) => {
+                const path = button.getAttribute('data-markdown');
+                if (path) {
+                    const normalizedPath = path.replace(/\\/g, '/');
+                    const baseUrl = Utils.getAdjustedBaseUrl();
+                    const fullUrl = `${baseUrl.replace(/\/$/, '')}/${normalizedPath.replace(/^\//, '')}`;
+                    window.open(fullUrl, '_blank');
                 }
             };
             window.getAdjustedBaseUrl = Utils.getAdjustedBaseUrl;

@@ -45,9 +45,39 @@ export function convertMarkdownToHtml(
         code, pre { background: #f4f4f4; padding: 0.5rem; border-radius: 5px; display: block; overflow-x: auto; }
         h1, h2, h3 { color: #444; }
         hr { margin: 2em 0; }
+        #copyBtn {
+          background-color: #007acc;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          margin-bottom: 1rem;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        #copyBtn:hover {
+          background-color: #005fa3;
+        }
       </style>
     </head>
     <body>
+      <button id="copyBtn">📋 Copy All</button>
+      <script>
+        document.getElementById("copyBtn").addEventListener("click", () => {
+          const content = document.getElementById("markdownContent").innerText;
+          navigator.clipboard.writeText(content).then(() => {
+            // change button text to indicate success
+            const button = document.getElementById("copyBtn");
+            button.textContent = "✅ Copied!";
+            setTimeout(() => {
+              button.textContent = "📋 Copy All"
+              }, 2000);
+          }).catch(err => {
+            console.error("Failed to copy text: ", err);
+            alert("Failed to copy text. Please try manually.");   
+          });
+        });
+      </script>
+      <div id="markdownContent">
       <h1>Instructions</h1>
       <ul>
         <li>Following Playwright test failed.</li>
@@ -57,7 +87,8 @@ export function convertMarkdownToHtml(
       <h1>Error Details</h1>
       ${errorHtml || "<p>No errors found.</p>"}
       ${stepsHtml || "<p>No step data available.</p>"}
-      ${markdownHtml ? `${markdownHtml}` : ""}
+      ${markdownHtml || ""}
+      </div>
     </body>
     </html>
   `;
