@@ -4,6 +4,13 @@
 
 #### 🐛 Bug Fixes
 
+- Fixed timeZone - #88
+- Fixed markdown open page - #87
+
+## v3.0.4
+
+#### 🐛 Bug Fixes
+
 - Chart not showing latest trends
 
 ## v3.0.3
