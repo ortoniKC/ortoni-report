@@ -90,7 +90,7 @@ export function formatDateLocal(isoString: string): string {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-    timeZoneName: "short",
+    timeZoneName: "shortOffset",
   };
   return new Intl.DateTimeFormat(undefined, options).format(date);
 }
