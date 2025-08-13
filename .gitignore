@@ -10,3 +10,4 @@ dist/cli
 dist/*.mjs
 dist/*d.mts
 *.tgz
+dist

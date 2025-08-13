@@ -1,9 +1,0 @@
-<div class="test-item 
-    {{#if (eq status 'passed')}}status-passed
-    {{else if (or (eq status 'failed') (eq status 'timedOut'))}}status-failed
-    {{else if (includes status 'flaky')}}status-flaky
-    {{else if (eq status 'skipped')}}status-skipped is-hidden{{/if}} ml-4" data-suite-name="{{suite}}"
-    data-test-tags="{{joinWithSpace testTags}}" data-project-name="{{projectName}}" data-test-id="{{index}}"
-    data-test-history-id="{{testId}}" data-test-status="{{status}} {{retry}}" data-test-duration="{{duration}}">
-    {{> testIcons}}
-</div>

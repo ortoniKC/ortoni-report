@@ -14,17 +14,17 @@ export class FileManager {
     }
   }
 
-  writeReportFile(filename: string, content: string): string {
+  writeReportFile(filename: string, result: unknown): string {
+    const templatePath = path.resolve(__dirname, "index.html"); // from npm package
+    let html = fs.readFileSync(templatePath, "utf-8");
+    console.log(html);
+    const reportJSON = JSON.stringify({
+      result,
+    });
+    html = html.replace("__ORTONI_TEST_REPORTDATA__", reportJSON);
     const outputPath = path.join(process.cwd(), this.folderPath, filename);
-    fs.writeFileSync(outputPath, content);
+    fs.writeFileSync(outputPath, html);
     return outputPath;
-  }
-
-  readCssContent(): string {
-    return fs.readFileSync(
-      path.resolve(__dirname, "style", "main.css"),
-      "utf-8"
-    );
   }
 
   copyTraceViewerAssets(skip: boolean) {

@@ -109,14 +109,12 @@ export default class OrtoniReport implements Reporter {
           (r) => r.status !== "skipped" && !r.isRetry
         );
         const totalDuration = msToTime(result.duration);
-        const cssContent = this.fileManager.readCssContent();
         const runId = await this.dbManager.saveTestRun();
         if (runId !== null) {
           await this.dbManager.saveTestResults(runId, this.results);
           const html = await this.htmlGenerator.generateHTML(
             filteredResults,
             totalDuration,
-            cssContent,
             this.results,
             this.projectSet
           );
