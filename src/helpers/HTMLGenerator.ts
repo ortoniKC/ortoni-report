@@ -81,7 +81,7 @@ export class HTMLGenerator {
       projectSet
     );
     const utcRunDate = formatDateUTC(new Date());
-    const localRunDate = formatDateLocal(utcRunDate);
+    const lastRunDate = formatDateLocal(utcRunDate);
     const testHistories = await Promise.all(
       results.map(async (result) => {
         const testId = `${result.filePath}:${result.projectName}:${result.title}`;
@@ -93,34 +93,41 @@ export class HTMLGenerator {
       })
     );
     return {
-      utcRunDate: utcRunDate,
-      localRunDate: localRunDate,
-      testHistories: testHistories,
-      logo: this.ortoniConfig.logo || undefined,
-      totalDuration: totalDuration,
-      results: results,
-      retryCount: results.filter((r) => r.isRetry).length,
-      passCount: passedTests,
-      failCount: failed,
-      skipCount: results.filter((r) => r.status === "skipped").length,
-      flakyCount: flakyTests,
-      totalCount: filteredResults.length,
-      groupedResults: groupResults(this.ortoniConfig, results),
-      projectName: this.ortoniConfig.projectName,
-      authorName: this.ortoniConfig.authorName,
-      meta: this.ortoniConfig.meta,
-      testType: this.ortoniConfig.testType,
-      preferredTheme: this.ortoniConfig.preferredTheme,
-      successRate: successRate,
-      lastRunDate: formatDate(new Date()),
-      projects: projectSet,
-      allTags: Array.from(allTags),
-      showProject: this.ortoniConfig.showProject || false,
-      title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
-      chartType: this.ortoniConfig.chartType || "pie",
-      reportAnalyticsData: await this.getReportData(),
-      chartData: await this.chartTrendData(),
-      ...this.extractProjectStats(projectResults),
+      summary: {
+        successRate,
+        lastRunDate,
+        retry: results.filter((r) => r.isRetry).length,
+        pass: passedTests,
+        fail: failed,
+        skip: results.filter((r) => r.status === "skipped").length,
+        flaky: flakyTests,
+        total: filteredResults.length,
+        totalDuration,
+        stats: this.extractProjectStats(projectResults),
+      },
+      results: {
+        list: results,
+        grouped: groupResults(this.ortoniConfig, results),
+        testHistories,
+        allTags: Array.from(allTags),
+        set: projectSet,
+      },
+      meta: {
+        projectName: this.ortoniConfig.projectName,
+        authorName: this.ortoniConfig.authorName,
+        meta: this.ortoniConfig.meta,
+        type: this.ortoniConfig.testType,
+        title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
+      },
+      preferences: {
+        theme: this.ortoniConfig.preferredTheme,
+        logo: this.ortoniConfig.logo || undefined,
+        show: this.ortoniConfig.showProject || false,
+      },
+      analytics: {
+        reportData: await this.getReportData(),
+        chartTrendData: await this.chartTrendData(),
+      },
     };
   }
 
