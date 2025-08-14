@@ -4,7 +4,6 @@ export interface Steps {
   location: string;
 }
 export interface TestResultData {
-  port: number | undefined;
   annotations: any;
   testTags: string[];
   location: string;

@@ -106,7 +106,6 @@ export class HTMLGenerator {
         stats: this.extractProjectStats(projectResults),
       },
       results: {
-        list: results,
         grouped: groupResults(this.ortoniConfig, results),
         testHistories,
         allTags: Array.from(allTags),

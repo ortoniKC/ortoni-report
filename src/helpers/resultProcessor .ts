@@ -31,7 +31,6 @@ export class TestResultProcessor {
     const suite = test.titlePath()[3].replace(tagPattern, "").trim();
 
     const testResult: TestResultData = {
-      port: ortoniConfig.port || 2004,
       annotations: test.annotations,
       testTags: test.tags,
       location: `${filePath}:${location.line}:${location.column}`,
