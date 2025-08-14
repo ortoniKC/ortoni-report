@@ -117,11 +117,11 @@
                 getAdjustedBaseUrl() {
                     const origin = window.location.origin;
                     const pathname = window.location.pathname;
-                    if (pathname.endsWith('.html')) {
-                        const directoryPath = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+                    if (pathname.endsWith('.html') || pathname.endsWith('/')) {
+                        const directoryPath = pathname.substring(0, pathname.lastIndexOf('/'));
                         return `${origin}${directoryPath}`;
                     }
-                    return origin;
+                    return `${origin}${pathname}`;
                 },
 
                 /**
