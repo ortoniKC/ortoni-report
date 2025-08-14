@@ -121,7 +121,7 @@ export class HTMLGenerator {
       preferences: {
         theme: this.ortoniConfig.preferredTheme,
         logo: this.ortoniConfig.logo || undefined,
-        show: this.ortoniConfig.showProject || false,
+        showProject: this.ortoniConfig.showProject || false,
       },
       analytics: {
         reportData: await this.getReportData(),
