@@ -57,6 +57,7 @@ export class TestResultProcessor {
       filePath: filePath,
       filters: projectSet,
       base64Image: ortoniConfig.base64Image,
+      testId: `${filePath}:${projectName}:${title}`,
     };
 
     attachFiles(

@@ -17,7 +17,7 @@ export class HTMLGenerator {
     this.dbManager = dbManager;
   }
 
-  async generateHTML(
+  async generateFinalReport(
     filteredResults: TestResultData[],
     totalDuration: string,
     results: TestResultData[],
@@ -40,18 +40,18 @@ export class HTMLGenerator {
       slowTests: await this.dbManager.getSlowTests(),
     };
   }
-  async chartTrendData() {
-    return {
-      labels: (await this.getReportData()).trends.map((t) =>
-        formatDateNoTimezone(t.run_date)
-      ),
-      passed: (await this.getReportData()).trends.map((t) => t.passed),
-      failed: (await this.getReportData()).trends.map((t) => t.failed),
-      avgDuration: (await this.getReportData()).trends.map(
-        (t) => t.avg_duration
-      ),
-    };
-  }
+  // async chartTrendData() {
+  //   return {
+  //     labels: (await this.getReportData()).trends.map((t) =>
+  //       formatDateNoTimezone(t.run_date)
+  //     ),
+  //     passed: (await this.getReportData()).trends.map((t) => t.passed),
+  //     failed: (await this.getReportData()).trends.map((t) => t.failed),
+  //     avgDuration: (await this.getReportData()).trends.map(
+  //       (t) => t.avg_duration
+  //     ),
+  //   };
+  // }
 
   private async prepareReportData(
     filteredResults: TestResultData[],
@@ -94,29 +94,33 @@ export class HTMLGenerator {
     );
     return {
       summary: {
+        overAllResult: {
+          pass: passedTests,
+          fail: failed,
+          skip: results.filter((r) => r.status === "skipped").length,
+          retry: results.filter((r) => r.isRetry).length,
+          flaky: flakyTests,
+          total: filteredResults.length,
+        },
         successRate,
         lastRunDate,
-        retry: results.filter((r) => r.isRetry).length,
-        pass: passedTests,
-        fail: failed,
-        skip: results.filter((r) => r.status === "skipped").length,
-        flaky: flakyTests,
-        total: filteredResults.length,
         totalDuration,
         stats: this.extractProjectStats(projectResults),
       },
-      results: {
-        grouped: groupResults(this.ortoniConfig, results),
+      testResult: {
+        tests: groupResults(this.ortoniConfig, results),
         testHistories,
         allTags: Array.from(allTags),
         set: projectSet,
       },
-      meta: {
+      userConfig: {
         projectName: this.ortoniConfig.projectName,
         authorName: this.ortoniConfig.authorName,
-        meta: this.ortoniConfig.meta,
         type: this.ortoniConfig.testType,
         title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
+      },
+      userMeta: {
+        meta: this.ortoniConfig.meta,
       },
       preferences: {
         theme: this.ortoniConfig.preferredTheme,
@@ -125,7 +129,7 @@ export class HTMLGenerator {
       },
       analytics: {
         reportData: await this.getReportData(),
-        chartTrendData: await this.chartTrendData(),
+        // chartTrendData: await this.chartTrendData(),
       },
     };
   }

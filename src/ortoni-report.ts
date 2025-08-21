@@ -112,7 +112,7 @@ export default class OrtoniReport implements Reporter {
         const runId = await this.dbManager.saveTestRun();
         if (runId !== null) {
           await this.dbManager.saveTestResults(runId, this.results);
-          const html = await this.htmlGenerator.generateHTML(
+          const finalReportData = await this.htmlGenerator.generateFinalReport(
             filteredResults,
             totalDuration,
             this.results,
@@ -120,7 +120,7 @@ export default class OrtoniReport implements Reporter {
           );
           this.outputPath = this.fileManager.writeReportFile(
             this.outputFilename,
-            html
+            finalReportData
           );
         } else {
           console.error("OrtoniReport: Error saving test run to database");

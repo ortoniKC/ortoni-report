@@ -14,12 +14,12 @@ export class FileManager {
     }
   }
 
-  writeReportFile(filename: string, result: unknown): string {
+  writeReportFile(filename: string, data: unknown): string {
     const templatePath = path.resolve(__dirname, "index.html");
     let html = fs.readFileSync(templatePath, "utf-8");
     console.log(html);
     const reportJSON = JSON.stringify({
-      result,
+      data,
     });
     html = html.replace("__ORTONI_TEST_REPORTDATA__", reportJSON);
     const outputPath = path.join(process.cwd(), this.folderPath, filename);

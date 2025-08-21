@@ -34,4 +34,5 @@ export interface TestResultData {
   videoPath?: string;
   markdownPath?: string;
   base64Image: boolean | undefined;
+  testId: string;
 }
