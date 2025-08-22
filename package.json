@@ -43,7 +43,7 @@
     "marked": "^16.0.0"
   },
   "peerDependencies": {
-    "@playwright/test": "<2.0.0",
+    "@playwright/test": "^1.54.0",
     "ansi-to-html": "^0.7.2",
     "commander": "^12.1.0",
     "express": "^4.21.1",

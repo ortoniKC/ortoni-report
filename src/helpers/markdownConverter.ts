@@ -1,7 +1,6 @@
 import fs from "fs";
 import { marked } from "marked";
 import { Steps } from "../types/testResults";
-import { escapeHtml } from "../utils/utils";
 
 export function convertMarkdownToHtml(
   markdownPath: string,
@@ -19,78 +18,47 @@ export function convertMarkdownToHtml(
     .filter((step) => step.snippet?.trim())
     .map(
       (step: Steps) => `
-      <div>
-        <pre><code>${step.snippet}</code></pre>
+      <section class="mb-4">
+        <pre class="bg-muted p-3 rounded-md overflow-x-auto text-sm">
+          <code>${step.snippet ?? ""}</code>
+        </pre>
         ${
           step.location
-            ? `<p><em>Location: ${escapeHtml(step.location)}</em></p>`
+            ? `<p class="text-xs text-muted-foreground mt-1">
+                <em>Location: ${step.location}</em>
+               </p>`
             : ""
         }
-      </div>`
+      </section>`
     )
     .join("\n");
 
   const errorHtml = resultError
-    .map((error: string) => `<pre><code>${error}</code></pre>`)
+    .map(
+      (error: string) => `
+      <pre class="bg-destructive/10 text-destructive p-3 rounded-md overflow-x-auto text-sm mb-2">
+        <code>${error}</code>
+      </pre>`
+    )
     .join("\n");
 
   const fullHtml = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Ortoni Error Report</title>
-      <style>
-        body { font-family: sans-serif; padding: 2rem; line-height: 1.6; max-width: 900px; margin: auto; }
-        code, pre { background: #f4f4f4; padding: 0.5rem; border-radius: 5px; display: block; overflow-x: auto; }
-        h1, h2, h3 { color: #444; }
-        hr { margin: 2em 0; }
-        #copyBtn {
-          background-color: #007acc;
-          color: white;
-          border: none;
-          padding: 0.5rem 1rem;
-          margin-bottom: 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-        #copyBtn:hover {
-          background-color: #005fa3;
-        }
-      </style>
-    </head>
-    <body>
-      <button id="copyBtn">📋 Copy All</button>
-      <script>
-        document.getElementById("copyBtn").addEventListener("click", () => {
-          const content = document.getElementById("markdownContent").innerText;
-          navigator.clipboard.writeText(content).then(() => {
-            // change button text to indicate success
-            const button = document.getElementById("copyBtn");
-            button.textContent = "✅ Copied!";
-            setTimeout(() => {
-              button.textContent = "📋 Copy All"
-              }, 2000);
-          }).catch(err => {
-            console.error("Failed to copy text: ", err);
-            alert("Failed to copy text. Please try manually.");   
-          });
-        });
-      </script>
-      <div id="markdownContent">
-      <h1>Instructions</h1>
-      <ul>
+    <div id="markdownContent" class="space-y-6">
+      <h1 class="text-xl font-bold">Instructions</h1>
+      <ul class="list-disc list-inside space-y-1">
         <li>Following Playwright test failed.</li>
         <li>Explain why, be concise, respect Playwright best practices.</li>
         <li>Provide a snippet of code with the fix, if possible.</li>
       </ul>
-      <h1>Error Details</h1>
-      ${errorHtml || "<p>No errors found.</p>"}
-      ${stepsHtml || "<p>No step data available.</p>"}
+
+      <h1 class="text-xl font-bold">Error Details</h1>
+      ${errorHtml || '<p class="text-muted-foreground">No errors found.</p>'}
+      ${
+        stepsHtml ||
+        '<p class="text-muted-foreground">No step data available.</p>'
+      }
       ${markdownHtml || ""}
-      </div>
-    </body>
-    </html>
+    </div>
   `;
 
   fs.writeFileSync(htmlOutputPath, fullHtml, "utf-8");
