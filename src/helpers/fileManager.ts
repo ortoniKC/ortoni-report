@@ -17,7 +17,6 @@ export class FileManager {
   writeReportFile(filename: string, data: unknown): string {
     const templatePath = path.resolve(__dirname, "index.html");
     let html = fs.readFileSync(templatePath, "utf-8");
-    console.log(html);
     const reportJSON = JSON.stringify({
       data,
     });
