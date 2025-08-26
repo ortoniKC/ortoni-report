@@ -1,11 +1,5 @@
 import { TestResultData } from "../types/testResults";
 import { groupResults } from "../utils/groupProjects";
-import {
-  formatDate,
-  formatDateLocal,
-  formatDateNoTimezone,
-  formatDateUTC,
-} from "../utils/utils";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 import { DatabaseManager } from "./databaseManager";
 
@@ -104,7 +98,7 @@ export class HTMLGenerator {
         projectName: this.ortoniConfig.projectName,
         authorName: this.ortoniConfig.authorName,
         type: this.ortoniConfig.testType,
-        title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
+        title: this.ortoniConfig.title,
       },
       userMeta: {
         meta: this.ortoniConfig.meta,
