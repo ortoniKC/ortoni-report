@@ -28,7 +28,8 @@ export class TestResultProcessor {
     const filePath = normalizeFilePath(test.titlePath()[2]);
     const tagPattern = /@[\w]+/g;
     const title = test.title.replace(tagPattern, "").trim();
-    const suiteAndTitle = extractSuites(test.parent.titlePath());
+    const suiteAndTitle = extractSuites(test.titlePath());
+    console.log(suiteAndTitle);
     const suite =
       suiteAndTitle.hierarchy.length > 0
         ? suiteAndTitle.hierarchy

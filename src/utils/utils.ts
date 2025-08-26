@@ -85,9 +85,11 @@ type SuiteAndTitle = {
 
 export function extractSuites(titlePath: string[]): SuiteAndTitle {
   const tagPattern = /@[\w]+/g;
+  console.log("title path: " + titlePath);
   const suiteParts = titlePath
-    .slice(3, -1)
+    .slice(3, titlePath.length - 1)
     .map((p) => p.replace(tagPattern, "").trim());
+  console.log("suite parts: " + suiteParts);
   return {
     hierarchy: suiteParts.join(" > "), // full hierarchy
     topLevelSuite: suiteParts[0] ?? "", // first suite
