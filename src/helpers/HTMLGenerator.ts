@@ -40,18 +40,6 @@ export class HTMLGenerator {
       slowTests: await this.dbManager.getSlowTests(),
     };
   }
-  // async chartTrendData() {
-  //   return {
-  //     labels: (await this.getReportData()).trends.map((t) =>
-  //       formatDateNoTimezone(t.run_date)
-  //     ),
-  //     passed: (await this.getReportData()).trends.map((t) => t.passed),
-  //     failed: (await this.getReportData()).trends.map((t) => t.failed),
-  //     avgDuration: (await this.getReportData()).trends.map(
-  //       (t) => t.avg_duration
-  //     ),
-  //   };
-  // }
 
   private async prepareReportData(
     filteredResults: TestResultData[],
@@ -80,8 +68,7 @@ export class HTMLGenerator {
       results,
       projectSet
     );
-    const utcRunDate = formatDateUTC(new Date());
-    const lastRunDate = formatDateLocal(utcRunDate);
+    const lastRunDate = new Date().toLocaleString();
     const testHistories = await Promise.all(
       results.map(async (result) => {
         const testId = `${result.filePath}:${result.projectName}:${result.title}`;
