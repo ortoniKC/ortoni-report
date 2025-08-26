@@ -30,10 +30,10 @@ export class TestResultProcessor {
     const title = test.title.replace(tagPattern, "").trim();
     const suiteAndTitle = extractSuites(test.parent.titlePath());
     const suite =
-      suiteAndTitle.topLevelSuite.length > 0
-        ? suiteAndTitle.topLevelSuite
+      suiteAndTitle.hierarchy.length > 0
+        ? suiteAndTitle.hierarchy
         : test.titlePath()[3].replace(tagPattern, "").trim();
-    const suiteHierarchy = suiteAndTitle.suite;
+    const suiteHierarchy = suiteAndTitle.hierarchy;
 
     const testResult: TestResultData = {
       suiteHierarchy,
@@ -65,8 +65,6 @@ export class TestResultProcessor {
       base64Image: ortoniConfig.base64Image,
       testId: `${filePath}:${projectName}:${title}`,
     };
-    console.log("Hierarchy: " + testResult.suiteHierarchy);
-    console.log("Suites: " + testResult.suite);
 
     attachFiles(
       test.id,

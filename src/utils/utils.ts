@@ -78,7 +78,7 @@ export function formatDateNoTimezone(isoString: string): string {
 }
 
 type SuiteAndTitle = {
-  suite: string; // full path joined
+  hierarchy: string; // full path joined
   topLevelSuite: string; // first suite
   parentSuite: string; // last suite before title
 };
@@ -89,7 +89,7 @@ export function extractSuites(titlePath: string[]): SuiteAndTitle {
     .slice(3, -1)
     .map((p) => p.replace(tagPattern, "").trim());
   return {
-    suite: suiteParts.join(" > "), // full hierarchy
+    hierarchy: suiteParts.join(" > "), // full hierarchy
     topLevelSuite: suiteParts[0] ?? "", // first suite
     parentSuite: suiteParts[suiteParts.length - 1] ?? "", // last suite
   };
