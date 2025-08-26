@@ -1,7 +1,7 @@
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 import { TestResultData } from "../types/testResults";
-import { formatDateUTC, formatDateLocal } from "../utils/utils";
+import { formatDateLocal } from "../utils/utils";
 
 export class DatabaseManager {
   private db: Database | null = null;

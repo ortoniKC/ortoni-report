@@ -19,7 +19,7 @@ export class HTMLGenerator {
 
   async generateFinalReport(
     filteredResults: TestResultData[],
-    totalDuration: string,
+    totalDuration: number,
     results: TestResultData[],
     projectSet: Set<string>
   ) {
@@ -55,7 +55,7 @@ export class HTMLGenerator {
 
   private async prepareReportData(
     filteredResults: TestResultData[],
-    totalDuration: string,
+    totalDuration: number,
     results: TestResultData[],
     projectSet: Set<string>
   ) {
@@ -98,7 +98,7 @@ export class HTMLGenerator {
           pass: passedTests,
           fail: failed,
           skip: results.filter((r) => r.status === "skipped").length,
-          retry: results.filter((r) => r.isRetry).length,
+          retry: results.filter((r) => r.retryAttemptCount).length,
           flaky: flakyTests,
           total: filteredResults.length,
         },
@@ -154,7 +154,7 @@ export class HTMLGenerator {
         ).length,
         skippedTests: allProjectTests.filter((r) => r.status === "skipped")
           .length,
-        retryTests: allProjectTests.filter((r) => r.isRetry).length,
+        retryTests: allProjectTests.filter((r) => r.retryAttemptCount).length,
         flakyTests: allProjectTests.filter((r) => r.status === "flaky").length,
         totalTests: projectTests.length,
       };

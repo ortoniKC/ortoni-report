@@ -4,11 +4,12 @@ export interface Steps {
   location: string;
 }
 export interface TestResultData {
+  suiteHierarchy: string;
+  key: string;
   annotations: any[];
   testTags: string[];
   location: string;
-  retry: string;
-  isRetry: number;
+  retryAttemptCount: number;
   projectName: any;
   suite: any;
   title: string;
@@ -22,7 +23,7 @@ export interface TestResultData {
     | "unexpected"
     | "flaky";
   flaky: string;
-  duration: string;
+  duration: number;
   errors: any[];
   steps: Steps[];
   logs: string;

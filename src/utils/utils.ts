@@ -1,30 +1,5 @@
 import path from "path";
 
-export function msToTime(duration: number): string {
-  const milliseconds = Math.floor(duration % 1000);
-  const seconds = Math.floor((duration / 1000) % 60);
-  const minutes = Math.floor((duration / (1000 * 60)) % 60);
-  const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-  let result = "";
-
-  if (hours > 0) {
-    result += `${hours}h:`;
-  }
-  if (minutes > 0 || hours > 0) {
-    result += `${minutes < 10 ? "0" + minutes : minutes}m:`;
-  }
-  if (seconds > 0 || minutes > 0 || hours > 0) {
-    result += `${seconds < 10 ? "0" + seconds : seconds}s`;
-  }
-  if (milliseconds > 0 && !(seconds > 0 || minutes > 0 || hours > 0)) {
-    result += `${milliseconds}ms`;
-  } else if (milliseconds > 0) {
-    result += `:${milliseconds < 100 ? "0" + milliseconds : milliseconds}ms`;
-  }
-
-  return result;
-}
 export function normalizeFilePath(filePath: string): string {
   // Normalize the path to handle different separators
   const normalizedPath = path.normalize(filePath);
@@ -100,4 +75,22 @@ export function formatDateNoTimezone(isoString: string): string {
     dateStyle: "medium",
     timeStyle: "short",
   });
+}
+
+type SuiteAndTitle = {
+  suite: string; // full path joined
+  topLevelSuite: string; // first suite
+  parentSuite: string; // last suite before title
+};
+
+export function extractSuites(titlePath: string[]): SuiteAndTitle {
+  const tagPattern = /@[\w]+/g;
+  const suiteParts = titlePath
+    .slice(3, -1)
+    .map((p) => p.replace(tagPattern, "").trim());
+  return {
+    suite: suiteParts.join(" > "), // full hierarchy
+    topLevelSuite: suiteParts[0] ?? "", // first suite
+    parentSuite: suiteParts[suiteParts.length - 1] ?? "", // last suite
+  };
 }

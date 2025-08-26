@@ -3,7 +3,7 @@ import { TestCase, TestResult } from "@playwright/test/reporter";
 import path from "path";
 import { TestResultData } from "../types/testResults";
 import { attachFiles } from "../utils/attachFiles";
-import { normalizeFilePath, msToTime, escapeHtml } from "../utils/utils";
+import { normalizeFilePath, escapeHtml, extractSuites } from "../utils/utils";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export class TestResultProcessor {
@@ -28,20 +28,26 @@ export class TestResultProcessor {
     const filePath = normalizeFilePath(test.titlePath()[2]);
     const tagPattern = /@[\w]+/g;
     const title = test.title.replace(tagPattern, "").trim();
-    const suite = test.titlePath()[3].replace(tagPattern, "").trim();
+    const suiteAndTitle = extractSuites(test.parent.titlePath());
+    const suite =
+      suiteAndTitle.topLevelSuite.length > 0
+        ? suiteAndTitle.topLevelSuite
+        : test.titlePath()[3].replace(tagPattern, "").trim();
+    const suiteHierarchy = suiteAndTitle.suite;
 
     const testResult: TestResultData = {
+      suiteHierarchy,
+      key: test.id,
       annotations: test.annotations,
       testTags: test.tags,
       location: `${filePath}:${location.line}:${location.column}`,
-      retry: result.retry > 0 ? "retry" : "",
-      isRetry: result.retry,
+      retryAttemptCount: result.retry,
       projectName: projectName,
-      suite: suite,
-      title: title,
-      status: status,
+      suite,
+      title,
+      status,
       flaky: test.outcome(),
-      duration: msToTime(result.duration),
+      duration: result.duration,
       errors: result.errors.map((e) =>
         this.ansiToHtml.toHtml(escapeHtml(e.stack || e.toString()))
       ),
@@ -59,6 +65,8 @@ export class TestResultProcessor {
       base64Image: ortoniConfig.base64Image,
       testId: `${filePath}:${projectName}:${title}`,
     };
+    console.log("Hierarchy: " + testResult.suiteHierarchy);
+    console.log("Suites: " + testResult.suite);
 
     attachFiles(
       test.id,

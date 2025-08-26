@@ -9,12 +9,13 @@ export function groupResults(
     // Group by filePath, suite, and projectName
     const groupedResults = results.reduce((acc: any, result, index) => {
       const testId = `${result.filePath}:${result.projectName}:${result.title}`;
+      const key = `${testId}-${result.key}-${result.retryAttemptCount}`;
       const { filePath, suite, projectName } = result;
       acc[filePath] = acc[filePath] || {};
       acc[filePath][suite] = acc[filePath][suite] || {};
       acc[filePath][suite][projectName] =
         acc[filePath][suite][projectName] || [];
-      acc[filePath][suite][projectName].push({ ...result, index, testId });
+      acc[filePath][suite][projectName].push({ ...result, index, testId, key });
       return acc;
     }, {});
     return groupedResults;
@@ -22,10 +23,11 @@ export function groupResults(
     // Group by filePath and suite, ignoring projectName
     const groupedResults = results.reduce((acc: any, result, index) => {
       const testId = `${result.filePath}:${result.projectName}:${result.title}`;
+      const key = `${testId}-${result.key}-${result.retryAttemptCount}`;
       const { filePath, suite } = result;
       acc[filePath] = acc[filePath] || {};
       acc[filePath][suite] = acc[filePath][suite] || [];
-      acc[filePath][suite].push({ ...result, index, testId });
+      acc[filePath][suite].push({ ...result, index, testId, key });
       return acc;
     }, {});
     return groupedResults;
