@@ -4,9 +4,7 @@ import { Steps } from "../types/testResults";
 
 export function convertMarkdownToHtml(
   markdownPath: string,
-  htmlOutputPath: string,
-  stepsError: Steps[],
-  resultError: string[]
+  htmlOutputPath: string
 ) {
   const hasMarkdown = fs.existsSync(markdownPath);
   const markdownContent = hasMarkdown

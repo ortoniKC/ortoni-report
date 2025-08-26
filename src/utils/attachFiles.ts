@@ -142,7 +142,7 @@ function handleAttachment(
   if (resultKey === "markdownPath" && errors) {
     const htmlPath = fullPath.replace(/\.md$/, ".html");
     const htmlRelativePath = relativePath.replace(/\.md$/, ".html");
-    convertMarkdownToHtml(fullPath, htmlPath, steps || [], errors || []);
+    convertMarkdownToHtml(fullPath, htmlPath);
     testResult[resultKey] = htmlRelativePath;
     return;
   }
