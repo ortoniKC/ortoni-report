@@ -1,5 +1,35 @@
 # Change Log:
 
+## V4.0.0
+
+#### 🚨 Breaking Changes
+
+- **Theme Settings Removed** – The explicit theme setting option has been removed.
+
+  - Theme now automatically adapts to the **system default** and persists via **cookies**.
+
+- **Chart Type Settings Removed** – Users can no longer switch chart types manually.
+- **Database Redesign** – The database schema has been restructured.
+
+  - ⚠️ Previous data may not be compatible with this release.
+
+#### ✨ New Features & Improvements
+
+- **Complete Redesign & Modern Tech Stack**
+
+  - Migrated frontend to **React**, **shadcn/ui**, **Tailwind CSS**, and **Framer Motion** for smoother UI/UX.
+
+- **Reporting Improvements**
+
+  - Cleaner, more interactive report layouts with improved navigation and accessibility.
+
+- **Chart Migration**
+
+  - Moved from **Chart.js** to **Recharts** for better customization and performance.
+
+- **Performance Boost**
+  - Significant optimizations across rendering, loading, and interactivity.
+
 ## v3.0.4
 
 #### 🐛 Bug Fixes

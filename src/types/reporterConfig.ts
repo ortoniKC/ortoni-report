@@ -73,13 +73,8 @@ export interface OrtoniReportConfig {
   stdIO?: boolean;
 
   /**
-   * Metadata for the report. ['TestCycle': 'Cycle 1', 'TestEnvironment':'QA', etc]
+   * Metadata for the report. ['Test Cycle': 'Cycle 1', 'Test Environment':'QA', etc]
    * @example { "key": "value" } as string
    */
   meta?: Record<string, string>;
-
-  /**
-   * Chart type on the dashboard.
-   * @example "doughnut" | "pie"   */
-  chartType?: "doughnut" | "pie";
 }
