@@ -1,30 +1,5 @@
 import path from "path";
 
-export function msToTime(duration: number): string {
-  const milliseconds = Math.floor(duration % 1000);
-  const seconds = Math.floor((duration / 1000) % 60);
-  const minutes = Math.floor((duration / (1000 * 60)) % 60);
-  const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-  let result = "";
-
-  if (hours > 0) {
-    result += `${hours}h:`;
-  }
-  if (minutes > 0 || hours > 0) {
-    result += `${minutes < 10 ? "0" + minutes : minutes}m:`;
-  }
-  if (seconds > 0 || minutes > 0 || hours > 0) {
-    result += `${seconds < 10 ? "0" + seconds : seconds}s`;
-  }
-  if (milliseconds > 0 && !(seconds > 0 || minutes > 0 || hours > 0)) {
-    result += `${milliseconds}ms`;
-  } else if (milliseconds > 0) {
-    result += `:${milliseconds < 100 ? "0" + milliseconds : milliseconds}ms`;
-  }
-
-  return result;
-}
 export function normalizeFilePath(filePath: string): string {
   // Normalize the path to handle different separators
   const normalizedPath = path.normalize(filePath);
@@ -81,8 +56,8 @@ export function escapeHtml(unsafe: string): string {
 export function formatDateUTC(date: Date): string {
   return date.toISOString();
 }
-export function formatDateLocal(isoString: string): string {
-  const date = new Date(isoString);
+export function formatDateLocal(dateInput: Date | string): string {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "short",
@@ -90,14 +65,33 @@ export function formatDateLocal(isoString: string): string {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-    timeZoneName: "shortOffset",
+    timeZoneName: "short", // or "Asia/Kolkata"
   };
   return new Intl.DateTimeFormat(undefined, options).format(date);
 }
+
 export function formatDateNoTimezone(isoString: string): string {
   const date = new Date(isoString);
   return date.toLocaleString("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
   });
+}
+
+type SuiteAndTitle = {
+  hierarchy: string; // full path joined
+  topLevelSuite: string; // first suite
+  parentSuite: string; // last suite before title
+};
+
+export function extractSuites(titlePath: string[]): SuiteAndTitle {
+  const tagPattern = /@[\w]+/g;
+  const suiteParts = titlePath
+    .slice(3, titlePath.length - 1)
+    .map((p) => p.replace(tagPattern, "").trim());
+  return {
+    hierarchy: suiteParts.join(" > "), // full hierarchy
+    topLevelSuite: suiteParts[0] ?? "", // first suite
+    parentSuite: suiteParts[suiteParts.length - 1] ?? "", // last suite
+  };
 }

@@ -4,12 +4,12 @@ export interface Steps {
   location: string;
 }
 export interface TestResultData {
-  port: number | undefined;
-  annotations: any;
+  suiteHierarchy: string;
+  key: string;
+  annotations: any[];
   testTags: string[];
   location: string;
-  retry: string;
-  isRetry: number;
+  retryAttemptCount: number;
   projectName: any;
   suite: any;
   title: string;
@@ -23,7 +23,7 @@ export interface TestResultData {
     | "unexpected"
     | "flaky";
   flaky: string;
-  duration: string;
+  duration: number;
   errors: any[];
   steps: Steps[];
   logs: string;
@@ -32,7 +32,8 @@ export interface TestResultData {
   filePath: string;
   filters: Set<string>;
   tracePath?: string;
-  videoPath?: string;
+  videoPath?: string[];
   markdownPath?: string;
   base64Image: boolean | undefined;
+  testId: string;
 }

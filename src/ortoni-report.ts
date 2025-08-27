@@ -13,7 +13,7 @@ import { TestResultProcessor } from "./helpers/resultProcessor ";
 import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
-import { ensureHtmlExtension, msToTime } from "./utils/utils";
+import { ensureHtmlExtension } from "./utils/utils";
 import { DatabaseManager } from "./helpers/databaseManager";
 import path from "path";
 import { TraceMode } from "playwright/types/test";
@@ -106,23 +106,21 @@ export default class OrtoniReport implements Reporter {
       this.overAllStatus = result.status;
       if (this.shouldGenerateReport) {
         const filteredResults = this.results.filter(
-          (r) => r.status !== "skipped" && !r.isRetry
+          (r) => r.status !== "skipped"
         );
-        const totalDuration = msToTime(result.duration);
-        const cssContent = this.fileManager.readCssContent();
+        const totalDuration = result.duration;
         const runId = await this.dbManager.saveTestRun();
         if (runId !== null) {
           await this.dbManager.saveTestResults(runId, this.results);
-          const html = await this.htmlGenerator.generateHTML(
+          const finalReportData = await this.htmlGenerator.generateFinalReport(
             filteredResults,
             totalDuration,
-            cssContent,
             this.results,
             this.projectSet
           );
           this.outputPath = this.fileManager.writeReportFile(
             this.outputFilename,
-            html
+            finalReportData
           );
         } else {
           console.error("OrtoniReport: Error saving test run to database");

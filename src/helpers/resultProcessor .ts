@@ -3,7 +3,7 @@ import { TestCase, TestResult } from "@playwright/test/reporter";
 import path from "path";
 import { TestResultData } from "../types/testResults";
 import { attachFiles } from "../utils/attachFiles";
-import { normalizeFilePath, msToTime, escapeHtml } from "../utils/utils";
+import { normalizeFilePath, escapeHtml, extractSuites } from "../utils/utils";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 
 export class TestResultProcessor {
@@ -29,20 +29,22 @@ export class TestResultProcessor {
     const tagPattern = /@[\w]+/g;
     const title = test.title.replace(tagPattern, "").trim();
     const suite = test.titlePath()[3].replace(tagPattern, "").trim();
+    const suiteAndTitle = extractSuites(test.titlePath());
+    const suiteHierarchy = suiteAndTitle.hierarchy;
 
     const testResult: TestResultData = {
-      port: ortoniConfig.port || 2004,
+      suiteHierarchy,
+      key: test.id,
       annotations: test.annotations,
       testTags: test.tags,
       location: `${filePath}:${location.line}:${location.column}`,
-      retry: result.retry > 0 ? "retry" : "",
-      isRetry: result.retry,
+      retryAttemptCount: result.retry,
       projectName: projectName,
-      suite: suite,
-      title: title,
-      status: status,
+      suite,
+      title,
+      status,
       flaky: test.outcome(),
-      duration: msToTime(result.duration),
+      duration: result.duration,
       errors: result.errors.map((e) =>
         this.ansiToHtml.toHtml(escapeHtml(e.stack || e.toString()))
       ),
@@ -58,6 +60,7 @@ export class TestResultProcessor {
       filePath: filePath,
       filters: projectSet,
       base64Image: ortoniConfig.base64Image,
+      testId: `${filePath}:${projectName}:${title}`,
     };
 
     attachFiles(

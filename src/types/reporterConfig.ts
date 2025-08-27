@@ -35,14 +35,8 @@ export interface OrtoniReportConfig {
    */
   testType?: string;
   /**
-   * The preferred theme for the report.
-   * Can be either "light" or "dark".
-   * @default "System theme"
-   * @example "dark"
-   */
-  preferredTheme?: "light" | "dark";
-  /**
    * If true, images will be encoded in base64.
+   * Not recommended to use if many screenshots are present.
    * @default false
    * @example true
    */
@@ -79,13 +73,8 @@ export interface OrtoniReportConfig {
   stdIO?: boolean;
 
   /**
-   * Metadata for the report. ['TestCycle': 'Cycle 1', 'TestEnvironment':'QA', etc]
+   * Metadata for the report. ['Test Cycle': 'Cycle 1', 'Test Environment':'QA', etc]
    * @example { "key": "value" } as string
    */
   meta?: Record<string, string>;
-
-  /**
-   * Chart type on the dashboard.
-   * @example "doughnut" | "pie"   */
-  chartType?: "doughnut" | "pie";
 }

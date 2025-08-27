@@ -29,6 +29,7 @@ export function attachFiles(
 
   const { base64Image } = config;
   testResult.screenshots = [];
+  testResult.videoPath = [];
 
   result.attachments.forEach((attachment) => {
     const { contentType, name, path: attachmentPath, body } = attachment;
@@ -131,13 +132,17 @@ function handleAttachment(
 ) {
   if (attachmentPath) {
     fs.copyFileSync(attachmentPath, fullPath);
-    testResult[resultKey] = relativePath;
+    if (resultKey === "videoPath") {
+      testResult[resultKey]?.push(relativePath);
+    } else if (resultKey === "tracePath") {
+      testResult[resultKey] = relativePath;
+    }
   }
 
   if (resultKey === "markdownPath" && errors) {
     const htmlPath = fullPath.replace(/\.md$/, ".html");
     const htmlRelativePath = relativePath.replace(/\.md$/, ".html");
-    convertMarkdownToHtml(fullPath, htmlPath, steps || [], errors || []);
+    convertMarkdownToHtml(fullPath, htmlPath);
     testResult[resultKey] = htmlRelativePath;
     return;
   }

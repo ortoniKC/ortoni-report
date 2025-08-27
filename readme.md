@@ -17,19 +17,20 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
   - **Dashboard**: High-level overview of test analytics and trends.
   - **Tests**: Dive into individual test details including logs, screenshots, and errors.
   - **Analytics**: Track overall execution metrics, trends, and flaky/slow test insights.
+  - **Glance**: See all the tests in a single Tabular view
 - **Hierarchical Grouping**: Tests are organized by filename, suite, and project for better traceability.
-- **Test History View**: Access up to 10 recent executions, categorized by suite and project.
+- **Test History View**: Access up to 10 recent executions, categorized by suite and project with test Status, Duration.
 - **Configurable Integration**: Easy setup with Playwright using TypeScript/JavaScript, along with customizable preferences.
-- **Advanced Filtering**: Filter by project, tags, and status — with a reset option for full visibility.
+- **Advanced Filtering**: Filter by Project, Tags, and Status
 
 ### 2. **Detailed Reporting**
 
-- **Comprehensive Test Data**: Includes status, duration, tags, logs, errors, screenshots, videos, and trace viewer.
-- **Native Trace Viewer**: Directly open the trace viewer within the reporter.
+- **Comprehensive Test Data**: Includes status, duration, tags, logs, errors, screenshots, videos, trace viewer & markdown
+- **Native Trace Viewer**: Directly open the trace viewer within the reporter in a new tab
 
 ### 3. **Visualization & Insights**
 
-- **Test Analytics Dashboard** 🌟 **(New!)**
+- **Test Analytics Dashboard**
 
   - Summary of total test runs, passed/failed counts, pass rate, and average duration.
   - **Trends Over Time**: Line chart showing test results across the last 30 runs.
@@ -38,7 +39,7 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 
 - **Chart Visualizations**:
 
-  - Pie or doughnut charts for test summary and per-project breakdowns **(Improved!)**
+  - Charts for test summary, per-project breakdowns
   - Bar charts for project-specific comparisons.
   - **Line Chart for Trends**: Visualize execution status progression over time.
 
@@ -54,12 +55,11 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 ### 5. **User Experience & Usability**
 
 - **Search & Reset**: Quickly search by keyword or status, with easy reset controls.
-- **Skip Management**: Skipped tests are hidden by default to declutter views.
 - **Self-Contained Reports**: Easily share and review offline-friendly reports.
 - **Multi-Filters**: Combine filters for targeted test analysis.
 - **Meta Information**: Add custom user or environment metadata to reports.
 - **CLI**: Open the reporter anytime using the builin CLI
-- **Open Markdown**: View markdown as HTML - Copy and use it in your AI prompt
+- **Open Markdown**: View markdown - Copy and use it in your AI prompt
 
 ---
 
@@ -84,25 +84,21 @@ import * as os from "os";
 
 const reportConfig: OrtoniReportConfig = {
   open: process.env.CI ? "never" : "always", // default to never
-  folderPath: "report-db",
+  folderPath: "my-report",
   filename: "index.html",
-  logo:"logo.{png, jpg}",
   title: "Ortoni Test Report",
-  showProject: !true,
-  projectName: "Ortoni-Report",
+  showProject: false,
+  projectName: "Your Project title",
   testType: "Functional",
   authorName: os.userInfo().username,
   base64Image: false,
   stdIO: false,
-  preferredTheme: "light",
-  chartType: "doughnut" | "pie";
   meta: {
-    project: "Playwright",
+    "Test Cycle": "Aug 25, 2025",
     version: "3",
-    description: "Playwright test report",
-    testCycle: "04121994",
+    description: "My automation suite",
     release: "0.3",
-     platform: os.type(),
+    platform: os.type(),
   },
 };
 
@@ -118,26 +114,22 @@ export default defineConfig({
 import { defineConfig } from "@playwright/test";
 
 const reportConfig = {
-  open: process.env.CI ? "never" : "always",
-  folderPath: "report-db",
+  open: process.env.CI ? "never" : "always", // default to never
+  folderPath: "my-report",
   filename: "index.html",
-  logo:"logo.{png, jpg}",
   title: "Ortoni Test Report",
-  showProject: !true,
-  projectName: "Ortoni-Report",
-  testType: "e2e",
-  authorName: "Koushik",
+  showProject: false,
+  projectName: "Your Project title",
+  testType: "Functional",
+  authorName: os.userInfo().username,
   base64Image: false,
   stdIO: false,
-  preferredTheme: "light",
-  chartType: "doughnut" | "pie";
   meta: {
-    project: "Playwright",
-    version: "3.0.0",
-    description: "Playwright test report",
-    testCycle: "1",
-    release: "1.0.0",
-    platform: "Windows",
+    "Test Cycle": "Aug 25, 2025",
+    version: "3",
+    description: "My automation suite",
+    release: "0.3",
+    platform: os.type(),
   },
 };
 
@@ -152,6 +144,7 @@ export default defineConfig({
 ### Command: `show-report`
 
 This command starts a local Express server and serves the generated Ortoni report. You can open the report in your default browser.
+Trace viewer and markdown support only in local server or cloud server
 
 #### Options
 

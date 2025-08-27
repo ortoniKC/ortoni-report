@@ -1,7 +1,7 @@
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 import { TestResultData } from "../types/testResults";
-import { formatDateUTC, formatDateLocal } from "../utils/utils";
+import { formatDateLocal } from "../utils/utils";
 
 export class DatabaseManager {
   private db: Database | null = null;
@@ -38,7 +38,7 @@ export class DatabaseManager {
           run_id INTEGER,
           test_id TEXT,
           status TEXT,
-          duration TEXT,
+          duration INTEGER, -- store duration as raw ms
           error_message TEXT,
           FOREIGN KEY (run_id) REFERENCES test_runs (id)
         );
@@ -109,7 +109,7 @@ export class DatabaseManager {
           runId,
           `${result.filePath}:${result.projectName}:${result.title}`,
           result.status,
-          result.duration,
+          result.duration, // store raw ms
           result.errors.join("\n"),
         ]);
       }
@@ -190,7 +190,7 @@ export class DatabaseManager {
         (SELECT COUNT(*) FROM test_results) as totalTests,
         (SELECT COUNT(*) FROM test_results WHERE status = 'passed') as passed,
         (SELECT COUNT(*) FROM test_results WHERE status = 'failed') as failed,
-        (SELECT AVG(CAST(duration AS FLOAT)) FROM test_results) as avgDuration
+        (SELECT AVG(duration) FROM test_results) as avgDuration
     `);
 
       const passRate = summary.totalTests
@@ -203,7 +203,7 @@ export class DatabaseManager {
         passed: summary.passed,
         failed: summary.failed,
         passRate: parseFloat(passRate.toString()),
-        avgDuration: Math.round(summary.avgDuration || 0),
+        avgDuration: Math.round(summary.avgDuration || 0), // raw ms avg
       };
     } catch (error) {
       console.error("OrtoniReport: Error getting summary data:", error);
@@ -234,7 +234,7 @@ export class DatabaseManager {
       SELECT trun.run_date,
         SUM(CASE WHEN tr.status = 'passed' THEN 1 ELSE 0 END) AS passed,
         SUM(CASE WHEN tr.status = 'failed' THEN 1 ELSE 0 END) AS failed,
-        AVG(CAST(tr.duration AS FLOAT)) AS avg_duration
+        AVG(tr.duration) AS avg_duration
       FROM test_results tr
       JOIN test_runs trun ON tr.run_id = trun.id
       GROUP BY trun.run_date
@@ -247,7 +247,7 @@ export class DatabaseManager {
       return rows.reverse().map((row) => ({
         ...row,
         run_date: formatDateLocal(row.run_date),
-        avg_duration: Math.round(row.avg_duration || 0),
+        avg_duration: Math.round(row.avg_duration || 0), // raw ms avg
       }));
     } catch (error) {
       console.error("OrtoniReport: Error getting trends data:", error);
@@ -257,7 +257,9 @@ export class DatabaseManager {
 
   async getFlakyTests(
     limit = 10
-  ): Promise<{ test_id: string; total: number }[]> {
+  ): Promise<
+    { test_id: string; total: number; flaky: number; avg_duration: number }[]
+  > {
     if (!this.db) {
       console.error("OrtoniReport: Database not initialized");
       return [];
@@ -269,7 +271,8 @@ export class DatabaseManager {
       SELECT
         test_id,
         COUNT(*) AS total,
-        SUM(CASE WHEN status = 'flaky' THEN 1 ELSE 0 END) AS flaky
+        SUM(CASE WHEN status = 'flaky' THEN 1 ELSE 0 END) AS flaky,
+        AVG(duration) AS avg_duration
       FROM test_results
       GROUP BY test_id
       HAVING flaky > 0
@@ -297,7 +300,7 @@ export class DatabaseManager {
         `
       SELECT
         test_id,
-        AVG(CAST(duration AS FLOAT)) AS avg_duration
+        AVG(duration) AS avg_duration
       FROM test_results
       GROUP BY test_id
       ORDER BY avg_duration DESC
@@ -308,7 +311,7 @@ export class DatabaseManager {
 
       return rows.map((row) => ({
         test_id: row.test_id,
-        avg_duration: Math.round(row.avg_duration || 0),
+        avg_duration: Math.round(row.avg_duration || 0), // raw ms avg
       }));
     } catch (error) {
       console.error("OrtoniReport: Error getting slow tests:", error);

@@ -1,15 +1,5 @@
-import path from "path";
 import { TestResultData } from "../types/testResults";
 import { groupResults } from "../utils/groupProjects";
-import {
-  formatDate,
-  formatDateLocal,
-  formatDateNoTimezone,
-  formatDateUTC,
-  safeStringify,
-} from "../utils/utils";
-import fs from "fs";
-import Handlebars from "handlebars";
 import { OrtoniReportConfig } from "../types/reporterConfig";
 import { DatabaseManager } from "./databaseManager";
 
@@ -18,15 +8,12 @@ export class HTMLGenerator {
   private dbManager: DatabaseManager;
   constructor(ortoniConfig: OrtoniReportConfig, dbManager: DatabaseManager) {
     this.ortoniConfig = ortoniConfig;
-    this.registerHandlebarsHelpers();
-    this.registerPartials();
     this.dbManager = dbManager;
   }
 
-  async generateHTML(
+  async generateFinalReport(
     filteredResults: TestResultData[],
-    totalDuration: string,
-    cssContent: string,
+    totalDuration: number,
     results: TestResultData[],
     projectSet: Set<string>
   ) {
@@ -36,12 +23,7 @@ export class HTMLGenerator {
       results,
       projectSet
     );
-    const templateSource = fs.readFileSync(
-      path.resolve(__dirname, "views", "main.hbs"),
-      "utf-8"
-    );
-    const template = Handlebars.compile(templateSource);
-    return template({ ...data, inlineCss: cssContent });
+    return data;
   }
 
   async getReportData() {
@@ -52,22 +34,10 @@ export class HTMLGenerator {
       slowTests: await this.dbManager.getSlowTests(),
     };
   }
-  async chartTrendData() {
-    return {
-      labels: (await this.getReportData()).trends.map((t) =>
-        formatDateNoTimezone(t.run_date)
-      ),
-      passed: (await this.getReportData()).trends.map((t) => t.passed),
-      failed: (await this.getReportData()).trends.map((t) => t.failed),
-      avgDuration: (await this.getReportData()).trends.map(
-        (t) => t.avg_duration
-      ),
-    };
-  }
 
   private async prepareReportData(
     filteredResults: TestResultData[],
-    totalDuration: string,
+    totalDuration: number,
     results: TestResultData[],
     projectSet: Set<string>
   ) {
@@ -92,8 +62,7 @@ export class HTMLGenerator {
       results,
       projectSet
     );
-    const utcRunDate = formatDateUTC(new Date());
-    const localRunDate = formatDateLocal(utcRunDate);
+    const lastRunDate = new Date().toLocaleString();
     const testHistories = await Promise.all(
       results.map(async (result) => {
         const testId = `${result.filePath}:${result.projectName}:${result.title}`;
@@ -105,34 +74,44 @@ export class HTMLGenerator {
       })
     );
     return {
-      utcRunDate: utcRunDate,
-      localRunDate: localRunDate,
-      testHistories: testHistories,
-      logo: this.ortoniConfig.logo || undefined,
-      totalDuration: totalDuration,
-      results: results,
-      retryCount: results.filter((r) => r.isRetry).length,
-      passCount: passedTests,
-      failCount: failed,
-      skipCount: results.filter((r) => r.status === "skipped").length,
-      flakyCount: flakyTests,
-      totalCount: filteredResults.length,
-      groupedResults: groupResults(this.ortoniConfig, results),
-      projectName: this.ortoniConfig.projectName,
-      authorName: this.ortoniConfig.authorName,
-      meta: this.ortoniConfig.meta,
-      testType: this.ortoniConfig.testType,
-      preferredTheme: this.ortoniConfig.preferredTheme,
-      successRate: successRate,
-      lastRunDate: formatDate(new Date()),
-      projects: projectSet,
-      allTags: Array.from(allTags),
-      showProject: this.ortoniConfig.showProject || false,
-      title: this.ortoniConfig.title || "Ortoni Playwright Test Report",
-      chartType: this.ortoniConfig.chartType || "pie",
-      reportAnalyticsData: await this.getReportData(),
-      chartData: await this.chartTrendData(),
-      ...this.extractProjectStats(projectResults),
+      summary: {
+        overAllResult: {
+          pass: passedTests,
+          fail: failed,
+          skip: results.filter((r) => r.status === "skipped").length,
+          retry: results.filter((r) => r.retryAttemptCount).length,
+          flaky: flakyTests,
+          total: filteredResults.length,
+        },
+        successRate,
+        lastRunDate,
+        totalDuration,
+        stats: this.extractProjectStats(projectResults),
+      },
+      testResult: {
+        tests: groupResults(this.ortoniConfig, results),
+        testHistories,
+        allTags: Array.from(allTags),
+        set: projectSet,
+      },
+      userConfig: {
+        projectName: this.ortoniConfig.projectName,
+        authorName: this.ortoniConfig.authorName,
+        type: this.ortoniConfig.testType,
+        title: this.ortoniConfig.title,
+      },
+      userMeta: {
+        meta: this.ortoniConfig.meta,
+      },
+      preferences: {
+        theme: this.ortoniConfig.preferredTheme,
+        logo: this.ortoniConfig.logo || undefined,
+        showProject: this.ortoniConfig.showProject || false,
+      },
+      analytics: {
+        reportData: await this.getReportData(),
+        // chartTrendData: await this.chartTrendData(),
+      },
     };
   }
 
@@ -156,7 +135,7 @@ export class HTMLGenerator {
         ).length,
         skippedTests: allProjectTests.filter((r) => r.status === "skipped")
           .length,
-        retryTests: allProjectTests.filter((r) => r.isRetry).length,
+        retryTests: allProjectTests.filter((r) => r.retryAttemptCount).length,
         flakyTests: allProjectTests.filter((r) => r.status === "flaky").length,
         totalTests: projectTests.length,
       };
@@ -175,49 +154,5 @@ export class HTMLGenerator {
       retryTests: projectResults.map((result) => result.retryTests),
       flakyTests: projectResults.map((result) => result.flakyTests),
     };
-  }
-
-  private registerHandlebarsHelpers() {
-    Handlebars.registerHelper("joinWithSpace", (array) => array.join(" "));
-    Handlebars.registerHelper("json", (context) => safeStringify(context));
-    Handlebars.registerHelper(
-      "eq",
-      (actualStatus, expectedStatus) => actualStatus === expectedStatus
-    );
-    Handlebars.registerHelper(
-      "includes",
-      (actualStatus: string, expectedStatus: string) =>
-        actualStatus.includes(expectedStatus)
-    );
-    Handlebars.registerHelper("gr", (count) => count > 0);
-    Handlebars.registerHelper("or", function (a, b) {
-      return a || b;
-    });
-    Handlebars.registerHelper("concat", function (...args) {
-      args.pop();
-      return args.join("");
-    });
-  }
-
-  private registerPartials() {
-    [
-      "head",
-      "sidebar",
-      "testPanel",
-      "summaryCard",
-      "userInfo",
-      "project",
-      "testStatus",
-      "testIcons",
-      "analytics",
-    ].forEach((partialName) => {
-      Handlebars.registerPartial(
-        partialName,
-        fs.readFileSync(
-          path.resolve(__dirname, "views", `${partialName}.hbs`),
-          "utf-8"
-        )
-      );
-    });
   }
 }
