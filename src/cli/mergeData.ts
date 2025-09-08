@@ -4,9 +4,9 @@ import { DatabaseManager } from "../helpers/databaseManager";
 import { FileManager } from "../helpers/fileManager";
 import { HTMLGenerator } from "../helpers/HTMLGenerator";
 
-export async function mergerData(options: any) {
+export async function mergeAllData(options: { dir?: string; file?: string }) {
   const projectRoot = process.cwd();
-  const folderPath = path.resolve(projectRoot, options.dir);
+  const folderPath = path.resolve(projectRoot, options.dir || "ortoni-report");
   console.info(`Ortoni Report: Merging shard files in folder: ${folderPath}`);
 
   const shardFiles = fs

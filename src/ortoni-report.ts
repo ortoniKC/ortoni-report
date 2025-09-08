@@ -39,7 +39,7 @@ export default class OrtoniReport implements Reporter {
   private shouldGenerateReport: boolean = true;
   private showConsoleLogs: boolean | undefined = true;
   private skipTraceViewer: boolean = false;
-  private config:
+  private shardConfig:
     | {
         total: number;
         current: number;
@@ -74,7 +74,7 @@ export default class OrtoniReport implements Reporter {
     await this.dbManager.initialize(
       path.join(this.folderPath, "ortoni-data-history.sqlite")
     );
-    this.config = config?.shard;
+    this.shardConfig = config?.shard;
   }
 
   onStdOut(
@@ -119,8 +119,8 @@ export default class OrtoniReport implements Reporter {
         );
         const totalDuration = result.duration;
         // ✅ If running in shard mode, write shard JSON instead of full HTML
-        if (this.config && this.config.total > 1) {
-          const shard = this.config;
+        if (this.shardConfig && this.shardConfig.total > 1) {
+          const shard = this.shardConfig;
           const shardFile = `ortoni-shard-${shard.current}-of-${shard.total}.json`;
           const shardData = {
             status: result.status,
