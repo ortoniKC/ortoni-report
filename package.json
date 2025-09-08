@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "4.0.1-beta.2",
+  "version": "4.0.1-beta.3",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "tsc": "tsc",
