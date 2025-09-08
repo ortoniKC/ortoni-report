@@ -104,13 +104,11 @@ export class HTMLGenerator {
         meta: this.ortoniConfig.meta,
       },
       preferences: {
-        theme: this.ortoniConfig.preferredTheme,
         logo: this.ortoniConfig.logo || undefined,
         showProject: this.ortoniConfig.showProject || false,
       },
       analytics: {
         reportData: await this.getReportData(),
-        // chartTrendData: await this.chartTrendData(),
       },
     };
   }

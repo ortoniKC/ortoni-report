@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+
 export class FileManager {
   constructor(private folderPath: string) {}
 
@@ -15,14 +16,26 @@ export class FileManager {
   }
 
   writeReportFile(filename: string, data: unknown): string {
-    const templatePath = path.resolve(__dirname, "index.html");
+    const templatePath = path.join(__dirname, "..", "index.html");
+    console.log("temp path - " + templatePath);
     let html = fs.readFileSync(templatePath, "utf-8");
     const reportJSON = JSON.stringify({
       data,
     });
     html = html.replace("__ORTONI_TEST_REPORTDATA__", reportJSON);
+    fs.writeFileSync(filename, html);
+
+    return filename;
+  }
+
+  writeRawFile(filename: string, data: unknown): string {
     const outputPath = path.join(process.cwd(), this.folderPath, filename);
-    fs.writeFileSync(outputPath, html);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+
+    const content =
+      typeof data === "string" ? data : JSON.stringify(data, null, 2);
+
+    fs.writeFileSync(outputPath, content, "utf-8");
     return outputPath;
   }
 

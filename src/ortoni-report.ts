@@ -38,6 +38,13 @@ export default class OrtoniReport implements Reporter {
   private shouldGenerateReport: boolean = true;
   private showConsoleLogs: boolean | undefined = true;
   private skipTraceViewer: boolean = false;
+  private config:
+    | {
+        total: number;
+        current: number;
+      }
+    | null
+    | undefined;
 
   constructor(private ortoniConfig: OrtoniReportConfig = {}) {
     this.folderPath = ortoniConfig.folderPath || "ortoni-report";
@@ -66,6 +73,7 @@ export default class OrtoniReport implements Reporter {
     await this.dbManager.initialize(
       path.join(this.folderPath, "ortoni-data-history.sqlite")
     );
+    this.config = config?.shard;
   }
 
   onStdOut(
@@ -109,6 +117,22 @@ export default class OrtoniReport implements Reporter {
           (r) => r.status !== "skipped"
         );
         const totalDuration = result.duration;
+        // ✅ If running in shard mode, write shard JSON instead of full HTML
+        if (this.config && this.config.total > 1) {
+          const shard = this.config;
+          const shardFile = `ortoni-shard-${shard.current}-of-${shard.total}.json`;
+          const shardData = {
+            status: result.status,
+            duration: totalDuration,
+            results: this.results,
+            projectSet: Array.from(this.projectSet),
+          };
+
+          this.fileManager.writeRawFile(shardFile, shardData);
+          console.log(`📦 OrtoniReport wrote shard file: ${shardFile}`);
+          this.shouldGenerateReport = false;
+          return;
+        }
         const runId = await this.dbManager.saveTestRun();
         if (runId !== null) {
           await this.dbManager.saveTestResults(runId, this.results);
