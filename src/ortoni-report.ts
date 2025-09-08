@@ -17,6 +17,7 @@ import { ensureHtmlExtension } from "./utils/utils";
 import { DatabaseManager } from "./helpers/databaseManager";
 import path from "path";
 import { TraceMode } from "playwright/types/test";
+import { title } from "process";
 
 export default class OrtoniReport implements Reporter {
   private testResultProcessor: TestResultProcessor;
@@ -95,7 +96,7 @@ export default class OrtoniReport implements Reporter {
       );
       this.results.push(testResult);
     } catch (error) {
-      console.error("OrtoniReport: Error processing test end:", error);
+      console.error("Ortoni Report: Error processing test end:", error);
     }
   }
 
@@ -126,10 +127,18 @@ export default class OrtoniReport implements Reporter {
             duration: totalDuration,
             results: this.results,
             projectSet: Array.from(this.projectSet),
+            userConfig: {
+              projectName: this.ortoniConfig.projectName,
+              authorName: this.ortoniConfig.authorName,
+              type: this.ortoniConfig.testType,
+              title: this.ortoniConfig.title,
+            },
+            userMeta: {
+              meta: this.ortoniConfig.meta,
+            },
           };
 
           this.fileManager.writeRawFile(shardFile, shardData);
-          console.log(`📦 OrtoniReport wrote shard file: ${shardFile}`);
           this.shouldGenerateReport = false;
           return;
         }
@@ -147,16 +156,16 @@ export default class OrtoniReport implements Reporter {
             finalReportData
           );
         } else {
-          console.error("OrtoniReport: Error saving test run to database");
+          console.error("Ortoni Report: Error saving test run to database");
         }
       } else {
         console.error(
-          "OrtoniReport: Report generation skipped due to error in Playwright worker!"
+          "Ortoni Report: Report generation skipped due to error in Playwright worker!"
         );
       }
     } catch (error) {
       this.shouldGenerateReport = false;
-      console.error("OrtoniReport: Error generating report:", error);
+      console.error("Ortoni Report: Error generating report:", error);
     }
   }
 
@@ -165,7 +174,7 @@ export default class OrtoniReport implements Reporter {
       await this.dbManager.close();
       if (this.shouldGenerateReport) {
         this.fileManager.copyTraceViewerAssets(this.skipTraceViewer);
-        console.info(`Ortoni HTML report generated at ${this.outputPath}`);
+        console.info(`Ortoni Report generated at ${this.outputPath}`);
         this.serverManager.startServer(
           this.folderPath,
           this.outputFilename,
@@ -174,7 +183,7 @@ export default class OrtoniReport implements Reporter {
         await new Promise((_resolve) => {});
       }
     } catch (error) {
-      console.error("OrtoniReport: Error in onExit:", error);
+      console.error("Ortoni Report: Error in onExit:", error);
     }
   }
 }
