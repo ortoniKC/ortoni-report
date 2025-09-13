@@ -87,24 +87,30 @@ export async function mergeAllData(
       }
 
       // Duration handling:
-      // Accept shardData.duration if it's a number (including 0)
-      // Otherwise fallback to sum of per-test durations (coerced to Number)
+      // Accept shardData.duration when it is a number (including 0).
+      // Fallback: if shardData.duration is missing or not a number, sum per-test durations inside the shard.
       const rawShardDur = shardData.duration;
       let durToAdd = 0;
+      let perTestSum = 0;
+
       if (typeof rawShardDur === "number") {
+        // Accept numeric durations (including 0)
         durToAdd = rawShardDur;
       } else {
-        durToAdd = Array.isArray(shardData.results)
+        // fallback: sum per-test durations (coerce to Number)
+        perTestSum = Array.isArray(shardData.results)
           ? shardData.results.reduce(
               (acc: number, t: any) => acc + (Number(t?.duration) || 0),
               0
             )
           : 0;
+        durToAdd = perTestSum;
       }
 
-      shardDurMap[file] = durToAdd;
+      // accumulate
       totalDurationSum += durToAdd;
       if (durToAdd > totalDurationMax) totalDurationMax = durToAdd;
+      shardDurMap[file] = durToAdd;
 
       // Merge userConfig/userMeta conservatively (prefer first non-empty value)
       if (shardData.userConfig) {
