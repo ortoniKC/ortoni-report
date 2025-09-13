@@ -1,4 +1,4 @@
-// src/mergeAllData.ts (replace existing mergeAllData)
+// src/mergeAllData.ts
 import * as fs from "fs";
 import * as path from "path";
 import { DatabaseManager } from "./helpers/databaseManager";
@@ -6,11 +6,12 @@ import { HTMLGenerator } from "./helpers/HTMLGenerator";
 import { FileManager } from "./helpers/fileManager";
 
 /**
- * Merge shard JSON files into a single report while keeping ALL test results (no dedupe).
- * - options:
- *    dir?: folder where shard files exist (default: "ortoni-report")
- *    file?: output file name for final HTML (default: "ortoni-report.html")
- *    saveHistory?: boolean | undefined -> if provided, overrides shard/userConfig
+ * Merge shard JSON files into a single report while keeping ALL test results.
+ *
+ * options:
+ *  - dir?: folder where shard files exist (default: "ortoni-report")
+ *  - file?: output file name for final HTML (default: "ortoni-report.html")
+ *  - saveHistory?: boolean | undefined -> if provided, overrides shard/userConfig
  */
 export async function mergeAllData(
   options: { dir?: string; file?: string; saveHistory?: boolean } = {}
@@ -34,7 +35,7 @@ export async function mergeAllData(
     return;
   }
 
-  // deterministic sort by numeric shard index if available (optional)
+  // deterministic sort by numeric shard index if available (ortoni-shard-<current>-of-<total>.json)
   const shardFileIndex = (name: string): number | null => {
     const m = name.match(/ortoni-shard-(\d+)-of-(\d+)\.json$/);
     return m ? parseInt(m[1], 10) : null;
@@ -50,13 +51,16 @@ export async function mergeAllData(
     })
     .map((x) => x.f);
 
-  // Merge state (no deduplication)
-  const allResults: any[] = [];
+  // Merge state
+  const allResults: any[] = []; // keep every test entry from every shard
   const projectSet = new Set<string>();
-  let totalDurationSum = 0; // will accumulate shard durations
-  let totalDurationMax = 0; // optional: track max shard duration (wall-clock)
+  let totalDurationSum = 0; // sum of shard durations (ms)
+  let totalDurationMax = 0; // max of shard durations (ms) (optional)
   let mergedUserConfig: any = null;
   let mergedUserMeta: any = null;
+  const badShards: string[] = [];
+  const shardCounts: Record<string, number> = {};
+  const shardDurMap: Record<string, number> = {}; // used duration per shard (ms)
 
   for (const file of sortedFiles) {
     const fullPath = path.join(folderPath, file);
@@ -64,16 +68,18 @@ export async function mergeAllData(
       const shardRaw = fs.readFileSync(fullPath, "utf-8");
       const shardData = JSON.parse(shardRaw);
 
-      // validate results array
+      // Validate results array
       if (!Array.isArray(shardData.results)) {
         console.warn(
           `Ortoni Report: Shard ${file} missing results array — skipping.`
         );
+        badShards.push(file);
         continue;
       }
 
       // Append all results (keep duplicates)
       shardData.results.forEach((r: any) => allResults.push(r));
+      shardCounts[file] = shardData.results.length;
 
       // Merge project sets
       if (Array.isArray(shardData.projectSet)) {
@@ -81,26 +87,26 @@ export async function mergeAllData(
       }
 
       // Duration handling:
-      // Primary: use shardData.duration (expected numeric)
-      // Fallback: if missing/zero, sum per-test durations inside the shard
-      // Convert to Number defensively.
-      const shardDur = Number(shardData.duration);
+      // Accept shardData.duration if it's a number (including 0)
+      // Otherwise fallback to sum of per-test durations (coerced to Number)
+      const rawShardDur = shardData.duration;
       let durToAdd = 0;
-      if (!isNaN(shardDur) && shardDur > 0) {
-        durToAdd = shardDur;
+      if (typeof rawShardDur === "number") {
+        durToAdd = rawShardDur;
       } else {
-        // try to sum per-test duration
-        const perTestSum = (
-          Array.isArray(shardData.results) ? shardData.results : []
-        )
-          .map((t: any) => Number(t.duration) || 0)
-          .reduce((a: number, b: number) => a + b, 0);
-        durToAdd = perTestSum;
+        durToAdd = Array.isArray(shardData.results)
+          ? shardData.results.reduce(
+              (acc: number, t: any) => acc + (Number(t?.duration) || 0),
+              0
+            )
+          : 0;
       }
+
+      shardDurMap[file] = durToAdd;
       totalDurationSum += durToAdd;
       if (durToAdd > totalDurationMax) totalDurationMax = durToAdd;
 
-      // Merge userConfig/userMeta as before (prefer first non-null)
+      // Merge userConfig/userMeta conservatively (prefer first non-empty value)
       if (shardData.userConfig) {
         if (!mergedUserConfig) mergedUserConfig = { ...shardData.userConfig };
         else {
@@ -131,14 +137,23 @@ export async function mergeAllData(
       }
     } catch (err) {
       console.error(`Ortoni Report: Failed to parse shard ${file}:`, err);
+      badShards.push(file);
       continue;
     }
+  } // end for each shard
+
+  if (badShards.length > 0) {
+    console.warn(
+      `Ortoni Report: Completed merge with ${badShards.length} bad shard(s) skipped:`,
+      badShards
+    );
   }
 
-  // final results preserved as allResults
-  const totalDuration = totalDurationSum;
+  // final results preserved with duplicates
+  const totalDuration = totalDurationSum; // in ms
 
-  // Determine saveHistory flag (options override -> mergedUserConfig -> default true)
+  // Determine whether to persist history:
+  // Priority: explicit options.saveHistory -> mergedUserConfig.saveHistory -> default true
   const saveHistoryFromOptions =
     typeof options.saveHistory === "boolean" ? options.saveHistory : undefined;
   const saveHistoryFromShard =
@@ -157,6 +172,7 @@ export async function mergeAllData(
       await dbManager.initialize(dbPath);
       runId = await dbManager.saveTestRun();
       if (typeof runId === "number") {
+        // Save all results (your saveTestResults may batch internally)
         await dbManager.saveTestResults(runId, allResults);
         console.info(
           `Ortoni Report: Saved ${allResults.length} results to DB (runId=${runId}).`
@@ -186,11 +202,11 @@ export async function mergeAllData(
     dbManager
   );
   const finalReportData = await htmlGenerator.generateFinalReport(
-    // filteredResults: keep same semantics (filter out skipped for display or pass as required)
+    // filteredResults: typically filter out skipped for display (keeps existing behavior)
     allResults.filter((r) => r.status !== "skipped"),
     totalDuration,
     allResults,
-    projectSet
+    projectSet // pass Set<string> as original generateFinalReport expects
   );
 
   // Write final HTML file
@@ -201,10 +217,9 @@ export async function mergeAllData(
     finalReportData
   );
 
+  // Logs & debugging summary
   console.log(`✅ Final merged report generated at ${outputPath}`);
-  console.log(
-    `✅ Shards merged: ${sortedFiles.length}, total tests merged: ${allResults.length}`
-  );
-  console.log(`✅ totalDuration (sum of shards) = ${totalDuration}`);
-  if (runId) console.log(`✅ DB runId: ${runId}`);
+  console.log(`✅ Shards merged: ${sortedFiles.length}`);
+  console.log(`✅ Tests per shard:`, shardCounts);
+  console.log(`✅ Total tests merged ${allResults.length}`);
 }
