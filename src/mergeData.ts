@@ -218,7 +218,7 @@ export async function mergeAllData(
   );
 
   // Logs & debugging summary
-  console.log(`✅ Final merged report generated at ${outputPath}`);
+  console.log(`✅ Final merged report generated at ${await outputPath}`);
   console.log(`✅ Shards merged: ${sortedFiles.length}`);
   console.log(`✅ Tests per shard:`, shardCounts);
   console.log(`✅ Total tests merged ${allResults.length}`);
