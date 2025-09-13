@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import { startReportServer } from "../utils/expressServer";
 import * as fs from "fs";
 import * as path from "path";
 import { mergeAllData } from "./mergeData";
+import { startReportServer } from "./utils/expressServer";
 
 program.version("4.0.1").description("Ortoni Report - CLI");
 

@@ -9,7 +9,7 @@ import {
 } from "@playwright/test/reporter";
 import { FileManager } from "./helpers/fileManager";
 import { HTMLGenerator } from "./helpers/HTMLGenerator";
-import { TestResultProcessor } from "./helpers/resultProcessor ";
+import { TestResultProcessor } from "./helpers/resultProcessor";
 import { ServerManager } from "./helpers/serverManager";
 import { OrtoniReportConfig } from "./types/reporterConfig";
 import { TestResultData } from "./types/testResults";
@@ -17,7 +17,6 @@ import { ensureHtmlExtension } from "./utils/utils";
 import { DatabaseManager } from "./helpers/databaseManager";
 import path from "path";
 import { TraceMode } from "playwright/types/test";
-import { title } from "process";
 
 export default class OrtoniReport implements Reporter {
   private testResultProcessor: TestResultProcessor;
@@ -151,7 +150,7 @@ export default class OrtoniReport implements Reporter {
             this.results,
             this.projectSet
           );
-          this.outputPath = this.fileManager.writeReportFile(
+          this.outputPath = await this.fileManager.writeReportFile(
             this.outputFilename,
             finalReportData
           );

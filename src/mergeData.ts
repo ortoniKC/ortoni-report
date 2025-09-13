@@ -1,12 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
-import { DatabaseManager } from "../helpers/databaseManager";
-import { FileManager } from "../helpers/fileManager";
-import { HTMLGenerator } from "../helpers/HTMLGenerator";
+import { DatabaseManager } from "./helpers/databaseManager";
+import { HTMLGenerator } from "./helpers/HTMLGenerator";
+import { FileManager } from "./helpers/fileManager";
 
 export async function mergeAllData(options: { dir?: string; file?: string }) {
-  const projectRoot = process.cwd();
-  const folderPath = path.resolve(projectRoot, options.dir || "ortoni-report");
+  const folderPath = options.dir || "ortoni-report";
   console.info(`Ortoni Report: Merging shard files in folder: ${folderPath}`);
 
   const shardFiles = fs
@@ -74,10 +73,10 @@ export async function mergeAllData(options: { dir?: string; file?: string }) {
 
   // write final report file
   const fileManager = new FileManager(folderPath);
+  // fileManager.ensureReportDirectory();
   const outputFileName = options.file || "ortoni-report.html";
-  const outputFilenamePath = path.join(folderPath, outputFileName);
   const outputPath = fileManager.writeReportFile(
-    outputFilenamePath,
+    outputFileName,
     finalReportData
   );
 
