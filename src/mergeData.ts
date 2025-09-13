@@ -69,7 +69,6 @@ export async function mergeAllData(
         console.warn(
           `Ortoni Report: Shard ${file} missing results array — skipping.`
         );
-        badShards.push(file);
         continue;
       }
 
