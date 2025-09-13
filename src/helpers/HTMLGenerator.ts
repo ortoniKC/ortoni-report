@@ -5,10 +5,11 @@ import { DatabaseManager } from "./databaseManager";
 
 export class HTMLGenerator {
   private ortoniConfig: OrtoniReportConfig;
-  private dbManager: DatabaseManager;
-  constructor(ortoniConfig: OrtoniReportConfig, dbManager: DatabaseManager) {
+  private dbManager?: DatabaseManager;
+
+  constructor(ortoniConfig: OrtoniReportConfig, dbManager?: DatabaseManager) {
     this.ortoniConfig = ortoniConfig;
-    this.dbManager = dbManager;
+    this.dbManager = dbManager; // may be undefined in CI or when saveHistory=false
   }
 
   async generateFinalReport(
@@ -26,13 +27,56 @@ export class HTMLGenerator {
     return data;
   }
 
+  /**
+   * Return safe analytics/report data.
+   * If no dbManager is provided, return empty defaults and a note explaining why.
+   */
   async getReportData() {
-    return {
-      summary: await this.dbManager.getSummaryData(),
-      trends: await this.dbManager.getTrends(),
-      flakyTests: await this.dbManager.getFlakyTests(),
-      slowTests: await this.dbManager.getSlowTests(),
-    };
+    if (!this.dbManager) {
+      return {
+        summary: {},
+        trends: {},
+        flakyTests: [],
+        slowTests: [],
+        note: "Test history/trends are unavailable (saveHistory disabled or DB not initialized).",
+      };
+    }
+
+    try {
+      const [summary, trends, flakyTests, slowTests] = await Promise.all([
+        this.dbManager.getSummaryData
+          ? this.dbManager.getSummaryData()
+          : Promise.resolve({}),
+        this.dbManager.getTrends
+          ? this.dbManager.getTrends()
+          : Promise.resolve({}),
+        this.dbManager.getFlakyTests
+          ? this.dbManager.getFlakyTests()
+          : Promise.resolve([]),
+        this.dbManager.getSlowTests
+          ? this.dbManager.getSlowTests()
+          : Promise.resolve([]),
+      ]);
+
+      return {
+        summary: summary ?? {},
+        trends: trends ?? {},
+        flakyTests: flakyTests ?? [],
+        slowTests: slowTests ?? [],
+      };
+    } catch (err) {
+      console.warn(
+        "HTMLGenerator: failed to read analytics from DB, continuing without history.",
+        err
+      );
+      return {
+        summary: {},
+        trends: {},
+        flakyTests: [],
+        slowTests: [],
+        note: "Test history/trends could not be loaded due to a DB error.",
+      };
+    }
   }
 
   private async prepareReportData(
@@ -47,14 +91,14 @@ export class HTMLGenerator {
     const failed = filteredResults.filter(
       (r) => r.status === "failed" || r.status === "timedOut"
     ).length;
-    const successRate = (
-      ((passedTests + flakyTests) / totalTests) *
-      100
-    ).toFixed(2);
+    const successRate =
+      totalTests === 0
+        ? "0.00"
+        : (((passedTests + flakyTests) / totalTests) * 100).toFixed(2);
 
-    const allTags = new Set();
+    const allTags = new Set<string>();
     results.forEach((result) =>
-      result.testTags.forEach((tag) => allTags.add(tag))
+      (result.testTags || []).forEach((tag) => allTags.add(tag))
     );
 
     const projectResults = this.calculateProjectResults(
@@ -63,16 +107,40 @@ export class HTMLGenerator {
       projectSet
     );
     const lastRunDate = new Date().toLocaleString();
+
+    // Fetch per-test histories only if DB manager exists; otherwise return empty history arrays.
     const testHistories = await Promise.all(
       results.map(async (result) => {
         const testId = `${result.filePath}:${result.projectName}:${result.title}`;
-        const history = await this.dbManager.getTestHistory(testId);
-        return {
-          testId: testId,
-          history: history,
-        };
+        if (!this.dbManager || !this.dbManager.getTestHistory) {
+          return {
+            testId,
+            history: [],
+          };
+        }
+        try {
+          const history = await this.dbManager.getTestHistory(testId);
+          return {
+            testId,
+            history: history ?? [],
+          };
+        } catch (err) {
+          // If a single test history fails, return empty history for that test and continue
+          console.warn(
+            `HTMLGenerator: failed to read history for ${testId}`,
+            err
+          );
+          return {
+            testId,
+            history: [],
+          };
+        }
       })
     );
+
+    // Fetch analytics/reportData using the safe getter (this will handle missing DB)
+    const reportData = await this.getReportData();
+
     return {
       summary: {
         overAllResult: {
@@ -108,7 +176,7 @@ export class HTMLGenerator {
         showProject: this.ortoniConfig.showProject || false,
       },
       analytics: {
-        reportData: await this.getReportData(),
+        reportData: reportData,
       },
     };
   }

@@ -47,7 +47,11 @@ program
   )
   .option("-f, --file <filename>", "Output report file", "ortoni-report.html")
   .action(async (options) => {
-    await mergeAllData(options);
+    await mergeAllData({
+      dir: options.dir,
+      file: options.file,
+      saveHistory: false,
+    });
   });
 
 program.parse(process.argv);

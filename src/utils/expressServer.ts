@@ -9,7 +9,7 @@ export function startReportServer(
   open: string | undefined
 ) {
   const app = express();
-  app.use(express.static(reportFolder));
+  app.use(express.static(reportFolder, { index: false }));
 
   app.get("/", (_req, res) => {
     try {

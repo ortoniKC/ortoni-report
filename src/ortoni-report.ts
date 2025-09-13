@@ -137,7 +137,11 @@ export default class OrtoniReport implements Reporter {
             },
           };
 
-          this.fileManager.writeRawFile(shardFile, shardData);
+          const shardFilePath = this.fileManager.writeRawFile(
+            shardFile,
+            shardData
+          );
+          console.info(`Ortoni Report: Shard data written to ${shardFilePath}`);
           this.shouldGenerateReport = false;
           return;
         }
