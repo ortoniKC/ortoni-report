@@ -38,13 +38,13 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
   - Summary of total test runs, passed/failed counts, pass rate, and average duration.
   - **Trends Over Time**: Line chart showing test results across the last 30 runs.
   - **Top Flaky Tests**: Identify unstable tests quickly.
-  - **Slowest Tests**: View tests with highest average durations.
+  - **Slowest Tests**: View tests with slowest average durations.
 
 - **Chart Visualizations**:
 
   - Charts for test summary, per-project breakdowns
   - Bar charts for project-specific comparisons.
-  - **Line Chart for Trends**: Visualize execution status progression over time.
+  - **Line Chart for Trends**: Visualize execution status progression over time (only in local execution)
 
 - **Colorful UI**: Redesigned with vibrant, high-contrast visuals for improved readability and engagement.
 
@@ -63,6 +63,7 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 - **Meta Information**: Add custom user or environment metadata to reports.
 - **CLI**: Open the reporter anytime using the built-in CLI
 - **Open Markdown**: View markdown - Copy and use it in your AI prompt
+- **Supports GitHub Actions** - [Refer the project for example](https://github.com/ortoniKC/pw-test)
 
 ---
 
@@ -82,6 +83,8 @@ npm install -g ortoni-report
 import { defineConfig } from "@playwright/test";
 import { OrtoniReportConfig } from "ortoni-report";
 import * as os from "os";
+
+// Everything is optional - use as per your requirement
 
 const reportConfig: OrtoniReportConfig = {
   open: process.env.CI ? "never" : "always",
@@ -129,6 +132,8 @@ This command starts a local Express server and serves the generated Ortoni repor
 ```bash
 npx ortoni-report show-report
 ```
+
+or
 
 ```bash
 npx ortoni-report show-report --dir custom-folder --file my-report.html --port 3000
@@ -188,5 +193,12 @@ UPI id: ortoni@axl [Koushik Chatterjee]
 
 **With love**
 Developed and designed by [Koushik Chatterjee](https://letcode.in/contact)
+
+**Tech Stack**
+
+1. Report generated using Playwright custom report
+2. UI - React and Shadcn UI
+3. DB - sqlite
+4. Local host - express
 
 **LetCode with Koushik**
