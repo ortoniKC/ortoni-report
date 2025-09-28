@@ -122,8 +122,8 @@ export default class OrtoniReport implements Reporter {
           const shard = this.shardConfig;
           const shardFile = `ortoni-shard-${shard.current}-of-${shard.total}.json`;
           const shardData = {
-            status: result.status,
-            duration: totalDuration,
+            // status: result.status,
+            totalDuration,
             results: this.results,
             projectSet: Array.from(this.projectSet),
             userConfig: {

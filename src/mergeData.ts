@@ -55,7 +55,6 @@ export async function mergeAllData(
   const allResults: any[] = []; // keep every test entry from every shard
   const projectSet = new Set<string>();
   let totalDurationSum = 0; // sum of shard durations (ms)
-  let totalDurationMax = 0; // max of shard durations (ms) (optional)
   let mergedUserConfig: any = null;
   let mergedUserMeta: any = null;
   const badShards: string[] = [];
@@ -87,9 +86,9 @@ export async function mergeAllData(
       }
 
       // Duration handling:
-      // Accept shardData.duration when it is a number (including 0).
-      // Fallback: if shardData.duration is missing or not a number, sum per-test durations inside the shard.
-      const rawShardDur = shardData.duration;
+      // Accept shardData.totalDuration when it is a number (including 0).
+      // Fallback: if shardData.totalDuration is missing or not a number, sum per-test durations inside the shard.
+      const rawShardDur = shardData.totalDuration;
       let durToAdd = 0;
       let perTestSum = 0;
 
@@ -106,10 +105,8 @@ export async function mergeAllData(
           : 0;
         durToAdd = perTestSum;
       }
-
       // accumulate
       totalDurationSum += durToAdd;
-      if (durToAdd > totalDurationMax) totalDurationMax = durToAdd;
       shardDurMap[file] = durToAdd;
 
       // Merge userConfig/userMeta conservatively (prefer first non-empty value)
