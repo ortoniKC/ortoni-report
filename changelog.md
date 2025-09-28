@@ -1,5 +1,22 @@
 # Change Log:
 
+## V4.0.1
+
+- **Improvemnts:**
+
+  - UI (Glance page)
+  - Fix: Chart where Y axis is cropped
+  - Fix: Project logo not showing #97
+
+- **Merge Report**
+
+  - Playwright blob report feature is now available in Ortoni Report #83
+  - GitHub action support - [Refer the project for example](https://github.com/ortoniKC/pw-test)
+  - use the command to merge report
+    ```bash
+    npx ortoni-report merge-report
+    ```
+
 ## V4.0.0
 
 #### 🚨 Breaking Changes

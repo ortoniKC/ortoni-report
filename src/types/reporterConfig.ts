@@ -77,4 +77,12 @@ export interface OrtoniReportConfig {
    * @example { "key": "value" } as string
    */
   meta?: Record<string, string>;
+
+  /**
+   * Save the history of the reports in a SQL file to be used in future reports.
+   * The history file will be saved in the report folder.
+   * @default true
+   * @example false (to disable)
+   */
+  saveHistory?: boolean;
 }

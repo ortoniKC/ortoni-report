@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "tsc": "tsc",
@@ -8,10 +8,11 @@
     "release": "npm publish"
   },
   "bin": {
-    "ortoni-report": "./dist/cli/cli.js"
+    "ortoni-report": "./dist/cli.js"
   },
   "files": [
-    "dist",
+    "dist/",
+    "dist/index.html",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -52,5 +53,11 @@
   },
   "main": "dist/ortoni-report.js",
   "module": "dist/ortoni-report.mjs",
-  "types": "dist/ortoni-report.d.ts"
+  "types": "dist/ortoni-report.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/ortoni-report.js",
+      "import": "./dist/ortoni-report.mjs"
+    }
+  }
 }

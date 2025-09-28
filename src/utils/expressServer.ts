@@ -9,13 +9,13 @@ export function startReportServer(
   open: string | undefined
 ) {
   const app = express();
-  app.use(express.static(reportFolder));
+  app.use(express.static(reportFolder, { index: false }));
 
   app.get("/", (_req, res) => {
     try {
       res.sendFile(path.resolve(reportFolder, reportFilename));
     } catch (error) {
-      console.error("Ortoni-Report: Error sending report file:", error);
+      console.error("Ortoni Report: Error sending report file:", error);
       res.status(500).send("Error loading report");
     }
   });
@@ -30,7 +30,7 @@ export function startReportServer(
         try {
           openBrowser(`http://localhost:${port}`);
         } catch (error) {
-          console.error("Ortoni-Report: Error opening browser:", error);
+          console.error("Ortoni Report: Error opening browser:", error);
         }
       }
     });
@@ -38,14 +38,14 @@ export function startReportServer(
     server.on("error", (error: { code: string }) => {
       if (error.code === "EADDRINUSE") {
         console.error(
-          `Ortoni-Report: Port ${port} is already in use. Trying a different port...`
+          `Ortoni Report: Port ${port} is already in use. Trying a different port...`
         );
       } else {
-        console.error("Ortoni-Report: Server error:", error);
+        console.error("Ortoni Report: Server error:", error);
       }
     });
   } catch (error) {
-    console.error("Ortoni-Report: Error starting the server:", error);
+    console.error("Ortoni Report: Error starting the server:", error);
   }
 }
 
@@ -64,6 +64,6 @@ function openBrowser(url: string) {
       spawn(command, [url]);
     }
   } catch (error) {
-    console.error("Ortoni-Report: Error opening the browser:", error);
+    console.error("Ortoni Report: Error opening the browser:", error);
   }
 }

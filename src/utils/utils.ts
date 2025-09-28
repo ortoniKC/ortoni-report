@@ -1,4 +1,5 @@
 import path from "path";
+import * as fs from "fs";
 
 export function normalizeFilePath(filePath: string): string {
   // Normalize the path to handle different separators

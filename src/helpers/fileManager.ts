@@ -1,5 +1,7 @@
 import fs from "fs";
 import path from "path";
+import { readBundledTemplate } from "./templateLoader";
+
 export class FileManager {
   constructor(private folderPath: string) {}
 
@@ -14,15 +16,26 @@ export class FileManager {
     }
   }
 
-  writeReportFile(filename: string, data: unknown): string {
-    const templatePath = path.resolve(__dirname, "index.html");
-    let html = fs.readFileSync(templatePath, "utf-8");
+  async writeReportFile(filename: string, data: unknown): Promise<string> {
+    let html = await readBundledTemplate();
+    // let html = fs.readFileSync(templatePath, "utf-8");
     const reportJSON = JSON.stringify({
       data,
     });
     html = html.replace("__ORTONI_TEST_REPORTDATA__", reportJSON);
     const outputPath = path.join(process.cwd(), this.folderPath, filename);
     fs.writeFileSync(outputPath, html);
+    return outputPath;
+  }
+
+  writeRawFile(filename: string, data: unknown): string {
+    const outputPath = path.join(process.cwd(), this.folderPath, filename);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+
+    const content =
+      typeof data === "string" ? data : JSON.stringify(data, null, 2);
+
+    fs.writeFileSync(outputPath, content, "utf-8");
     return outputPath;
   }
 

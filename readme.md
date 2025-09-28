@@ -14,14 +14,17 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 
 - **Sidebar Navigation**: Enjoy a clean and structured layout for seamless navigation.
 - **Sections**:
+
   - **Dashboard**: High-level overview of test analytics and trends.
   - **Tests**: Dive into individual test details including logs, screenshots, and errors.
   - **Analytics**: Track overall execution metrics, trends, and flaky/slow test insights.
   - **Glance**: See all the tests in a single Tabular view
+
 - **Hierarchical Grouping**: Tests are organized by filename, suite, and project for better traceability.
 - **Test History View**: Access up to 10 recent executions, categorized by suite and project with test Status, Duration.
 - **Configurable Integration**: Easy setup with Playwright using TypeScript/JavaScript, along with customizable preferences.
 - **Advanced Filtering**: Filter by Project, Tags, and Status
+- **🔀 Merge Reports**: Combine multiple shard/parallel test run reports into a single **consolidated view** using CLI (`npx ortoni-report merge-report`)
 
 ### 2. **Detailed Reporting**
 
@@ -35,13 +38,13 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
   - Summary of total test runs, passed/failed counts, pass rate, and average duration.
   - **Trends Over Time**: Line chart showing test results across the last 30 runs.
   - **Top Flaky Tests**: Identify unstable tests quickly.
-  - **Slowest Tests**: View tests with highest average durations.
+  - **Slowest Tests**: View tests with slowest average durations.
 
 - **Chart Visualizations**:
 
   - Charts for test summary, per-project breakdowns
   - Bar charts for project-specific comparisons.
-  - **Line Chart for Trends**: Visualize execution status progression over time.
+  - **Line Chart for Trends**: Visualize execution status progression over time (only in local execution)
 
 - **Colorful UI**: Redesigned with vibrant, high-contrast visuals for improved readability and engagement.
 
@@ -58,8 +61,9 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 - **Self-Contained Reports**: Easily share and review offline-friendly reports.
 - **Multi-Filters**: Combine filters for targeted test analysis.
 - **Meta Information**: Add custom user or environment metadata to reports.
-- **CLI**: Open the reporter anytime using the builin CLI
+- **CLI**: Open the reporter anytime using the built-in CLI
 - **Open Markdown**: View markdown - Copy and use it in your AI prompt
+- **Supports GitHub Actions** - [Refer the project for example](https://github.com/ortoniKC/pw-test)
 
 ---
 
@@ -70,20 +74,20 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 Run the following command to install the **ortoni-report** package globally:
 
 ```bash
-npm install -D ortoni-report
+npm install -g ortoni-report
 ```
 
-### Step 2: Configure in `playwright.config.ts`
-
-Set up **Ortoni Report** in your Playwright configuration file with the following example:
+### Step 2: Configure in `playwright.config.[ts/js]`
 
 ```typescript
 import { defineConfig } from "@playwright/test";
 import { OrtoniReportConfig } from "ortoni-report";
 import * as os from "os";
 
+// Everything is optional - use as per your requirement
+
 const reportConfig: OrtoniReportConfig = {
-  open: process.env.CI ? "never" : "always", // default to never
+  open: process.env.CI ? "never" : "always",
   folderPath: "my-report",
   filename: "index.html",
   title: "Ortoni Test Report",
@@ -94,57 +98,28 @@ const reportConfig: OrtoniReportConfig = {
   base64Image: false,
   stdIO: false,
   meta: {
-    "Test Cycle": "Aug 25, 2025",
-    version: "3",
+    "Test Cycle": "Sep, 2025",
+    version: "4",
     description: "My automation suite",
-    release: "0.3",
+    release: "0.1",
     platform: os.type(),
   },
 };
 
 export default defineConfig({
+  ... playwright config
   reporter: [["ortoni-report", reportConfig]],
-  // Other Playwright configurations
+  ... playwright config
 });
 ```
 
-### Configure in `playwright.config.js`
-
-```javascript
-import { defineConfig } from "@playwright/test";
-
-const reportConfig = {
-  open: process.env.CI ? "never" : "always", // default to never
-  folderPath: "my-report",
-  filename: "index.html",
-  title: "Ortoni Test Report",
-  showProject: false,
-  projectName: "Your Project title",
-  testType: "Functional",
-  authorName: os.userInfo().username,
-  base64Image: false,
-  stdIO: false,
-  meta: {
-    "Test Cycle": "Aug 25, 2025",
-    version: "3",
-    description: "My automation suite",
-    release: "0.3",
-    platform: os.type(),
-  },
-};
-
-export default defineConfig({
-  reporter: [["ortoni-report", reportConfig]],
-  // Other Playwright configurations
-});
-```
+---
 
 ## Using the Ortoni Report CLI
 
 ### Command: `show-report`
 
-This command starts a local Express server and serves the generated Ortoni report. You can open the report in your default browser.
-Trace viewer and markdown support only in local server or cloud server
+This command starts a local Express server and serves the generated Ortoni report.
 
 #### Options
 
@@ -154,42 +129,36 @@ Trace viewer and markdown support only in local server or cloud server
 
 #### Example Usage
 
-1. **Default Usage**
-
-   ```bash
-   npx ortoni-report show-report
-   ```
-
-   This will:
-
-   - Look for the report file `ortoni-report.html` in the `ortoni-report` folder.
-   - Start the server on port `2004`.
-
-2. **Custom folder and file Options**
-   ```bash
-   npx ortoni-report show-report --dir custom-folder --file my-report.html --port 3000
-   ```
-   This will:
-   - Look for the file `my-report.html` in `custom-folder`.
-   - Start the server on port `3000`.
-
-#### Errors and Troubleshooting
-
-- If the specified file or folder does not exist, you will see an error like:
-  ```
-  Error: The file "my-report.html" does not exist in the folder "custom-folder".
-  ```
-  Ensure the file and folder paths are correct.
-
-#### Accessing the Report
-
-Once the server is running, open your browser and navigate to:
-
-```
-http://localhost:<port>
+```bash
+npx ortoni-report show-report
 ```
 
-Replace `<port>` with the port number you specified or the default port (`2004`). The report will automatically open in your default browser if the `always` option is enabled.
+or
+
+```bash
+npx ortoni-report show-report --dir custom-folder --file my-report.html --port 3000
+```
+
+---
+
+### Command: `merge-report` ✅ _\[New]_
+
+This command **merges multiple Ortoni reports** (from shard executions or parallel test runs) into a single consolidated report.
+
+#### Options
+
+- **`-d, --dir <path>`**: Folder containing the shard files (folderPath - provided in ortoni-config). Defaults to ortoni-report.
+- **`-f, --file <filename>`**: Name of the merged report file. Defaults to ortoni-report.html.
+
+#### Example Usage
+
+```bash
+npx ortoni-report merge-report
+```
+
+```bash
+npx ortoni-report merge-report --dir my-folder --file final-report.html
+```
 
 ---
 
@@ -197,27 +166,39 @@ Replace `<port>` with the port number you specified or the default port (`2004`)
 
 Stay up-to-date with the latest features, improvements, and bug fixes by reviewing the [Changelog](https://github.com/ortoniKC/ortoni-report/blob/main/changelog.md).
 
+---
+
 ## License
 
 This project is licensed under the terms of the [LICENSE](https://github.com/ortoniKC/ortoni-report/blob/main/LICENSE.md).
 
+---
+
 ## Feedback and Contributions
 
-I encourage you to share feedback and contribute to improving Ortoni Report! For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
+I encourage you to share feedback and contribute to improving Ortoni Report!
+For issues, suggestions, or contributions, please visit our [GitHub repository](https://github.com/ortoniKC/ortoni-report).
+
+---
 
 ## Support
 
 If you'd like to support this project, you can donate via UPI:
 
-![UPI Payment](https://raw.githubusercontent.com/ortoniKC/ortoniKC/refs/heads/main/ortoni.png)
+UPI id: ortoni@axl [Koushik Chatterjee]
 
 [Buy me coffee](https://buymeacoffee.com/letcode) | [Paypal](https://paypal.me/koushik1677?country.x=IN&locale.x=en_GB)
 
-Thank you for using **Ortoni Report**! I'm committed to providing you with a superior Playwright testing experience.
-
 ---
 
-**Developer & Designer**
-[Koushik Chatterjee](https://letcode.in/contact)
+**With love**
+Developed and designed by [Koushik Chatterjee](https://letcode.in/contact)
+
+**Tech Stack**
+
+1. Report generated using Playwright custom report
+2. UI - React and Shadcn UI
+3. DB - sqlite
+4. Local host - express
 
 **LetCode with Koushik**
