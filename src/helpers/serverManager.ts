@@ -4,7 +4,7 @@ import { startReportServer } from "../utils/expressServer";
 export class ServerManager {
   constructor(private ortoniConfig: OrtoniReportConfig) {}
 
-  startServer(
+  async startServer(
     folderPath: string,
     outputFilename: string,
     overAllStatus: string | undefined
@@ -21,6 +21,7 @@ export class ServerManager {
         this.ortoniConfig.port,
         openOption
       );
+      await new Promise((_resolve) => {});
     }
   }
 }
