@@ -183,7 +183,6 @@ export default class OrtoniReport implements Reporter {
           this.outputFilename,
           this.overAllStatus
         );
-        await new Promise((_resolve) => {});
       }
     } catch (error) {
       console.error("Ortoni Report: Error in onExit:", error);
