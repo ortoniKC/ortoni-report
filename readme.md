@@ -174,6 +174,10 @@ This project is licensed under the terms of the [LICENSE](https://github.com/ort
 
 ---
 
+## Contributors
+
+1. [Prabhash Dissanayake](https://github.com/prabhash-dissanayake-yl) - [PR](https://github.com/ortoniKC/ortoni-report/pull/99)
+
 ## Feedback and Contributions
 
 I encourage you to share feedback and contribute to improving Ortoni Report!
