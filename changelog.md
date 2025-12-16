@@ -1,5 +1,10 @@
 # Change Log:
 
+## V4.0.2
+
+- **Improvemnts/Fix:**
+  - prevent onExit from hanging when server is not started #99 (prabhash-dissanayake-yl:fix/await-server-start)
+
 ## V4.0.1
 
 - **Improvemnts:**

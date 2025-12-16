@@ -178,7 +178,7 @@ export default class OrtoniReport implements Reporter {
       if (this.shouldGenerateReport) {
         this.fileManager.copyTraceViewerAssets(this.skipTraceViewer);
         console.info(`Ortoni Report generated at ${this.outputPath}`);
-        this.serverManager.startServer(
+        await this.serverManager.startServer(
           this.folderPath,
           this.outputFilename,
           this.overAllStatus
