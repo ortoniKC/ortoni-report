@@ -1,5 +1,12 @@
 # Change Log:
 
+## V4.0.5
+
+- **Improvemnts/Fix:**
+  - Jenkins stage of Playwright execution is always green #82
+  - merge-report command now returns exit code 1 if failures exist.
+  - Added Jenkinsfile.sample for recommended CI configuration.
+
 ## V4.0.4
 
 - **Improvemnts/Fix:**
