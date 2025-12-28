@@ -1,5 +1,10 @@
 # Change Log:
 
+## V4.0.3
+
+- **Improvemnts/Fix:**
+  - With Retries Attachments are same for all failures #100
+
 ## V4.0.2
 
 - **Improvemnts/Fix:**
