@@ -143,7 +143,7 @@ export class DatabaseManager {
 
       return results.map((result) => ({
         ...result,
-        run_date: formatDateLocal(result.run_date),
+        run_date: result.run_date, // Return raw ISO string to avoid parsing issues in browser
       }));
     } catch (error) {
       console.error("OrtoniReport: Error getting test history:", error);
@@ -246,7 +246,7 @@ export class DatabaseManager {
 
       return rows.reverse().map((row) => ({
         ...row,
-        run_date: formatDateLocal(row.run_date),
+        run_date: row.run_date, // Return raw ISO string for chart compatibility
         avg_duration: Math.round(row.avg_duration || 0), // raw ms avg
       }));
     } catch (error) {
