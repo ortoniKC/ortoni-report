@@ -201,7 +201,7 @@ Developed and designed by [Koushik Chatterjee](https://letcode.in/contact)
 **Tech Stack**
 
 1. Report generated using Playwright custom report
-2. UI - React and Shadcn UI
+2. [UI - React and Shadcn UI](https://github.com/ortoniKC/ortoni-report-react)
 3. DB - sqlite
 4. Local host - express
 
