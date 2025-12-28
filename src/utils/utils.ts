@@ -57,18 +57,25 @@ export function escapeHtml(unsafe: string): string {
 export function formatDateUTC(date: Date): string {
   return date.toISOString();
 }
-export function formatDateLocal(dateInput: Date | string): string {
-  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-  const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZoneName: "short", // or "Asia/Kolkata"
-  };
-  return new Intl.DateTimeFormat(undefined, options).format(date);
+export function formatDateLocal(dateInput: Date | string | undefined | null): string {
+  if (!dateInput) return "N/A";
+  try {
+    const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    if (isNaN(date.getTime())) {
+      return "N/A";
+    }
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  } catch (e) {
+    return "N/A";
+  }
 }
 
 export function formatDateNoTimezone(isoString: string): string {

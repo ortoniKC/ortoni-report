@@ -1,5 +1,10 @@
 # Change Log:
 
+## V4.0.4
+
+- **Improvemnts/Fix:**
+  - Showing 'Invalid Date' on History of Test & in Analytics Chart X-axis #98
+
 ## V4.0.3
 
 - **Improvemnts/Fix:**

@@ -1,6 +1,7 @@
 import { TestResultData } from "../types/testResults";
 import { groupResults } from "../utils/groupProjects";
 import { OrtoniReportConfig } from "../types/reporterConfig";
+import { formatDateLocal } from "../utils/utils";
 import { DatabaseManager } from "./databaseManager";
 
 export class HTMLGenerator {
@@ -106,7 +107,7 @@ export class HTMLGenerator {
       results,
       projectSet
     );
-    const lastRunDate = new Date().toLocaleString();
+    const lastRunDate = formatDateLocal(new Date());
 
     // Fetch per-test histories only if DB manager exists; otherwise return empty history arrays.
     const testHistories = await Promise.all(
