@@ -64,7 +64,7 @@ export class TestResultProcessor {
     };
 
     attachFiles(
-      test.id,
+      path.join(test.id, `retry-${result.retry}`),
       result,
       testResult,
       ortoniConfig,
