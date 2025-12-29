@@ -225,17 +225,4 @@ export async function mergeAllData(
   console.log(`✅ Shards merged: ${sortedFiles.length}`);
   console.log(`✅ Tests per shard:`, shardCounts);
   console.log(`✅ Total tests merged ${allResults.length}`);
-
-  const failedTests = allResults.filter(
-    (r) =>
-      r.status === "failed" ||
-      r.status === "timedOut" ||
-      r.status === "interrupted"
-  ).length;
-  if (failedTests > 0) {
-    console.error(
-      `Ortoni Report: Found ${failedTests} failed tests. Setting exit code to 1.`
-    );
-    process.exitCode = 1;
-  }
 }
