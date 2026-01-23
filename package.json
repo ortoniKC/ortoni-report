@@ -5,7 +5,8 @@
   "scripts": {
     "tsc": "tsc",
     "build": "tsup",
-    "release": "npm publish"
+    "release": "npm publish",
+    "pack": "npm pack && node ./copy-build.mjs"
   },
   "bin": {
     "ortoni-report": "./dist/cli.js"

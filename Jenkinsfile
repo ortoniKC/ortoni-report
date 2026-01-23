@@ -17,11 +17,13 @@ pipeline {
         }
 
         stage('Run Playwright Tests') {
-            steps {
-                // Run shards and allow them to fail so that we can merge the results afterward.
-                // Playwright will still generate shard files even if tests fail.
-                sh 'npx playwright test --shard=1/2 || true'
-                sh 'npx playwright test --shard=2/2 || true'
+            parallel {
+                stage('Shard 1') {
+                    steps { sh 'npx playwright test --shard=1/2 || true' }
+                }
+                stage('Shard 2') {
+                    steps { sh 'npx playwright test --shard=2/2 || true' }
+                }
             }
         }
 
@@ -58,7 +60,7 @@ pipeline {
     post {
         always {
             // Optional: Archive shard data for debugging
-            archiveArtifacts artifacts: 'ortoni-report/*.json', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'ortoni-report/ortoni-report.html', allowEmptyArchive: true
         }
     }
 }

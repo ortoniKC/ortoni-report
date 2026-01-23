@@ -2,6 +2,10 @@ export interface Steps {
   snippet: string | undefined;
   title: string;
   location: string;
+  duration: number;
+  status: string;
+  category: string;
+  steps: Steps[];
 }
 export interface TestResultData {
   suiteHierarchy: string;

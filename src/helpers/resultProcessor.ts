@@ -74,7 +74,7 @@ export class TestResultProcessor {
     return testResult;
   }
 
-  private processSteps(steps: TestResult["steps"]) {
+  private processSteps(steps: any[]): any[] {
     return steps.map((step) => {
       const stepLocation = step.location
         ? `${path.relative(this.projectRoot, step.location.file)}:${
@@ -85,6 +85,10 @@ export class TestResultProcessor {
         snippet: this.ansiToHtml.toHtml(escapeHtml(step.error?.snippet || "")),
         title: step.title,
         location: step.error ? stepLocation : "",
+        duration: step.duration,
+        status: step.error ? "failed" : "passed",
+        category: step.category,
+        steps: this.processSteps(step.steps || []),
       };
     });
   }
