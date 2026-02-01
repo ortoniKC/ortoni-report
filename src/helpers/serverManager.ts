@@ -11,9 +11,10 @@ export class ServerManager {
   ) {
     const openOption = this.ortoniConfig.open || "never";
     const hasFailures = overAllStatus === "failed";
+    const isCI = !!process.env.CI;
     if (
-      openOption === "always" ||
-      (openOption === "on-failure" && hasFailures)
+      !isCI &&
+      (openOption === "always" || (openOption === "on-failure" && hasFailures))
     ) {
       startReportServer(
         folderPath,
@@ -22,6 +23,10 @@ export class ServerManager {
         openOption
       );
       await new Promise((_resolve) => {});
+    } else if (isCI && openOption !== "never") {
+      console.info(
+        "Ortoni Report: 'open' option ignored because process is running in CI."
+      );
     }
   }
 }

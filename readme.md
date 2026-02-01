@@ -63,7 +63,7 @@ A comprehensive and visually appealing HTML report generator tailored for Playwr
 - **Meta Information**: Add custom user or environment metadata to reports.
 - **CLI**: Open the reporter anytime using the built-in CLI
 - **Open Markdown**: View markdown - Copy and use it in your AI prompt
-- **Supports GitHub Actions** - [Refer the project for example](https://github.com/ortoniKC/pw-test)
+- **Supports CI/CD** - [Sample Jenkinsfile](Jenkinsfile.sample) | [Refer the project for GitHub Actions](https://github.com/ortoniKC/pw-test)
 
 ---
 

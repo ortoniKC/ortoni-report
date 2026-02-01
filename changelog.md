@@ -1,5 +1,15 @@
 # Change Log:
 
+## V4.0.5
+
+- **Improvemnts/Fix:**
+  - Jenkins stage of Playwright execution is always green #82 - Recommended using JUnit reporter or post-build actions.
+  - Added sample Jenkinsfile for recommended CI configuration.
+  - Prevented onExit from hanging in CI environments.
+  - Added history chart in tests
+  - Removed history tabular format
+  - Histor tests now shows upto last 25 executions
+
 ## V4.0.4
 
 - **Improvemnts/Fix:**
@@ -18,13 +28,11 @@
 ## V4.0.1
 
 - **Improvemnts:**
-
   - UI (Glance page)
   - Fix: Chart where Y axis is cropped
   - Fix: Project logo not showing #97
 
 - **Merge Report**
-
   - Playwright blob report feature is now available in Ortoni Report #83
   - GitHub action support - [Refer the project for example](https://github.com/ortoniKC/pw-test)
   - use the command to merge report
@@ -37,26 +45,21 @@
 #### 🚨 Breaking Changes
 
 - **Theme Settings Removed** – The explicit theme setting option has been removed.
-
   - Theme now automatically adapts to the **system default** and persists via **cookies**.
 
 - **Chart Type Settings Removed** – Users can no longer switch chart types manually.
 - **Database Redesign** – The database schema has been restructured.
-
   - ⚠️ Previous data may not be compatible with this release.
 
 #### ✨ New Features & Improvements
 
 - **Complete Redesign & Modern Tech Stack**
-
   - Migrated frontend to **React**, **shadcn/ui**, **Tailwind CSS**, and **Framer Motion** for smoother UI/UX.
 
 - **Reporting Improvements**
-
   - Cleaner, more interactive report layouts with improved navigation and accessibility.
 
 - **Chart Migration**
-
   - Moved from **Chart.js** to **Recharts** for better customization and performance.
 
 - **Performance Boost**
@@ -207,7 +210,6 @@ npx ortoni-report show-report
 #### 👌 Improvements
 
 - **Search Functionality**:
-
   - **Removed from Navbar**: Search functionality has been removed from the navbar to enhance navigation simplicity.
   - **Added to Test Panel**: Search functionality has been relocated to the test panel for more intuitive test filtering.
 
@@ -273,11 +275,9 @@ npx ortoni-report show-report
   - You can now show or hide specific projects in the test list.
   - `showProject: true` from config
 - **Document Title from Config**
-
   - The document title is now configurable via the configuration file, allowing you to customize it to your preference.
 
 - **Display Tags in Test Section**
-
   - Tags associated with tests are now displayed within the test section, giving you a clearer overview of test categories.
 
 - **Project and Tags Added to Filter**
@@ -288,7 +288,6 @@ npx ortoni-report show-report
 #### 🛠 Fixes
 
 - **Project Drop-down Z-Index on Screenshot**
-
   - Resolved an issue where the project drop-down menu was being overlapped by screenshots. The z-index has been adjusted for proper layering.
 
 - **Project Filter Hide Test Steps**
@@ -297,7 +296,6 @@ npx ortoni-report show-report
 #### ✨ Improvements
 
 - **Hide Skipped Tests on All Tests Filter**
-
   - Skipped tests are now hidden by default when using the "All Tests" filter, providing a cleaner and more focused view of relevant tests.
 
 - **Colorful Dashboard**

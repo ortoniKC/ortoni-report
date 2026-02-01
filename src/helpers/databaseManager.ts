@@ -1,7 +1,6 @@
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
 import { TestResultData } from "../types/testResults";
-import { formatDateLocal } from "../utils/utils";
 
 export class DatabaseManager {
   private db: Database | null = null;
@@ -39,7 +38,6 @@ export class DatabaseManager {
           test_id TEXT,
           status TEXT,
           duration INTEGER, -- store duration as raw ms
-          error_message TEXT,
           FOREIGN KEY (run_id) REFERENCES test_runs (id)
         );
       `);
@@ -100,8 +98,8 @@ export class DatabaseManager {
       await this.db.exec("BEGIN TRANSACTION;");
 
       const stmt = await this.db.prepare(`
-        INSERT INTO test_results (run_id, test_id, status, duration, error_message)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO test_results (run_id, test_id, status, duration)
+        VALUES (?, ?, ?, ?)
       `);
 
       for (const result of results) {
@@ -110,7 +108,6 @@ export class DatabaseManager {
           `${result.filePath}:${result.projectName}:${result.title}`,
           result.status,
           result.duration, // store raw ms
-          result.errors.join("\n"),
         ]);
       }
 
@@ -122,7 +119,7 @@ export class DatabaseManager {
     }
   }
 
-  async getTestHistory(testId: string, limit: number = 10): Promise<any[]> {
+  async getTestHistory(testId: string, limit: number = 25): Promise<any[]> {
     if (!this.db) {
       console.error("OrtoniReport: Database not initialized");
       return [];
@@ -131,7 +128,7 @@ export class DatabaseManager {
     try {
       const results = await this.db.all(
         `
-        SELECT tr.status, tr.duration, tr.error_message, trun.run_date
+        SELECT tr.status, tr.duration, trun.run_date
         FROM test_results tr
         JOIN test_runs trun ON tr.run_id = trun.id
         WHERE tr.test_id = ?
