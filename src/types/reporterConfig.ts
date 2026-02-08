@@ -14,12 +14,6 @@ export interface OrtoniReportConfig {
    */
   title?: string;
   /**
-   * Add project on the list of the tests? (Filtering projects still works if hidden)
-   * @example true to display, false to hide.
-   * @default false
-   */
-  showProject?: boolean;
-  /**
    * The name of the project.
    * @example "Ortoni Project"
    */

@@ -1,5 +1,74 @@
 # Change Log:
 
+## V4.0.6
+
+#### 🔍 Advanced Debugging & Failure Analysis
+
+- **Error Similarity Grouping**
+  - Automatically groups test failures by matching error patterns.
+  - Helps quickly identify recurring or systemic issues.
+
+- **Retry Side-by-Side Comparison**
+  - Added a new **Retries** tab.
+  - Allows visual comparison between failed and passed retry attempts of the same test.
+
+- **Deep Linking**
+  - Introduced shareable URLs using `?id=...`.
+  - Enables direct navigation to specific test failures.
+
+- **Export Failure Summaries**
+  - Copy failure insights formatted for:
+    - Slack
+    - Jira
+    - Direct shareable links
+
+---
+
+#### 🤖 AI-Powered Insights
+
+- **AI Root Cause Analysis ("Suggest Fix")**
+  - Integrated AI assistance for failure explanation.
+  - Supports multiple LLM providers:
+    - OpenAI
+    - Google Gemini
+    - Anthropic Claude
+    - Ollama (local LLM support)
+  - Configurable model and API keys via settings.
+
+---
+
+#### 📊 Data Visualization & Analytics
+
+- **Test Reliability Heatmap**
+  - Visualizes flaky execution trends across:
+    - Days
+    - Time windows
+  - Integrated into the dashboard.
+
+---
+
+#### ⚡ Performance & Scalability Improvements
+
+- **List Virtualization**
+  - Implemented using `@tanstack/react-virtual`.
+  - Enables smooth rendering for large test suites (5,000+ tests).
+
+---
+
+#### ⌨️ Productivity & Navigation Enhancements
+
+- **Command Palette (⌘ + K)**
+  - Global instant search.
+  - Fast navigation across tests and sections.
+
+- **Keyboard Shortcuts**
+  - `J` → Navigate down test list.
+  - `K` → Navigate up test list.
+  - `Enter` → Open selected test.
+  - `T` → Toggle light/dark theme.
+
+---
+
 ## V4.0.5
 
 - **Improvemnts/Fix:**
