@@ -1,6 +1,6 @@
 {
   "name": "ortoni-report",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "Playwright Report By LetCode with Koushik",
   "scripts": {
     "tsc": "tsc",
@@ -60,5 +60,8 @@
       "require": "./dist/ortoni-report.js",
       "import": "./dist/ortoni-report.mjs"
     }
+  },
+  "dependencies": {
+    "ortoni-report": "file:ortoni-report-4.0.6.tgz"
   }
 }
