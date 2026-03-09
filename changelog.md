@@ -1,5 +1,9 @@
 # Change Log:
 
+## V4.0.8
+
+- Fixed: https://github.com/ortoniKC/ortoni-report/issues/107
+
 ## V4.0.6
 
 #### 🔍 Advanced Debugging & Failure Analysis
