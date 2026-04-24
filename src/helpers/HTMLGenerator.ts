@@ -174,7 +174,6 @@ export class HTMLGenerator {
       },
       preferences: {
         logo: this.ortoniConfig.logo || undefined,
-        showProject: this.ortoniConfig.showProject || false,
       },
       analytics: {
         reportData: reportData,
