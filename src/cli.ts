@@ -46,11 +46,12 @@ program
     "ortoni-report"
   )
   .option("-f, --file <filename>", "Output report file", "ortoni-report.html")
+  .option("-s, --save-history", "Save report history", false)
   .action(async (options) => {
     await mergeAllData({
       dir: options.dir,
       file: options.file,
-      saveHistory: false,
+      saveHistory: options.saveHistory,
     });
   });
 
