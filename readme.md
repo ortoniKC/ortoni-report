@@ -201,6 +201,7 @@ See full release updates [here](https://github.com/ortoniKC/ortoni-report/blob/m
 ## Contributors
 
 1. [Prabhash Dissanayake](https://github.com/prabhash-dissanayake-yl) - [PR](https://github.com/ortoniKC/ortoni-report/pull/99)
+2. [Bhavik Tikudiya](https://github.com/bhavikAtCodal)
 
 ---
 
