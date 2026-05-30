@@ -3,6 +3,7 @@ export default defineConfig({
   format: ["cjs", "esm"],
   entry: ["src/ortoni-report.ts", "src/cli.ts"],
   dts: true,
+  minify: true,
   external: [
     "@playwright/test",
     "playwright-core",
