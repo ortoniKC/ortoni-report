@@ -126,19 +126,19 @@ export class DatabaseManager {
     }
 
     try {
-      const results = await this.db.all(
+      const rows = await this.db.all(
         `
         SELECT tr.status, tr.duration, trun.run_date
         FROM test_results tr
         JOIN test_runs trun ON tr.run_id = trun.id
         WHERE tr.test_id = ?
-        ORDER BY trun.run_date DESC
+        ORDER BY datetime(trun.run_date) DESC, tr.id DESC
         LIMIT ?
       `,
         [testId, limit]
       );
 
-      return results.map((result) => ({
+      return rows.reverse().map((result) => ({
         ...result,
         run_date: result.run_date, // Return raw ISO string to avoid parsing issues in browser
       }));
