@@ -89,14 +89,14 @@ export class HTMLGenerator {
     // Deduplicate results by testId, keeping the one with the highest retry count (final outcome)
     const uniqueResults = new Map<string, TestResultData>();
     for (const result of filteredResults) {
-      const existing = uniqueResults.get(result.testId);
+      const existing = uniqueResults.get(result.key);
       if (!existing || result.retryAttemptCount > existing.retryAttemptCount) {
-        uniqueResults.set(result.testId, result);
+        uniqueResults.set(result.key, result);
       }
     }
     const finalResults = Array.from(uniqueResults.values());
 
-    const totalTests = finalResults.filter(
+    const totalTestsCount = finalResults.filter(
       (r) => r.status !== "skipped"
     ).length;
     const passedTestsCount = finalResults.filter(
@@ -113,11 +113,12 @@ export class HTMLGenerator {
       0
     );
     const successRate =
-      totalTests === 0
+      totalTestsCount === 0
         ? "0.00"
-        : (((passedTestsCount + flakyTestsCount) / totalTests) * 100).toFixed(
-            2
-          );
+        : (
+            ((passedTestsCount + flakyTestsCount) / totalTestsCount) *
+            100
+          ).toFixed(2);
 
     const allTags = new Set<string>();
     results.forEach((result) =>
@@ -125,7 +126,6 @@ export class HTMLGenerator {
     );
 
     const projectResults = this.calculateProjectResults(
-      filteredResults,
       finalResults,
       projectSet
     );
@@ -204,34 +204,25 @@ export class HTMLGenerator {
   }
 
   private calculateProjectResults(
-    filteredResults: TestResultData[],
     results: TestResultData[],
     projectSet: Set<string>
   ) {
     return Array.from(projectSet).map((projectName) => {
-      const projectTests = filteredResults.filter(
-        (r) => r.projectName === projectName
-      );
-      const allProjectTests = results.filter(
-        (r) => r.projectName === projectName
-      );
-      const passedTests = projectTests.filter(
-        (r) => r.status === "passed"
-      ).length;
-      const failedTests = projectTests.filter(
+      const projects = results.filter((r) => r.projectName === projectName);
+      const passedTests = projects.filter((r) => r.status === "passed").length;
+      const failedTests = projects.filter(
         (r) => r.status === "failed" || r.status === "timedOut"
       ).length;
       return {
         projectName,
         passedTests,
         failedTests,
-        skippedTests: allProjectTests.filter((r) => r.status === "skipped")
-          .length,
-        retryTests: allProjectTests.reduce(
+        skippedTests: projects.filter((r) => r.status === "skipped").length,
+        retryTests: projects.reduce(
           (sum, r) => sum + (r.retryAttemptCount || 0),
           0
         ),
-        flakyTests: allProjectTests.filter((r) => r.status === "flaky").length,
+        flakyTests: projects.filter((r) => r.status === "flaky").length,
         totalTests: passedTests + failedTests,
       };
     });
