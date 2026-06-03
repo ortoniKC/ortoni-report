@@ -1,5 +1,19 @@
 # Change Log:
 
+## 4.0.9
+
+- Improved: UI across the report
+- refactor: remove typewriter effect from headers and enhance ErrorAnalysis component with scroll-triggered animations and border-beam styling
+- refactor: consolidate dashboard layout by integrating overall execution chart into meta card component
+- feat: conditionally render project charts and improve label formatting and layout consistency
+- feat: implement sticky tabs with auto-scroll to top on tab change in TestTabs component
+
+  Contribution by [Bhavik Tikudiya](https://github.com/bhavikAtCodal)
+  - Annotation Description to have html parsing capability
+  - Supporting Expand/Collapse for Suite Spec Tests based on Pass/Fail
+  - Make the Test history chart date viewing from left to right, right-end to be recent similar to Analytics
+  - Enable History for Sharding Merge Report
+
 ## V4.0.8
 
 - Fixed: https://github.com/ortoniKC/ortoni-report/issues/107
