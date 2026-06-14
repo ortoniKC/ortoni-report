@@ -1,5 +1,9 @@
 # Change Log:
 
+## 4.10.0
+
+- Fixed #116, #117
+
 ## 4.0.9
 
 - Improved: UI across the report
