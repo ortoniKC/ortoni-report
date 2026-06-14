@@ -169,7 +169,7 @@ export class HTMLGenerator {
         overAllResult: {
           pass: passedTestsCount,
           fail: failedTestsCount,
-          skip: finalResults.filter((r) => r.status === "skipped").length,
+          skip: results.filter((r) => r.status === "skipped").length,
           retry: retryTestsCount,
           flaky: flakyTestsCount,
           total: passedTestsCount + failedTestsCount,
